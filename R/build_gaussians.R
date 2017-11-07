@@ -92,7 +92,13 @@ build_gaussians <- function(profile_matrix,
     protein <- proteins[i]
     pb$tick(tokens = list(what = sprintf(paste0("%-", max_len, "s"), protein)))
     chromatogram <- cleaned[protein,]
-    gaussian <- choose_gaussians(chromatogram, filter_gaussians_height = 0.1)
+    points <- sum(!is.na(profile_matrix[protein,]))
+    gaussian <- choose_gaussians(chromatogram, points,
+                                 max_gaussians, criterion,
+                                 max_iterations, min_R_squared,
+                                 method, filter_gaussians_center,
+                                 filter_gaussians_height,
+                                 filter_gaussians_variance)
     gaussians[[protein]] <- gaussian
   }
   
