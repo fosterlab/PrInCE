@@ -2,17 +2,20 @@
 % Please edit documentation in R/gaussian_aicc.R
 \name{gaussian_aicc}
 \alias{gaussian_aicc}
-\title{Calculate the corrected AIC for a Gaussian mixture model}
+\title{Calculate corrected AIC for a Gaussian mixture model}
 \usage{
-gaussian_aicc(fit, indices)
+gaussian_aicc(coefs, chromatogram)
 }
 \arguments{
-\item{fit}{the curve fit by the \code{stats::nls} function}
+\item{coefs}{the coefficients of the Gaussian mixture model, output by 
+\code{\link{fit_gaussians}}}
 }
 \value{
 the corrected AIC of the fit model
 }
 \description{
 Calculates the corrected AIC for a curve fit with a Gaussian mixture model
-by nonlinear least squares optimization.
+by nonlinear least squares optimization. This function permits the 
+calculation of the AICc after rejecting some Gaussians in the model, 
+for example because their centres are outside the bounds of the profile.
 }

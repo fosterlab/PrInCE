@@ -71,7 +71,7 @@ build_gaussians <- function(profile_matrix,
                             filter_gaussians_height = 0.15,
                             filter_gaussians_variance = 0.1) {
   # preprocess chromatograms: filter and clean
-  filtered <- filter_profiles(mat,
+  filtered <- filter_profiles(profile_matrix,
                               min_points = min_points,
                               min_consecutive = min_consecutive)
   cleaned <- clean_profiles(profile_matrix,

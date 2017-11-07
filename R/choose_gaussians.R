@@ -57,14 +57,14 @@ choose_gaussians <- function(chromatogram, max_gaussians = 5,
   models <- purrr::map(fits, "fit")
   drop <- purrr::map_lgl(models, is.null)
   fits <- fits[!drop]
-  models <- purrr::map(fits, "fit")
+  coefs <- purrr::map(fits, "coefs")
   
   if (criterion == "AICc") {
-    criteria <- lapply(models, gaussian_aicc)
+    criteria <- lapply(coefs, gaussian_aicc, chromatogram)
   } else if (criterion == "AIC") { 
-    criteria <- lapply(models, stats::AIC)
+    criteria <- lapply(coefs, gaussian_aic)
   } else if (criterion == "BIC") {
-    criteria <- lapply(models, stats::BIC)  
+    criteria <- lapply(coefs, gaussian_bic)  
   }
   best <- which.min(criteria)
   if (length(best) == 0) {

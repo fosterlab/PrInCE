@@ -1,33 +1,20 @@
-#' Calculate the corrected AIC for a Gaussian mixture model
+#' Calculate corrected AIC for a Gaussian mixture model
 #' 
 #' Calculates the corrected AIC for a curve fit with a Gaussian mixture model
-#' by nonlinear least squares optimization.
+#' by nonlinear least squares optimization. This function permits the 
+#' calculation of the AICc after rejecting some Gaussians in the model, 
+#' for example because their centres are outside the bounds of the profile.
 #' 
-#' @param fit the curve fit by the \code{stats::nls} function
+#' @param coefs the coefficients of the Gaussian mixture model, output by 
+#' \code{\link{fit_gaussians}}
 #' 
 #' @return the corrected AIC of the fit model
-gaussian_aicc <- function(fit, indices) {
-  # first, calculate log likelihood
-  
-  
-  
-  n <- length(fitted(fit))
-  loglik <- as.numeric(logLik(fit))
-  k <- length(coef(fit)) + 1
-  AIC <- 2 * k - 2 * loglik
-  AICc <- AIC + (2 * k * (k + 1)) / (n - k - 1)
+gaussian_aicc <- function(coefs, chromatogram) {
+  # first, calculate AIC
+  AIC <- gaussian_aic(coefs, chromatogram)
+  # second, calculate AICc
+  N <- length(chromatogram)
+  k <- length(unlist(coefs)) + 1
+  AICc <- AIC + (2 * k * (k + 1)) / (N - k - 1)
   return(AICc)
 }
-
-# 
-# res <- object$m$resid()
-# N <- length(res)
-# if (is.null(w <- object$weights)) 
-#   w <- rep_len(1, N)
-# zw <- w == 0
-# val <- -N * (log(2 * pi) + 1 - log(N) - sum(log(w + zw)) + 
-#                log(sum(w * res^2)))/2
-# attr(val, "df") <- 1L + length(coef(object))
-# attr(val, "nobs") <- attr(val, "nall") <- sum(!zw)
-# class(val) <- "logLik"
-# val
