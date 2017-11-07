@@ -11,6 +11,7 @@
 #' @param smooth if true, smooth the chromatogram with a moving average filter
 #' @param smooth_width width of the moving average filter, in fractions 
 #' 
+#' @export
 clean_profile <- function(chromatogram, impute_NA = T, smooth = T,
                           smooth_width = 4) {
   # copy chromatogram
