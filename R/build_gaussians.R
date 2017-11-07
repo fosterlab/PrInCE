@@ -74,7 +74,7 @@ build_gaussians <- function(profile_matrix,
   filtered <- filter_profiles(profile_matrix,
                               min_points = min_points,
                               min_consecutive = min_consecutive)
-  cleaned <- clean_profiles(profile_matrix,
+  cleaned <- clean_profiles(filtered,
                             impute_NA = impute_NA,
                             smooth = smooth,
                             smooth_width = 4)
