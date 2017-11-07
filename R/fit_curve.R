@@ -19,10 +19,10 @@
 #' 
 #' @export
 fit_curve <- function(coef, indices) {
-  gaussians <- length(coef) / 3
-  A <- coef[startsWith(names(coef), "A")]
-  mu <- coef[startsWith(names(coef), "mu")]
-  sigma <- coef[startsWith(names(coef), "sigma")]
+  A <- coef[["A"]]
+  mu <- coef[["mu"]]
+  sigma <- coef[["sigma"]]
+  gaussians <- length(A)
   rowSums(sapply(seq_len(gaussians), function(i) 
     A[i] * exp(-((indices - mu[i])/sigma[i])^2)))
 }

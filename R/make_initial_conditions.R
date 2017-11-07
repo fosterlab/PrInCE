@@ -40,7 +40,7 @@ make_initial_conditions <- function(chromatogram, n_gaussians,
     # find fractions that represent local maxima
     peaksX <- which(diff(sign(diff(chromatogram))) == -2) + 1
     # catch local minima at start or end
-    if (dplyr::first(chromatogram)[1] > dplyr::nth(chromatogram, 2))
+    if (dplyr::first(chromatogram) > dplyr::nth(chromatogram, 2))
       peaksX <- c(peaksX, 1)
     if (dplyr::last(chromatogram) > dplyr::nth(chromatogram, -2))
       peaksX <- c(peaksX, length(chromatogram))
@@ -58,6 +58,10 @@ make_initial_conditions <- function(chromatogram, n_gaussians,
       mu[i] <- peaksX[i] + runif(1, max = 3) - 1.5
       sigma[i] <- sigma_default + runif(1) - 0.5
     }
+    # if there are not enough peaks, pick additional random values
+    fractions <- length(chromatogram)
+    A[is.na(A)] <- runif(sum(is.na(A)), max = fractions)
+    mu[is.na(mu)] <- runif(sum(is.na(mu)), max = max(peaksY))
     initial_conditions <- list(A = A, mu = mu, sigma = sigma)
     return(initial_conditions)
   } else if (method == "random") {

@@ -11,26 +11,17 @@
 #' @param smooth if true, smooth the chromatogram with a moving average filter
 #' @param smooth_width width of the moving average filter, in fractions 
 #' 
+#' @return a cleaned profile
+#' 
 #' @export
 clean_profile <- function(chromatogram, impute_NA = T, smooth = T,
                           smooth_width = 4) {
   # copy chromatogram
   cleaned <- chromatogram
-  
+    
   # impute missing values using mean of neighbors
-  fractions <- length(cleaned)
-  nas <- which(is.na(cleaned) | cleaned == 0)
   if (impute_NA) {
-    for (i in nas) {
-      prevIdx <- i - 1
-      nextIdx <- i + 1
-      if (prevIdx < 1 | nextIdx > fractions - 1)
-        next
-      neighbors <- c(cleaned[prevIdx], cleaned[nextIdx])
-      if (!any(is.na(neighbors))) {
-        cleaned[i] <- mean(neighbors)
-      }
-    }
+    impute_neighbors(cleaned)
   }
   
   # replace remaining NAs with near-zero noise

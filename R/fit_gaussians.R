@@ -6,7 +6,7 @@
 #' @param chromatogram a numeric vector corresponding to the chromatogram trace
 #' @param n_gaussians the number of Gaussians to fit
 #' @param max_iterations the number of times to try fitting the curve with
-#' different initial conditions; defaults to 5
+#' different initial conditions; defaults to 10
 #' @param min_R_squared the minimum R-squared value to accept when fitting the
 #' curve with different initial conditions; defaults to 0.5
 #' @param method the method used to select the initial conditions for
@@ -26,10 +26,11 @@
 #' 
 #' @export
 fit_gaussians <- function(chromatogram, n_gaussians,
-                          max_iterations = 5, min_R_squared = 0.5,
+                          max_iterations = 10, min_R_squared = 0.5,
                           method = c("guess", "random"),
                           filter_gaussians_center = T,
-                          filter_gaussians_height = 0.15) {
+                          filter_gaussians_height = 0.15,
+                          filter_gaussians_variance = 0.1) {
   indices <- seq_len(length(chromatogram))
   iter <- 0
   bestR2 <- 0
@@ -50,47 +51,68 @@ fit_gaussians <- function(chromatogram, n_gaussians,
       rowSums(sapply(seq_len(n_gaussians), 
                      function(i) A[i] * exp(-((x - mu[i])/sigma[i])^2)))
     }
-    fit <- stats::nls(chromatogram ~ p_model(indices, A, mu, sigma), 
-               start = list(A = A, mu = mu, sigma = sigma), 
-               trace = F,  
-               control = list(warnOnly = T, minFactor = 1/2048))
-    coef <- coef(fit)
+    fit <- tryCatch({
+      suppressWarnings(
+        stats::nls(chromatogram ~ p_model(indices, A, mu, sigma), 
+                        start = list(A = A, mu = mu, sigma = sigma), 
+                        trace = F,  
+                        control = list(warnOnly = T, minFactor = 1/2048)))
+    }, error = function(e) { 
+      e 
+    }, simpleError = function(e) { 
+      e
+    })
+    if ("error" %in% class(fit))
+      next
+    
+    # split up fit coefficients vector into list with three entries
+    coefs <- coef(fit)
+    coefs <- split(coefs, rep(1:3, each = n_gaussians))
+    coefs <- setNames(coefs, c("A", "mu", "sigma"))
+    
+    # remove Gaussians with negative variances 
+    if (filter_gaussians_variance > 0) {
+      sigmas <- coefs[["sigma"]]
+      drop <- which(sigmas < 0.1)
+      if (length(drop) > 0)
+        coefs <- lapply(coefs, `[`, -drop)
+    }
     
     # (optional): remove Gaussians outside bounds of chromatogram
     if (filter_gaussians_center) {
-      means <- coef[startsWith(names(coef), "mu")]
-      filter <- which(means < 0 | means > length(chromatogram))
-      for (idx in filter) {
-        coef <- coef[!endsWith(names(coef), as.character(idx))]
-      }
+      means <- coefs[["mu"]]
+      drop <- which(means < 0 | means > length(chromatogram))
+      if (length(drop) > 0)
+        coefs <- lapply(coefs, `[`, -drop)
     }
     
     # (optional): remove Gaussians less than 15% of height
     if (filter_gaussians_height > 0) {
       minHeight <- max(chromatogram) * filter_gaussians_height
-      heights <- coef[startsWith(names(coef), "A")]
-      filter <- which(heights < minHeight)
-      for (idx in filter) {
-        coef <- coef[!endsWith(names(coef), as.character(idx))]
-      }
+      heights <- coefs[["A"]]
+      drop <- which(heights < minHeight)
+      if (length(drop) > 0)
+        coefs <- lapply(coefs, `[`, -drop)
     }
     
-    # if coefficients are empty, try again
-    if (isEmpty(coef))
-      next
-    
     # calculate R^2
-    curveFit <- fit_curve(coef, indices)
+    if (length(dplyr::first(coefs)) == 0)
+      next
+    curveFit <- fit_curve(coefs, indices)
     R2 <- cor(chromatogram, curveFit)^2
     # replace best fit with this model?
     if (R2 > bestR2) {
       bestR2 <- R2
       bestFit <- fit
-      bestCoefs <- coef
+      bestCoefs <- coefs
     }
   }
+  if (!is.null(bestCoefs)) {
+    curveFit <- fit_curve(bestCoefs, indices)
+  } else {
+    curveFit <- NULL
+  }
   results <- list(n_gaussians = n_gaussians, R2 = bestR2, iterations = iter,
-                  coefs = bestCoefs, curveFit = fit_curve(bestCoefs, indices),
-                  fit = bestFit)
+                  coefs = bestCoefs, curveFit = curveFit, fit = bestFit)
   return(results)
 }
