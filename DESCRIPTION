@@ -7,8 +7,10 @@ Depends: R (>= 3.2.3)
 Imports: 
 	purrr (>= 0.2.4),
 	dplyr (>= 0.7.4),
+	tidyr (>= 0.7.2),
 	forecast (>= 8.2),
-	progress (>= 1.1.2)
+	progress (>= 1.1.2),
+	Hmisc (>= 4.0)
 License: GPL-3.0
 Encoding: UTF-8
 LazyData: true
