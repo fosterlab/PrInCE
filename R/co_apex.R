@@ -1,0 +1,42 @@
+#' Calculate the co-apex score for every protein pair
+#' 
+#' Calculate the co-apex score for every pair of proteins. This is defined as 
+#' the minimum Euclidean distance between any two Gaussians fit to each 
+#' profile. 
+#' 
+#' @param gaussians a list of Gaussian mixture models fit to the profile matrix
+#' by \code{link{build_gaussians}}
+#' @param proteins all proteins being scored, optionally including those 
+#' without Gaussian fits 
+#' 
+#' @return a matrix of co-apex scores 
+#' 
+#' @export
+co_apex <- function(gaussians, proteins = NULL) {
+  if (is.null(proteins)) {
+    proteins <- names(gaussians)
+  }
+  n_proteins <- length(proteins)
+  n_gaussians <- length(gaussians)
+  gaussian_names <- names(gaussians)
+  ## first, calculate Euclidean distance between every pair of Gaussians 
+  gaussian_centers <- purrr::map(gaussians, c("coefs", "mu"))
+  gaussian_sigmas <- purrr::map(gaussians, c("coefs", "sigma"))
+  gaussian_matrix <- cbind(unlist(gaussian_centers), unlist(gaussian_sigmas))
+  CA <- as.matrix(dist(gaussian_matrix))
+  ## get indices for each protein 
+  gaussian_indices <- rep(gaussian_names, lengths(gaussian_centers))
+  ## calculate min co-apex score 
+  co_apex <- matrix(0, nrow = n_proteins, ncol = n_proteins,
+                    dimnames = list(proteins, proteins))
+  for (i in seq_len(n_gaussians)) {
+    protein_A <- names(gaussians)[i]
+    idxs_A <- which(gaussian_indices == protein_A)
+    for (j in seq_len(n_gaussians)) {
+      protein_B <- names(gaussians)[j]
+      idxs_B <- which(gaussian_indices == protein_B)
+      co_apex[protein_A, protein_B] <- min(CA[idxs_A, idxs_B]) 
+    }
+  }
+  return(co_apex)
+}
