@@ -14,8 +14,7 @@
 filter_profiles <- function(profile_matrix, min_points = 5, 
                             min_consecutive = 5) {
   nas <- is.na(profile_matrix)
-  before <- nrow(profile_matrix)
-  
+
   # filter profiles without a certain number of points
   if (!is.na(min_points) & !is.null(min_points) & min_points > 0) {
     profile_matrix <- profile_matrix[rowSums(!nas) >= min_points,]
@@ -28,9 +27,6 @@ filter_profiles <- function(profile_matrix, min_points = 5,
     imputed_nas <- is.na(imputed)
     profile_matrix <- profile_matrix[rowSums(!imputed_nas) >= min_consecutive,]
   }
-  
-  after <- nrow(profile_matrix)
-  message(".. predicting interactions for ", after, " of ", before, " proteins")
   
   return(profile_matrix)
 }

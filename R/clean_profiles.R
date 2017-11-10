@@ -18,7 +18,5 @@
 #' @export
 clean_profiles <- function(profile_matrix, impute_NA = T, smooth = T, 
                          smooth_width = 4) {
-  if (impute_NA | smooth)
-    message(".. cleaning ", nrow(profile_matrix), " profiles")
   t(apply(profile_matrix, 1, clean_profile, impute_NA, smooth, smooth_width))
 }
