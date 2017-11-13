@@ -16,13 +16,16 @@
 #' by \code{link{build_gaussians}}
 #' @param gold_standard a matrix or data frame of "gold standard" interactions
 #' used to train a naive Bayes classifier
+#' @param min_precision calculate precision for each interaction in a ranked
+#' list until this value is reached 
 #' 
 #' @return a data frame containing the values of these five features for each
 #' protein pair and the score output by the naive Bayes classifier
 #' 
 #' @export
-predict_interactions <- function(profile_matrix, gaussians, gold_standard) {
-  # get cleaned chromatograms
+predict_interactions <- function(profile_matrix, gaussians, gold_standard,
+                                 min_precision = 0.5) {
+  # calculate features on cleaned chromatograms
   cleaned <- clean_profiles(profile_matrix)
   proteins <- rownames(cleaned)
   n_proteins <- length(proteins)
@@ -40,7 +43,7 @@ predict_interactions <- function(profile_matrix, gaussians, gold_standard) {
   CA <- co_apex(gaussians, proteins)
   
   # collapse features
-  feature_matrices <- list(cor.R, cor.P, eucl, co_peak, co_apex)
+  feature_matrices <- list(cor.R, cor.P, eucl, co_peak, CA)
   ## make sure all dimensions are identical
   if (!all(purrr::map_int(feature_matrices, nrow) == n_proteins) |
       !all(purrr::map_int(feature_matrices, ncol) == n_proteins))
@@ -48,12 +51,33 @@ predict_interactions <- function(profile_matrix, gaussians, gold_standard) {
   tri <- upper.tri(co_peak)
   idxs <- which(tri, arr.ind = T)
   input <- data.frame(protein_A = rownames(co_peak)[idxs[, 1]], 
-                   protein_B = rownames(co_peak)[idxs[, 2]]) 
+                      protein_B = rownames(co_peak)[idxs[, 2]]) 
   input <- cbind(input, purrr::map(feature_matrices, ~ .[tri]))
   colnames(input)[3:7] <- c("cor_R", "cor_P", "euclidean_distance",
                             "co_peak", "co_apex")
 
   # identify true positives
+  label_mat <- make_label_matrix(gold_standard, co_peak)
+  tri <- upper.tri(label_mat)
+  labels <- label_mat[tri]
   
-  # run naive Bayes 
+  # train naive Bayes
+  training_idxs <- which(!is.na(labels))
+  training_labels <- as.factor(labels[training_idxs])
+  laplace <- mean(labels[training_idxs])
+  training <- input[training_idxs, -c(1:2)]
+  nb <- naivebayes::naive_bayes(training, training_labels, laplace = laplace)
+  
+  # predict all data 
+  predictions <- predict(nb, input[, -c(1:2)], type = 'prob')
+  
+  # create ranked data frame
+  interactions <- cbind(input[, 1:2], posterior = predictions[, "1"])
+  interactions <- dplyr::arrange(output, -posterior)
+  
+  # calculate precision
+  interactions <- calculate_precision(interactions, gold_standard,
+                                      min_precision)
+  
+  return(interactions)
 }
