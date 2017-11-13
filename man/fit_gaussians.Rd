@@ -7,7 +7,7 @@
 fit_gaussians(chromatogram, n_gaussians, max_iterations = 10,
   min_R_squared = 0.5, method = c("guess", "random"),
   filter_gaussians_center = T, filter_gaussians_height = 0.15,
-  filter_gaussians_variance = 0.1)
+  filter_gaussians_variance_min = 0.1, filter_gaussians_variance_max = 50)
 }
 \arguments{
 \item{chromatogram}{a numeric vector corresponding to the chromatogram trace}
@@ -30,6 +30,14 @@ fall outside the bounds of the chromatogram}
 \item{filter_gaussians_height}{Gaussians whose heights are below this 
 fraction of the chromatogram height will be filtered. Setting this value to
 zero disables height-based filtering of fit Gaussians}
+
+\item{filter_gaussians_variance_min}{Gaussians whose variance falls below 
+this number of fractions will be filtered. Setting this value to
+zero disables filtering.}
+
+\item{filter_gaussians_variance_max}{Gaussians whose variance is above
+this number of fractions will be filtered. Setting this value to
+zero disables filtering.}
 }
 \value{
 a list with six entries: the number of Gaussians used to fit

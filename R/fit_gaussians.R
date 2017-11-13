@@ -17,6 +17,12 @@
 #' @param filter_gaussians_height Gaussians whose heights are below this 
 #' fraction of the chromatogram height will be filtered. Setting this value to
 #' zero disables height-based filtering of fit Gaussians
+#' @param filter_gaussians_variance_min Gaussians whose variance falls below 
+#' this number of fractions will be filtered. Setting this value to
+#' zero disables filtering.
+#' @param filter_gaussians_variance_max Gaussians whose variance is above
+#' this number of fractions will be filtered. Setting this value to
+#' zero disables filtering.
 #'
 #' @return a list with six entries: the number of Gaussians used to fit
 #' the curve; the R^2 of the fit; the number of iterations used to 
@@ -30,7 +36,8 @@ fit_gaussians <- function(chromatogram, n_gaussians,
                           method = c("guess", "random"),
                           filter_gaussians_center = T,
                           filter_gaussians_height = 0.15,
-                          filter_gaussians_variance = 0.1) {
+                          filter_gaussians_variance_min = 0.1,
+                          filter_gaussians_variance_max = 50) {
   indices <- seq_len(length(chromatogram))
   iter <- 0
   bestR2 <- 0
@@ -71,9 +78,17 @@ fit_gaussians <- function(chromatogram, n_gaussians,
     coefs <- setNames(coefs, c("A", "mu", "sigma"))
     
     # remove Gaussians with negative variances 
-    if (filter_gaussians_variance > 0) {
+    if (filter_gaussians_variance_min > 0) {
       sigmas <- coefs[["sigma"]]
-      drop <- which(sigmas < 0.1)
+      drop <- which(sigmas < filter_gaussians_variance_min)
+      if (length(drop) > 0)
+        coefs <- lapply(coefs, `[`, -drop)
+    }
+    
+    # remove Gaussians with extremely large 
+    if (filter_gaussians_variance_max > 0) {
+      sigmas <- coefs[["sigma"]]
+      drop <- which(sigmas > filter_gaussians_variance_max)
       if (length(drop) > 0)
         coefs <- lapply(coefs, `[`, -drop)
     }
