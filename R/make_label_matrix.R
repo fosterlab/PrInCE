@@ -9,6 +9,8 @@
 #' 
 #' @return a matrix with the same dimensions as the input feature matrix
 #' being used as input to the classifier 
+#' 
+#' @export
 make_label_matrix <- function(gold_standard, feature_matrix) {
   proteins <- rownames(feature_matrix)
   label_mat <- feature_matrix
