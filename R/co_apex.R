@@ -27,7 +27,7 @@ co_apex <- function(gaussians, proteins = NULL) {
   ## get indices for each protein 
   gaussian_indices <- rep(gaussian_names, lengths(gaussian_centers))
   ## calculate min co-apex score 
-  co_apex <- matrix(0, nrow = n_proteins, ncol = n_proteins,
+  co_apex <- matrix(NA, nrow = n_proteins, ncol = n_proteins,
                     dimnames = list(proteins, proteins))
   for (i in seq_len(n_gaussians)) {
     protein_A <- names(gaussians)[i]
