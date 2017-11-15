@@ -116,7 +116,7 @@ fit_gaussians <- function(chromatogram, n_gaussians,
     curveFit <- fit_curve(coefs, indices)
     R2 <- cor(chromatogram, curveFit)^2
     # replace best fit with this model?
-    if (R2 > bestR2) {
+    if (R2 > bestR2 & R2 > min_R_squared) {
       bestR2 <- R2
       bestFit <- fit
       bestCoefs <- coefs

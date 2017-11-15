@@ -5,7 +5,7 @@
 \title{Preprocess a co-elution profile matrix}
 \usage{
 clean_profiles(profile_matrix, impute_NA = T, smooth = T,
-  smooth_width = 4)
+  smooth_width = 4, noise_floor = 0.001)
 }
 \arguments{
 \item{profile_matrix}{a numeric matrix of co-elution profiles, with proteins
@@ -17,6 +17,8 @@ neighboring values}
 \item{smooth}{if true, smooth the chromatogram with a moving average filter}
 
 \item{smooth_width}{width of the moving average filter, in fractions}
+
+\item{noise_floor}{mean value of the near-zero noise to add}
 }
 \value{
 a cleaned matrix

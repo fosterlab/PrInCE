@@ -23,9 +23,10 @@
 #' @param filter_gaussians_height Gaussians whose heights are below this 
 #' fraction of the chromatogram height will be filtered. Setting this value to
 #' zero disables height-based filtering of fit Gaussians
-#' @param filter_gaussians_variance Gaussians whose variance is below this 
-#' threshold will be filtered. Setting this value to zero disables 
-#' variance-baesd filtering of fit Gaussians.
+#' @param filter_gaussians_variance_min Gaussians whose variance is below this 
+#' threshold will be filtered. Setting this value to zero disables filtering.
+#' @param filter_gaussians_variance_max Gaussians whose variance is above this 
+#' threshold will be filtered. Setting this value to zero disables filtering.
 #'
 #' @return a list with six entries: the number of Gaussians used to fit
 #' the curve; the R^2 of the fit; the number of iterations used to 
@@ -41,7 +42,8 @@ choose_gaussians <- function(chromatogram, points = NULL,
                              method = c("guess", "random"),
                              filter_gaussians_center = T,
                              filter_gaussians_height = 0.15,
-                             filter_gaussians_variance = 0.1) {
+                             filter_gaussians_variance_min = 0.1,
+                             filter_gaussians_variance_max = 50) {
   criterion <- match.arg(criterion)
   
   # don't fit mixtures with more parameters than (experimental) points
@@ -55,7 +57,8 @@ choose_gaussians <- function(chromatogram, points = NULL,
     fits[[n_gaussians]] <- fit_gaussians(
       chromatogram, n_gaussians, max_iterations, min_R_squared,
       method = method, filter_gaussians_center, 
-      filter_gaussians_height, filter_gaussians_variance)
+      filter_gaussians_height, filter_gaussians_variance_min,
+      filter_gaussians_variance_max)
   
   # remove any models that failed to fit
   models <- purrr::map(fits, "fit")

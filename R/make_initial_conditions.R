@@ -45,10 +45,12 @@ make_initial_conditions <- function(chromatogram, n_gaussians,
     if (dplyr::last(chromatogram) > dplyr::nth(chromatogram, -2))
       peaksX <- c(peaksX, length(chromatogram))
     # order local maxima by distance (on one side, only)
-    distances <- diff(peaksX)
-    peaksX <- peaksX[order(-distances)]
+    ## distances <- diff(peaksX)
+    ## peaksX <- peaksX[order(-distances)]
     # get intensities for sorted local maxima
     peaksY <- chromatogram[peaksX]
+    # order by height
+    peaksX <- peaksX[order(-peaksY)]
     # use local maxima as initial conditions for Gaussian fitting
     A <- numeric(0)
     mu <- numeric(0)

@@ -4,7 +4,8 @@
 \alias{clean_profile}
 \title{Preprocess a co-elution profile}
 \usage{
-clean_profile(chromatogram, impute_NA = T, smooth = T, smooth_width = 4)
+clean_profile(chromatogram, impute_NA = T, smooth = T, smooth_width = 4,
+  noise_floor = 0.001)
 }
 \arguments{
 \item{chromatogram}{a numeric vector corresponding to the chromatogram trace}
@@ -15,6 +16,8 @@ neighboring values}
 \item{smooth}{if true, smooth the chromatogram with a moving average filter}
 
 \item{smooth_width}{width of the moving average filter, in fractions}
+
+\item{noise_floor}{mean value of the near-zero noise to add}
 }
 \value{
 a cleaned profile

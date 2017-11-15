@@ -45,9 +45,13 @@
 #' fraction of the chromatogram height will be filtered. Setting this value to
 #' zero disables height-based filtering of fit Gaussians. Passed to 
 #' \code{\link{fit_gaussians}}
-#' @param filter_gaussians_variance Gaussians whose variance is below this 
-#' threshold will be filtered. Setting this value to zero disables 
-#' variance-baesd filtering of fit Gaussians. Passed to 
+#' @param filter_gaussians_variance_min Gaussians whose variance falls below 
+#' this number of fractions will be filtered. Setting this value to
+#' zero disables filtering. Passed to 
+#' \code{\link{fit_gaussians}}
+#' @param filter_gaussians_variance_max Gaussians whose variance is above
+#' this number of fractions will be filtered. Setting this value to
+#' zero disables filtering. Passed to 
 #' \code{\link{fit_gaussians}}
 #' 
 #' @return a list of fit Gaussian mixture models, where each item in the 
@@ -69,7 +73,8 @@ build_gaussians <- function(profile_matrix,
                             method = c("guess", "random"),
                             filter_gaussians_center = T,
                             filter_gaussians_height = 0.15,
-                            filter_gaussians_variance = 0.1) {
+                            filter_gaussians_variance_min = 0.1,
+                            filter_gaussians_variance_max = 50) {
   # preprocess chromatograms: filter and clean
   filtered <- filter_profiles(profile_matrix,
                               min_points = min_points,
@@ -98,7 +103,8 @@ build_gaussians <- function(profile_matrix,
                                  max_iterations, min_R_squared,
                                  method, filter_gaussians_center,
                                  filter_gaussians_height,
-                                 filter_gaussians_variance)
+                                 filter_gaussians_variance_min,
+                                 filter_gaussians_variance_max)
     gaussians[[protein]] <- gaussian
   }
   

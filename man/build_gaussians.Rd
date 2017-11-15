@@ -9,7 +9,7 @@ build_gaussians(profile_matrix, min_points = 5, min_consecutive = 5,
   criterion = c("AICc", "AIC", "BIC"), max_iterations = 10,
   min_R_squared = 0.5, method = c("guess", "random"),
   filter_gaussians_center = T, filter_gaussians_height = 0.15,
-  filter_gaussians_variance = 0.1)
+  filter_gaussians_variance_min = 0.1, filter_gaussians_variance_max = 50)
 }
 \arguments{
 \item{profile_matrix}{a numeric matrix of co-elution profiles, with proteins
@@ -61,9 +61,14 @@ fraction of the chromatogram height will be filtered. Setting this value to
 zero disables height-based filtering of fit Gaussians. Passed to 
 \code{\link{fit_gaussians}}}
 
-\item{filter_gaussians_variance}{Gaussians whose variance is below this 
-threshold will be filtered. Setting this value to zero disables 
-variance-baesd filtering of fit Gaussians. Passed to 
+\item{filter_gaussians_variance_min}{Gaussians whose variance falls below 
+this number of fractions will be filtered. Setting this value to
+zero disables filtering. Passed to 
+\code{\link{fit_gaussians}}}
+
+\item{filter_gaussians_variance_max}{Gaussians whose variance is above
+this number of fractions will be filtered. Setting this value to
+zero disables filtering. Passed to 
 \code{\link{fit_gaussians}}}
 }
 \value{

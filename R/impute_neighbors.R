@@ -21,5 +21,6 @@ impute_neighbors <- function(chromatogram) {
       chromatogram[i] <- mean(neighbors)
     }
   }
+  
   return(chromatogram)
 }
