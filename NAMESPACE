@@ -2,6 +2,7 @@
 
 export(adjacency_matrix_from_list)
 export(build_gaussians)
+export(calculate_precision)
 export(choose_gaussians)
 export(clean_profile)
 export(clean_profiles)
