@@ -15,17 +15,22 @@ filter_profiles <- function(profile_matrix, min_points = 5,
                             min_consecutive = 5) {
   nas <- is.na(profile_matrix)
 
-  # filter profiles without a certain number of points
+  # filter profiles without N non-missing points
   if (!is.na(min_points) & !is.null(min_points) & min_points > 0) {
     profile_matrix <- profile_matrix[rowSums(!nas) >= min_points,]
+  } else {
+    # need to at least filter profiles without any points
+    profile_matrix <- profile_matrix[rowSums(!nas) >= 1,]
   }
   
-  # filter profiles without a certain number of consecutive points 
+  # filter profiles without N consecutive points after imputation
   if (!is.na(min_consecutive) & !is.null(min_consecutive) &
       min_consecutive > 0) {
     imputed <- t(apply(profile_matrix, 1, impute_neighbors))
     imputed_nas <- is.na(imputed)
-    profile_matrix <- profile_matrix[rowSums(!imputed_nas) >= min_consecutive,]
+    rles <- apply(imputed_nas, 1, rle)
+    max_consecutive <- purrr::map_int(rles, ~ max(.$lengths[.$values == F]))
+    profile_matrix <- profile_matrix[max_consecutive >= min_consecutive,]
   }
   
   return(profile_matrix)
