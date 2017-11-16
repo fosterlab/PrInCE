@@ -25,15 +25,19 @@
 #' @export
 predict_interactions <- function(profile_matrix, gaussians, gold_standard,
                                  min_precision = 0.5) {
-  # calculate features on cleaned chromatograms
-  cleaned <- clean_profiles(profile_matrix)
+  # replace missing values with near-zero noise
+  cleaned <- clean_profiles(profile_matrix, impute_NA = F, smooth = F,
+                            noise_floor = 0.05)
   proteins <- rownames(cleaned)
   n_proteins <- length(proteins)
   
   # calculate Pearson correlation and P-value distances
-  cors <- Hmisc::rcorr(t(cleaned))
-  cor.R <- 1 - cors$r
-  cor.P <- cors$P
+  cor_R_raw <- 1 - cor(t(profile_matrix), use = 'pairwise.complete.obs')
+  cor_R_cleaned <- 1 - cor(t(cleaned))
+  cor_P <- Hmisc::rcorr(t(profile_matrix))$P
+  ## set P-values with 2 pairwise observations to zero 
+  pairs <- crossprod(t(!is.na(profile_matrix)))
+  cor_P[pairs <= 2] <- NA
   # calculate Euclidean distance
   eucl <- as.matrix(dist(cleaned, method = 'euclidean'))
   # calculate co-peak distance
@@ -43,7 +47,7 @@ predict_interactions <- function(profile_matrix, gaussians, gold_standard,
   CA <- co_apex(gaussians, proteins)
   
   # collapse features
-  feature_matrices <- list(cor.R, cor.P, eucl, co_peak, CA)
+  feature_matrices <- list(cor_R_raw, cor_R_cleaned, cor_P, eucl, co_peak, CA)
   ## make sure all dimensions are identical
   if (!all(purrr::map_int(feature_matrices, nrow) == n_proteins) |
       !all(purrr::map_int(feature_matrices, ncol) == n_proteins))
@@ -53,8 +57,8 @@ predict_interactions <- function(profile_matrix, gaussians, gold_standard,
   input <- data.frame(protein_A = rownames(co_peak)[idxs[, 1]], 
                       protein_B = rownames(co_peak)[idxs[, 2]]) 
   input <- cbind(input, purrr::map(feature_matrices, ~ .[tri]))
-  colnames(input)[3:7] <- c("cor_R", "cor_P", "euclidean_distance",
-                            "co_peak", "co_apex")
+  colnames(input)[3:8] <- c("cor_R_raw", "cor_R_cleaned", "cor_P", 
+                            "euclidean_distance", "co_peak", "co_apex")
 
   # identify true positives
   label_mat <- make_label_matrix(gold_standard, co_peak)
@@ -64,20 +68,30 @@ predict_interactions <- function(profile_matrix, gaussians, gold_standard,
   # train naive Bayes
   training_idxs <- which(!is.na(labels))
   training_labels <- as.factor(labels[training_idxs])
-  laplace <- mean(labels[training_idxs])
   training <- input[training_idxs, -c(1:2)]
+  laplace <- mean(labels[training_idxs])
   nb <- naivebayes::naive_bayes(training, training_labels, laplace = laplace)
   
+  # predictions <- naivebayes:::predict.naive_bayes(
+  #   nb, training, type = 'prob')
+  
+  nb <- e1071::naiveBayes(training, training_labels)
+  predictions <- e1071:::predict.naiveBayes(nb, training, type = 'raw')
+  interactions <- cbind(input[training_idxs, 1:2], posterior = predictions[, "1"])
+  interactions$label <- training_labels
+  interactions <- dplyr::arrange(interactions, -posterior)
+   
+  
   # predict all data 
-  predictions <- predict(nb, input[, -c(1:2)], type = 'prob')
+  predictions <- naivebayes:::predict.naive_bayes(
+    nb, input[, -c(1:2)], type = 'prob')
   
   # create ranked data frame
   interactions <- cbind(input[, 1:2], posterior = predictions[, "1"])
-  interactions <- dplyr::arrange(output, -posterior)
+  interactions <- dplyr::arrange(interactions, -posterior)
   
   # calculate precision
-  interactions <- calculate_precision(interactions, gold_standard,
-                                      min_precision)
+  interactions <- calculate_precision(interactions, labels, min_precision)
   
   return(interactions)
 }
