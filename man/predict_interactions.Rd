@@ -4,8 +4,7 @@
 \alias{predict_interactions}
 \title{Predict interactions for a profile matrix}
 \usage{
-predict_interactions(profile_matrix, gaussians, gold_standard,
-  min_precision = 0.5)
+predict_interactions(profile_matrix, gaussians, gold_standard)
 }
 \arguments{
 \item{profile_matrix}{a numeric matrix of co-elution profiles, with proteins
@@ -16,13 +15,10 @@ by \code{link{build_gaussians}}}
 
 \item{gold_standard}{a matrix or data frame of "gold standard" interactions
 used to train a naive Bayes classifier}
-
-\item{min_precision}{calculate precision for each interaction in a ranked
-list until this value is reached}
 }
 \value{
-a data frame containing the values of these five features for each
-protein pair and the score output by the naive Bayes classifier
+a ranked data frame of pairwise interactions, with the 
+classifier score, label, and cumulative precision for each interaction
 }
 \description{
 Predict pairwise interactions between proteins in a profile matrix, using a

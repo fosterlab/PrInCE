@@ -15,16 +15,13 @@
 #' @param gaussians a list of Gaussian mixture models fit to the profile matrix
 #' by \code{link{build_gaussians}}
 #' @param gold_standard a matrix or data frame of "gold standard" interactions
-#' used to train a naive Bayes classifier
-#' @param min_precision calculate precision for each interaction in a ranked
-#' list until this value is reached 
+#' used to train a naive Bayes classifier 
 #' 
-#' @return a data frame containing the values of these five features for each
-#' protein pair and the score output by the naive Bayes classifier
+#' @return a ranked data frame of pairwise interactions, with the 
+#' classifier score, label, and cumulative precision for each interaction 
 #' 
 #' @export
-predict_interactions <- function(profile_matrix, gaussians, gold_standard,
-                                 min_precision = 0.5) {
+predict_interactions <- function(profile_matrix, gaussians, gold_standard) {
   # replace missing values with near-zero noise
   cleaned <- clean_profiles(profile_matrix, impute_NA = F, smooth = F,
                             noise_floor = 0.05)
@@ -69,29 +66,19 @@ predict_interactions <- function(profile_matrix, gaussians, gold_standard,
   training_idxs <- which(!is.na(labels))
   training_labels <- as.factor(labels[training_idxs])
   training <- input[training_idxs, -c(1:2)]
-  laplace <- mean(labels[training_idxs])
-  nb <- naivebayes::naive_bayes(training, training_labels, laplace = laplace)
-  
-  # predictions <- naivebayes:::predict.naive_bayes(
-  #   nb, training, type = 'prob')
-  
-  nb <- e1071::naiveBayes(training, training_labels)
-  predictions <- e1071:::predict.naiveBayes(nb, training, type = 'raw')
-  interactions <- cbind(input[training_idxs, 1:2], posterior = predictions[, "1"])
-  interactions$label <- training_labels
-  interactions <- dplyr::arrange(interactions, -posterior)
-   
+  nb <- naivebayes::naive_bayes(training, training_labels)
   
   # predict all data 
   predictions <- naivebayes:::predict.naive_bayes(
     nb, input[, -c(1:2)], type = 'prob')
   
   # create ranked data frame
-  interactions <- cbind(input[, 1:2], posterior = predictions[, "1"])
-  interactions <- dplyr::arrange(interactions, -posterior)
+  interactions <- cbind(input[, 1:2], score = predictions[, "1"],
+                        label = labels)
+  interactions <- dplyr::arrange(interactions, -score)
   
   # calculate precision
-  interactions <- calculate_precision(interactions, labels, min_precision)
-  
+  interactions$precision <- calculate_precision(interactions$label)
+
   return(interactions)
 }
