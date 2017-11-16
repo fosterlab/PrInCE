@@ -2,10 +2,29 @@
 % Please edit documentation in R/PrInCE.R
 \name{PrInCE}
 \alias{PrInCE}
-\title{Predicting Interactomes from Co-Elution}
+\title{PrInCE: Prediction of Interactomes from Co-Elution}
 \usage{
-PrInCE(profile_matrix)
+PrInCE(profile_matrix, gold_standard)
+}
+\arguments{
+\item{profile_matrix}{a numeric matrix of co-elution profiles, or something
+that can be coerced to it, with proteins in rows}
+
+\item{gold_standard}{an adjacency matrix of gold-standard interactions.
+Zeroes in the adjacency matrix are interpreted by PrInCE as "true negatives"
+when calculating precision.}
+}
+\value{
+a ranked data frame of interacting proteins, with the precision
+at each point in the list
 }
 \description{
-<description>
+PrInCE is a pipeline
+}
+\references{
+\insertRef{stacey2017}{PrInCE}
+
+\insertRef{scott2015}{PrInCE}
+
+\insertRef{kristensen2012}{PrInCE}
 }
