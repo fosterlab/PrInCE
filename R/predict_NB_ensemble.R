@@ -67,12 +67,12 @@ predict_NB_ensemble <- function(input, labels, models = 10, cv_folds = 10,
       predictions = predictions[, "1"]
       nb_scores[-withheld_idxs, fold] <- predictions
     }
-    medians <- setNames(Biobase::rowMedians(nb_scores, na.rm = T),
+    medians <- setNames(robustbase::rowMedians(nb_scores, na.rm = T),
                         rownames(nb_scores))
     ensembled[, i] <- medians
   }
   
-  ensembled_medians <- setNames(Biobase::rowMedians(ensembled, na.rm = T),
+  ensembled_medians <- setNames(robustbase::rowMedians(ensembled, na.rm = T),
                                 rownames(ensembled))
   return(ensembled_medians)
 }

@@ -11,6 +11,8 @@ Imports:
 	forecast (>= 8.2),
 	progress (>= 1.1.2),
 	Hmisc (>= 4.0),
+	naivebayes (>= 0.9.1),
+	robustbase (>= 0.92-7)
 	Rdpack
 License: GPL-3.0
 Encoding: UTF-8
