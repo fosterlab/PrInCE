@@ -62,19 +62,11 @@ predict_interactions <- function(profile_matrix, gaussians, gold_standard) {
   tri <- upper.tri(label_mat)
   labels <- label_mat[tri]
   
-  # train naive Bayes
-  training_idxs <- which(!is.na(labels))
-  training_labels <- as.factor(labels[training_idxs])
-  training <- input[training_idxs, -c(1:2)]
-  nb <- naivebayes::naive_bayes(training, training_labels)
-  
-  # predict all data 
-  predictions <- naivebayes:::predict.naive_bayes(
-    nb, input[, -c(1:2)], type = 'prob')
+  # predict with an ensemble of naive Bayes classifiers
+  predictions <- predict_NB_ensemble(input, labels)
   
   # create ranked data frame
-  interactions <- cbind(input[, 1:2], score = predictions[, "1"],
-                        label = labels)
+  interactions <- cbind(input[, 1:2], score = predictions, label = labels)
   interactions <- dplyr::arrange(interactions, -score)
   
   # calculate precision
