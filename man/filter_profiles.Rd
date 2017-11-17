@@ -4,7 +4,7 @@
 \alias{filter_profiles}
 \title{Filter a co-elution profile matrix}
 \usage{
-filter_profiles(profile_matrix, min_points = 5, min_consecutive = 5)
+filter_profiles(profile_matrix, min_points = 1, min_consecutive = 5)
 }
 \arguments{
 \item{profile_matrix}{a numeric matrix of co-elution profiles, with proteins

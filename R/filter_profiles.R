@@ -11,7 +11,7 @@
 #' consecutive, non-missing points
 #' 
 #' @export
-filter_profiles <- function(profile_matrix, min_points = 5, 
+filter_profiles <- function(profile_matrix, min_points = 1, 
                             min_consecutive = 5) {
   nas <- is.na(profile_matrix)
 
