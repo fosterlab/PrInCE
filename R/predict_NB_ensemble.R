@@ -57,11 +57,11 @@ predict_NB_ensemble <- function(input, labels, models = 10, cv_folds = 10,
         paste0("%-", nchar(total_models), "s"), counter)))
 
       # train model
-      nb = naivebayes::naive_bayes(training[which(folds == fold),],
-                                   as.factor(labels[which(folds == fold)]))
+      nb = naivebayes::naive_bayes(training[which(folds != fold),],
+                                   as.factor(labels[which(folds != fold)]))
       
       # classify
-      withheld_idxs = as.integer(rownames(training))[folds != fold]
+      withheld_idxs = as.integer(rownames(training))[folds == fold]
       predictions = naivebayes:::predict.naive_bayes(
         nb, input[-withheld_idxs, -c(1:2)], type = 'prob')
       predictions = predictions[, "1"]
