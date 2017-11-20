@@ -29,15 +29,10 @@ co_apex <- function(gaussians, proteins = NULL) {
   ## calculate min co-apex score 
   co_apex <- matrix(NA, nrow = n_proteins, ncol = n_proteins,
                     dimnames = list(proteins, proteins))
-  for (i in seq_len(n_gaussians)) {
-    protein_A <- names(gaussians)[i]
-    if (!protein_A %in% rownames(co_apex))
-      next
+  gaussian_names <- intersect(names(gaussians), proteins)
+  for (protein_A in gaussian_names) {
     idxs_A <- which(gaussian_indices == protein_A)
-    for (j in seq_len(n_gaussians)) {
-      protein_B <- names(gaussians)[j]
-      if (!protein_B %in% rownames(co_apex))
-        next
+    for (protein_B in gaussian_names) {
       idxs_B <- which(gaussian_indices == protein_B)
       co_apex[protein_A, protein_B] <- min(CA[idxs_A, idxs_B]) 
     }
