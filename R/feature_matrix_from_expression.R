@@ -28,14 +28,6 @@ feature_matrix_from_expression <- function(expr, profile_matrix, ...) {
   # fill coexpression
   coexpr <- cor(filtered, ...)
   # add empty rows and columns
-  diff <- setdiff(proteins, colnames(filtered))
-  new_rows <- matrix(NA, nrow = length(diff), ncol = ncol(coexpr),
-                     dimnames = list(diff, colnames(coexpr)))
-  coexpr <- rbind(coexpr, new_rows)
-  new_cols <- matrix(NA, nrow = nrow(coexpr), ncol = length(diff),
-                     dimnames = list(rownames(coexpr), diff))
-  coexpr <- cbind(coexpr, new_cols)
-  # same order as profile matrix
-  coexpr <- coexpr[rownames(profile_matrix), rownames(profile_matrix)]
+  coexpr <- match_matrix_dimensions(coexpr, profile_matrix)
   return(coexpr)
 }
