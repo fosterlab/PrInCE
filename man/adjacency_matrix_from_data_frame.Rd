@@ -4,10 +4,13 @@
 \alias{adjacency_matrix_from_data_frame}
 \title{Create an adjacency matrix from a data frame}
 \usage{
-adjacency_matrix_from_data_frame(dat)
+adjacency_matrix_from_data_frame(dat, symmetric = T)
 }
 \arguments{
 \item{dat}{a data frame with pairwise interactions in the first two columns}
+
+\item{symmetric}{if true, interactions in both directions will be 
+added to the adjacency matrix}
 }
 \value{
 an adjacency matrix between all interacting proteins
