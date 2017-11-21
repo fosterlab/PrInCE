@@ -26,7 +26,7 @@ predict_interactions <- function(profile_matrix, gaussians, gold_standard) {
   input <- calculate_features(profile_matrix, gaussians)
   
   # identify true positives
-  label_mat <- make_label_matrix(gold_standard, co_peak)
+  label_mat <- make_label_matrix(gold_standard, profile_matrix)
   tri <- upper.tri(label_mat)
   labels <- label_mat[tri]
   

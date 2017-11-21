@@ -4,17 +4,17 @@
 #' feature matrices being classified. 
 #' 
 #' @param gold_standard an adjacency matrix of gold-standard interactions
-#' @param feature_matrix any of the feature matrices being used as input to a 
-#' classifier 
+#' @param profile_matrix the profile matrix for which interactions are being
+#' predicted 
 #' 
 #' @return a matrix with the same dimensions as the input feature matrix
 #' being used as input to the classifier 
 #' 
 #' @export
-make_label_matrix <- function(gold_standard, feature_matrix) {
-  proteins <- rownames(feature_matrix)
-  label_mat <- feature_matrix
-  label_mat[] <- NA
+make_label_matrix <- function(gold_standard, profile_matrix) {
+  proteins <- rownames(profile_matrix)
+  label_mat <- matrix(NA, nrow = length(proteins), ncol = length(proteins),
+                      dimnames = c(proteins, proteins))
   overlap_idxs <- rownames(gold_standard) %in% proteins
   gold_standard <- gold_standard[overlap_idxs, overlap_idxs]
   tri <- upper.tri(gold_standard)

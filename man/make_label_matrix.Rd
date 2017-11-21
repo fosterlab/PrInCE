@@ -4,13 +4,13 @@
 \alias{make_label_matrix}
 \title{Create a gold-standard label matrix}
 \usage{
-make_label_matrix(gold_standard, feature_matrix)
+make_label_matrix(gold_standard, profile_matrix)
 }
 \arguments{
 \item{gold_standard}{an adjacency matrix of gold-standard interactions}
 
-\item{feature_matrix}{any of the feature matrices being used as input to a 
-classifier}
+\item{profile_matrix}{the profile matrix for which interactions are being
+predicted}
 }
 \value{
 a matrix with the same dimensions as the input feature matrix
