@@ -14,7 +14,7 @@
 make_label_matrix <- function(gold_standard, profile_matrix) {
   proteins <- rownames(profile_matrix)
   label_mat <- matrix(NA, nrow = length(proteins), ncol = length(proteins),
-                      dimnames = c(proteins, proteins))
+                      dimnames = list(proteins, proteins))
   overlap_idxs <- rownames(gold_standard) %in% proteins
   gold_standard <- gold_standard[overlap_idxs, overlap_idxs]
   tri <- upper.tri(gold_standard)
