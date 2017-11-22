@@ -1,6 +1,6 @@
-#' Predict interactions using an ensemble of random forests
+#' Predict interactions using an ensemble of support vector machines
 #' 
-#' Use an ensemble of random forest classifiers to predict interactions from
+#' Use an ensemble of support vector machines to predict interactions from
 #' co-elution dataset features. The ensemble approach ensures that 
 #' results are robust to the partitioning of the dataset into folds. For each
 #' model, the median of classifier scores across all folds is calculated.
@@ -11,9 +11,9 @@
 #' remaining columns
 #' @param labels labels for each interaction in \code{input}: 0 for negatives,
 #' 1 for positives, and NA for interactions outside the reference set 
-#' @param models the number of random forest classifiers to train
+#' @param models the number of support vector machines to train
 #' @param cv_folds the number of folds to split the reference dataset into 
-#' when training each random forests classifier. By default, each 
+#' when training each support vector machine. By default, each 
 #' classifier uses ten-fold cross-validation, i.e., the classifier is trained
 #' on 90\% of the dataset and used to classify the remaining 10\%
 #' 
@@ -21,7 +21,7 @@
 #' median of classifier scores across all ensembled models
 #' 
 #' @export
-predict_RF_ensemble <- function(input, labels, models = 1, cv_folds = 10,
+predict_SVM_ensemble <- function(input, labels, models = 1, cv_folds = 10,
                                 seed = 0) {
   # set seed
   set.seed(seed)
@@ -48,7 +48,7 @@ predict_RF_ensemble <- function(input, labels, models = 1, cv_folds = 10,
   for (i in seq_len(models)) {
     folds <- cut(seq_len(nrow(training)), breaks = cv_folds, labels = F)
     folds <- sample(folds) ## randomize
-    rf_scores <- matrix(NA, ncol = cv_folds, nrow = n_interactions,
+    svm_scores <- matrix(NA, ncol = cv_folds, nrow = n_interactions,
                         dimnames = list(interaction_names))
     for (fold in seq_len(cv_folds)) {
       # print message
@@ -57,26 +57,23 @@ predict_RF_ensemble <- function(input, labels, models = 1, cv_folds = 10,
         paste0("%-", nchar(total_models), "s"), counter)))
 
       # train model
-      rf_data <- training[which(folds != fold),]
-      rf_labels <- as.factor(training_labels[which(folds != fold)])
-      rf_data_labeled <- cbind(rf_data, label = rf_labels)
-      rf <- ranger::ranger(data = rf_data_labeled, 
-                           dependent.variable.name = "label",
-                           probability = T,
-                           seed = seed)
+      svm_data <- training[which(folds != fold),]
+      svm_labels <- as.factor(training_labels[which(folds != fold)])
+      svm <- LiblineaR::LiblineaR(svm_data, svm_labels, type = 1)
       
       # classify
       withheld_idxs = as.integer(rownames(training))[folds == fold]
-      rf_test_data <- input[-withheld_idxs, -c(1:2)]
-      predictions <- ranger:::predict.ranger(rf, rf_test_data, seed = seed)
-      predictions <- predictions[[1]][, "1"]
-      rf_scores[-withheld_idxs, fold] <- predictions
+      svm_test_data <- input[-withheld_idxs, -c(1:2)]
+      predictions <- LiblineaR:::predict.LiblineaR(svm, svm_test_data, 
+                                                   decisionValues = T)
+      predictions <- predictions$decisionValues[, "1"]
+      svm_scores[-withheld_idxs, fold] <- predictions
       
       # call GC
       gc()
     }
-    medians <- setNames(robustbase::rowMedians(rf_scores, na.rm = T),
-                        rownames(rf_scores))
+    medians <- setNames(robustbase::rowMedians(svm_scores, na.rm = T),
+                        rownames(svm_scores))
     ensembled[, i] <- medians
   }
   
