@@ -53,7 +53,7 @@ calculate_features <- function(profile_matrix, gaussians,
     cor_R_cleaned <- 1 - cor(t(cleaned))
     feature_matrices[["cor_R_cleaned"]] <- cor_R_cleaned
   }
-  if (pearson_P_raw) {
+  if (pearson_P) {
     cor_P <- Hmisc::rcorr(t(profile_matrix))$P
     ## set P-values with 2 pairwise observations to zero 
     pairs <- crossprod(t(!is.na(profile_matrix)))
