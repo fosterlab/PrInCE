@@ -45,8 +45,11 @@ calculate_features <- function(profile_matrix, gaussians,
   ## cor_R_raw, cor_R_cleaned, cor_P, eucl, co_peak, CA)
   
   # calculate Pearson correlation and P-value distances
+  pairs <- crossprod(t(!is.na(profile_matrix)))
   if (pearson_R_raw) {
     cor_R_raw <- 1 - cor(t(profile_matrix), use = 'pairwise.complete.obs')
+    ## set correlations with 2 pairwise observations to zero
+    cor_P[pairs <= 2] <- 0
     feature_matrices[["cor_R_raw"]] <- cor_R_raw
   }
   if (pearson_R_cleaned) {
@@ -55,9 +58,8 @@ calculate_features <- function(profile_matrix, gaussians,
   }
   if (pearson_P) {
     cor_P <- Hmisc::rcorr(t(profile_matrix))$P
-    ## set P-values with 2 pairwise observations to zero 
-    pairs <- crossprod(t(!is.na(profile_matrix)))
-    cor_P[pairs <= 2] <- NA
+    ## set P-values with 2 pairwise observations to 1
+    cor_P[pairs <= 2] <- 1
     feature_matrices[["cor_P"]] <- cor_P  
   }
   # calculate Euclidean distance
