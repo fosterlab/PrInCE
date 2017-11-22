@@ -59,12 +59,12 @@ predict_RF_ensemble <- function(input, labels, models = 1, cv_folds = 10,
       # train model
       rf_data <- training[which(folds != fold),]
       rf_labels <- as.factor(training_labels[which(folds != fold)])
-      rf_data <- cbind(rf_data, label = rf_labels)
-      rf <- ranger::ranger(data = rf_data_imputed, 
+      rf_data_labeled <- cbind(rf_data, label = rf_labels)
+      rf <- ranger::ranger(data = rf_data_labeled, 
                            dependent.variable.name = "label",
                            probability = T,
                            seed = seed)
-
+      
       # classify
       withheld_idxs = as.integer(rownames(training))[folds == fold]
       rf_test_data <- input[-withheld_idxs, -c(1:2)]
