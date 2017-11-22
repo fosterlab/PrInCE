@@ -46,13 +46,11 @@ predict_NB_ensemble <- function(input, labels, models = 10, cv_folds = 10,
   
   # create models
   for (i in seq_len(models)) {
-    message("... model ", i)
     folds <- cut(seq_len(nrow(training)), breaks = cv_folds, labels = F)
     folds <- sample(folds) ## randomize
     nb_scores <- matrix(NA, ncol = cv_folds, nrow = n_interactions,
                         dimnames = list(interaction_names))
     for (fold in seq_len(cv_folds)) {
-      message(".... fold ", fold)
       # print message
       counter <- counter + 1
       pb$tick(tokens = list(what = sprintf(
