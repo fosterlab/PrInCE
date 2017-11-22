@@ -22,7 +22,7 @@
 #' 
 #' @export
 predict_SVM_ensemble <- function(input, labels, models = 1, cv_folds = 10,
-                                seed = 0) {
+                                 seed = 0) {
   # set seed
   set.seed(seed)
   
@@ -49,13 +49,13 @@ predict_SVM_ensemble <- function(input, labels, models = 1, cv_folds = 10,
     folds <- cut(seq_len(nrow(training)), breaks = cv_folds, labels = F)
     folds <- sample(folds) ## randomize
     svm_scores <- matrix(NA, ncol = cv_folds, nrow = n_interactions,
-                        dimnames = list(interaction_names))
+                         dimnames = list(interaction_names))
     for (fold in seq_len(cv_folds)) {
       # print message
       counter <- counter + 1
       pb$tick(tokens = list(what = sprintf(
         paste0("%-", nchar(total_models), "s"), counter)))
-
+      
       # train model
       svm_data <- training[which(folds != fold),]
       svm_labels <- as.factor(training_labels[which(folds != fold)])
