@@ -66,6 +66,9 @@ predict_NB_ensemble <- function(input, labels, models = 10, cv_folds = 10,
         nb, input[-withheld_idxs, -c(1:2)], type = 'prob')
       predictions = predictions[, "1"]
       nb_scores[-withheld_idxs, fold] <- predictions
+      
+      # call GC
+      gc()
     }
     medians <- setNames(robustbase::rowMedians(nb_scores, na.rm = T),
                         rownames(nb_scores))
