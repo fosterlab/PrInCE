@@ -13,6 +13,7 @@ Imports:
 	Hmisc (>= 4.0),
 	naivebayes (>= 0.9.1),
 	robustbase (>= 0.92-7),
+	ranger (>= 0.8.0),
 	Rdpack
 License: GPL-3.0
 Encoding: UTF-8
