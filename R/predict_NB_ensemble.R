@@ -46,24 +46,27 @@ predict_NB_ensemble <- function(input, labels, models = 10, cv_folds = 10,
   
   # create models
   for (i in seq_len(models)) {
+    message("... model ", i)
     folds <- cut(seq_len(nrow(training)), breaks = cv_folds, labels = F)
     folds <- sample(folds) ## randomize
     nb_scores <- matrix(NA, ncol = cv_folds, nrow = n_interactions,
                         dimnames = list(interaction_names))
     for (fold in seq_len(cv_folds)) {
+      message(".... fold ", fold)
       # print message
       counter <- counter + 1
       pb$tick(tokens = list(what = sprintf(
         paste0("%-", nchar(total_models), "s"), counter)))
 
       # train model
-      nb = naivebayes::naive_bayes(training[which(folds != fold),],
-                                   as.factor(labels[which(folds != fold)]))
+      nb_data <- training[which(folds != fold),]
+      nb_labels <- as.factor(training_labels[which(folds != fold)])
+      nb = naivebayes::naive_bayes(nb_data, nb_labels)
       
       # classify
       withheld_idxs = as.integer(rownames(training))[folds == fold]
       predictions = naivebayes:::predict.naive_bayes(
-        nb, input[-withheld_idxs, -c(1:2)], type = 'prob')
+        nb, input[-withheld_idxs, -c(1:2)], type = 'prob', threshold = 1e-10)
       predictions = predictions[, "1"]
       nb_scores[-withheld_idxs, fold] <- predictions
       
