@@ -49,7 +49,7 @@ calculate_features <- function(profile_matrix, gaussians,
   if (pearson_R_raw) {
     cor_R_raw <- 1 - cor(t(profile_matrix), use = 'pairwise.complete.obs')
     ## set correlations with 2 pairwise observations to zero
-    cor_P[pairs <= 2] <- 0
+    cor_R_raw[pairs <= 2] <- 0
     feature_matrices[["cor_R_raw"]] <- cor_R_raw
   }
   if (pearson_R_cleaned) {
