@@ -22,8 +22,8 @@ classifier uses ten-fold cross-validation, i.e., the classifier is trained
 on 90\% of the dataset and used to classify the remaining 10\%}
 }
 \value{
-the median of classifier scores across all models for each row 
-in the input data fame
+the input data frame of pairwise interactions, ranked by the 
+median of classifier scores across all ensembled models
 }
 \description{
 Use an ensemble of naive Bayes classifiers to predict interactions from

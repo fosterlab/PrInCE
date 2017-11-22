@@ -17,8 +17,8 @@
 #' classifier uses ten-fold cross-validation, i.e., the classifier is trained
 #' on 90\% of the dataset and used to classify the remaining 10\%
 #' 
-#' @return the median of classifier scores across all models for each row 
-#' in the input data fame 
+#' @return the input data frame of pairwise interactions, ranked by the 
+#' median of classifier scores across all ensembled models
 #' 
 #' @export
 predict_NB_ensemble <- function(input, labels, models = 10, cv_folds = 10,
@@ -76,7 +76,13 @@ predict_NB_ensemble <- function(input, labels, models = 10, cv_folds = 10,
     ensembled[, i] <- medians
   }
   
+  # calculate median of medians across ensembled models
   ensembled_medians <- setNames(robustbase::rowMedians(ensembled, na.rm = T),
                                 rownames(ensembled))
-  return(ensembled_medians)
+  
+  # create ranked data frame
+  interactions <- cbind(input[, 1:2], score = ensembled_medians, label = labels)
+  interactions <- dplyr::arrange(interactions, -score)
+  
+  return(interactions)
 }

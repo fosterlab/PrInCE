@@ -31,11 +31,7 @@ predict_interactions <- function(profile_matrix, gaussians, gold_standard) {
   labels <- label_mat[tri]
   
   # predict with an ensemble of naive Bayes classifiers
-  predictions <- predict_NB_ensemble(input, labels)
-  
-  # create ranked data frame
-  interactions <- cbind(input[, 1:2], score = predictions, label = labels)
-  interactions <- dplyr::arrange(interactions, -score)
+  interactions <- predict_NB_ensemble(input, labels)
   
   # calculate precision
   interactions$precision <- calculate_precision(interactions$label)
