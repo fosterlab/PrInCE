@@ -11,12 +11,15 @@
 #' with protein pairs in the first two columns
 #' @param col_name the name of the column in the first data frame that 
 #' contains interaction features 
+#' @param default_value the default value for protein pairs that are not in the 
+#' first data frame (set, by default, to \code{NA})
 #' 
 #' @return a vector matching the dimensions and order of the feature data frame,
 #' to use as input for a classifier in interaction prediction 
 #' 
 #' @export
-make_feature_from_data_frame <- function(dat, input, col_name) {
+make_feature_from_data_frame <- function(dat, input, col_name, 
+                                         default_value = NA) {
   # get all proteins in feature data frame
   ref_proteins1 <- input[[1]]
   ref_proteins2 <- input[[2]]
@@ -30,7 +33,7 @@ make_feature_from_data_frame <- function(dat, input, col_name) {
   new_proteins1 <- filtered[[1]]
   new_proteins2 <- filtered[[2]] 
   new_proteins <- unique(c(new_proteins1, new_proteins2))
-  feature_matrix <- matrix(NA, nrow = length(new_proteins), 
+  feature_matrix <- matrix(default_value, nrow = length(new_proteins), 
                            ncol = length(new_proteins),
                            dimnames = list(new_proteins, new_proteins))
   # fill interaction scores
@@ -44,7 +47,7 @@ make_feature_from_data_frame <- function(dat, input, col_name) {
   feat_idxs <- ref_proteins1 %in% rownames(feature_matrix) & 
     ref_proteins2 %in% rownames(feature_matrix)
   idxing_mat <- cbind(ref_proteins1[feat_idxs], ref_proteins2[feat_idxs])
-  feature <- rep(NA, nrow(input))
+  feature <- rep(default_value, nrow(input))
   feature[feat_idxs] <- feature_matrix[idxing_mat]
   return(feature)
 }

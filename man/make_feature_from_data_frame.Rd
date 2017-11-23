@@ -4,7 +4,7 @@
 \alias{make_feature_from_data_frame}
 \title{Create a feature vector for a classifier from a data frame}
 \usage{
-make_feature_from_data_frame(dat, input, col_name)
+make_feature_from_data_frame(dat, input, col_name, default_value = NA)
 }
 \arguments{
 \item{dat}{a data frame with pairwise interactions in the first two columns,
@@ -15,6 +15,9 @@ with protein pairs in the first two columns}
 
 \item{col_name}{the name of the column in the first data frame that 
 contains interaction features}
+
+\item{default_value}{the default value for protein pairs that are not in the 
+first data frame (set, by default, to \code{NA})}
 }
 \value{
 a vector matching the dimensions and order of the feature data frame,
