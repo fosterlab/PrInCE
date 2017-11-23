@@ -26,10 +26,8 @@ predict_interactions <- function(profile_matrix, gaussians, gold_standard) {
   input <- calculate_features(profile_matrix, gaussians)
   
   # identify true positives
-  label_mat <- make_label_matrix(gold_standard, profile_matrix)
-  tri <- upper.tri(label_mat)
-  labels <- label_mat[tri]
-  
+  labels <- make_labels(gold_standard, input)
+
   # predict with an ensemble of naive Bayes classifiers
   interactions <- predict_NB_ensemble(input, labels)
   
