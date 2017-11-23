@@ -16,17 +16,20 @@
 #' by \code{link{build_gaussians}}
 #' @param gold_standard a matrix or data frame of "gold standard" interactions
 #' used to train a naive Bayes classifier 
+#' @param protein_groups optionally, specify a list linking each protein in the 
+#' profile matrix to a protein group 
 #' 
 #' @return a ranked data frame of pairwise interactions, with the 
 #' classifier score, label, and cumulative precision for each interaction 
 #' 
 #' @export
-predict_interactions <- function(profile_matrix, gaussians, gold_standard) {
+predict_interactions <- function(profile_matrix, gaussians, gold_standard,
+                                 protein_groups = NULL) {
   # calculate features
   input <- calculate_features(profile_matrix, gaussians)
   
   # identify true positives
-  labels <- make_labels(gold_standard, input)
+  labels <- make_labels(gold_standard, input, protein_groups = protein_groups)
 
   # predict with an ensemble of naive Bayes classifiers
   interactions <- predict_NB_ensemble(input, labels)

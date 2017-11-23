@@ -4,7 +4,8 @@
 \alias{predict_interactions}
 \title{Predict interactions for a profile matrix}
 \usage{
-predict_interactions(profile_matrix, gaussians, gold_standard)
+predict_interactions(profile_matrix, gaussians, gold_standard,
+  protein_groups = NULL)
 }
 \arguments{
 \item{profile_matrix}{a numeric matrix of co-elution profiles, with proteins
@@ -15,6 +16,9 @@ by \code{link{build_gaussians}}}
 
 \item{gold_standard}{a matrix or data frame of "gold standard" interactions
 used to train a naive Bayes classifier}
+
+\item{protein_groups}{optionally, specify a list linking each protein in the 
+profile matrix to a protein group}
 }
 \value{
 a ranked data frame of pairwise interactions, with the 
