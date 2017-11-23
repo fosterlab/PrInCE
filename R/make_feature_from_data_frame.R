@@ -40,7 +40,7 @@ make_feature_from_data_frame <- function(dat, input, col_name) {
     feature_column <- filtered[[3]]
   }
   feature_matrix[as.matrix(filtered[, 1:2])] <- feature_column
-  # index matrix 
+  # index matrix to get feature vector
   feat_idxs <- ref_proteins1 %in% rownames(feature_matrix) & 
     ref_proteins2 %in% rownames(feature_matrix)
   idxing_mat <- cbind(ref_proteins1[feat_idxs], ref_proteins2[feat_idxs])
