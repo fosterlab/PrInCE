@@ -44,7 +44,7 @@ make_labels <- function(gold_standard, input, protein_groups = NULL) {
     # map groups of length 1 by matrix indexing 
     lengths_1 <- lengths(groups_1)
     lengths_2 <- lengths(groups_2)
-    single_lab_idxs <- unname(which(lab_idxs & lengths_1 == 1 & lengths_2 == 1))
+    single_lab_idxs <- lab_idxs & lengths_1 == 1 & lengths_2 == 1
     idxing_mat <- cbind(unlist(groups_1[single_lab_idxs]), 
                         unlist(groups_2[single_lab_idxs]))
     labels[single_lab_idxs] <- gold_standard[idxing_mat]
