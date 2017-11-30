@@ -26,6 +26,9 @@ predict_RF_ensemble <- function(input, labels, models = 1, cv_folds = 10,
   # set seed
   set.seed(seed)
   
+  # replace missing data
+  input <- replace_missing_data(input)
+  
   # extract training data
   training_idxs <- which(!is.na(labels))
   training_labels <- as.factor(labels[training_idxs])
