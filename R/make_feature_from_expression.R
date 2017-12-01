@@ -21,7 +21,7 @@ make_feature_from_expression <- function(expr, input, ...) {
   proteins_2 <- input[[2]]
   proteins <- unique(c(proteins_1, proteins_2))
   # subset expression to these proteins 
-  filtered <- expr[, colnames(expr) %in% proteins]
+  filtered <- 1.0 * expr[, colnames(expr) %in% proteins]
   if (ncol(filtered) == 0)
     stop("no proteins overlap between expression and feature data")
   # create coexpression matrix
