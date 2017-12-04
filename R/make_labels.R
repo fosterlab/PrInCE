@@ -51,7 +51,7 @@ make_labels <- function(gold_standard, input, protein_groups = NULL) {
     # map groups of length > 1
     multi_lab_idxs <- lab_idxs & !single_lab_idxs
     labels[multi_lab_idxs] <- purrr::map_lgl(which(multi_lab_idxs), ~ any(
-      gold_standard[as.matrix(crossing(groups_1[[.]], groups_2[[.]]))]))
+      gold_standard[as.matrix(tidyr::crossing(groups_1[[.]], groups_2[[.]]))]))
   } 
   return(labels)
 }
