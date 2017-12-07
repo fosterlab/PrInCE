@@ -4,7 +4,7 @@
 \alias{build_gaussians}
 \title{Deconvolve profiles into Gaussian mixture models}
 \usage{
-build_gaussians(profile_matrix, min_points = 5, min_consecutive = 5,
+build_gaussians(profile_matrix, min_points = 1, min_consecutive = 5,
   impute_NA = T, smooth = T, smooth_width = 4, max_gaussians = 5,
   criterion = c("AICc", "AIC", "BIC"), max_iterations = 10,
   min_R_squared = 0.5, method = c("guess", "random"),

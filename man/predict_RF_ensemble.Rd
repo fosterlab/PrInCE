@@ -4,7 +4,8 @@
 \alias{predict_RF_ensemble}
 \title{Predict interactions using an ensemble of random forests}
 \usage{
-predict_RF_ensemble(input, labels, models = 1, cv_folds = 10, seed = 0)
+predict_RF_ensemble(input, labels, models = 1, cv_folds = 10, seed = 0,
+  trees = 500)
 }
 \arguments{
 \item{input}{a data frame containing interacting gene/protein pairs in the
@@ -20,6 +21,8 @@ remaining columns}
 when training each random forests classifier. By default, each 
 classifier uses ten-fold cross-validation, i.e., the classifier is trained
 on 90\% of the dataset and used to classify the remaining 10\%}
+
+\item{trees}{number of trees to grow for each fold}
 }
 \value{
 the input data frame of pairwise interactions, ranked by the 
