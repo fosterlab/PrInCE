@@ -1,7 +1,7 @@
-#' Replace missing data with mean ± random noise 
+#' Replace missing data with median ± random noise 
 #' 
 #' Replace missing data within each numeric column of a data frame with 
-#' the column mean, plus or minus some random noise, in order to train 
+#' the column median, plus or minus some random noise, in order to train 
 #' classifiers that do not easily ignore missing data (e.g. random forests or
 #' support vector machines).
 #' 
@@ -12,7 +12,7 @@
 #' column
 #' 
 #' @return a data frame with missing values in each numeric column replaced
-#' by the column mean, plus or minus some random noise
+#' by the column median, plus or minus some random noise
 #' 
 #' @export
 replace_missing_data <- function(input, noise_pct = 0.05) {
@@ -22,7 +22,7 @@ replace_missing_data <- function(input, noise_pct = 0.05) {
       next
     missing <- is.na(column)
     input[[col_name]][missing] <- 
-      mean(column, na.rm = T) + rnorm(sum(missing)) * 
+      median(column, na.rm = T) + rnorm(sum(missing)) * 
       sd(column, na.rm = T) * noise_pct 
   }
   return(input)
