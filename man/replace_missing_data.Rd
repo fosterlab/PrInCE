@@ -2,7 +2,7 @@
 % Please edit documentation in R/replace_missing_data.R
 \name{replace_missing_data}
 \alias{replace_missing_data}
-\title{Replace missing data with mean ± random noise}
+\title{Replace missing data with median ± random noise}
 \usage{
 replace_missing_data(input, noise_pct = 0.05)
 }
@@ -16,11 +16,11 @@ column}
 }
 \value{
 a data frame with missing values in each numeric column replaced
-by the column mean, plus or minus some random noise
+by the column median, plus or minus some random noise
 }
 \description{
 Replace missing data within each numeric column of a data frame with 
-the column mean, plus or minus some random noise, in order to train 
+the column median, plus or minus some random noise, in order to train 
 classifiers that do not easily ignore missing data (e.g. random forests or
 support vector machines).
 }
