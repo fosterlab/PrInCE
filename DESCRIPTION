@@ -15,6 +15,7 @@ Imports:
 	robustbase (>= 0.92-7),
 	ranger (>= 0.8.0),
 	LiblineaR (>= 2.10-8),
+	speedglm (>= 0.3-2),
 	Rdpack
 License: GPL-3.0
 Encoding: UTF-8
