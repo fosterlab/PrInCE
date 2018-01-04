@@ -28,6 +28,9 @@ predict_SVM_ensemble <- function(input, labels, models = 1, cv_folds = 10,
   
   # replace missing data
   input <- replace_missing_data(input)
+  
+  # scale all features
+  input[, -c(1:2)] <- sapply(input[, -c(1:2)], scale)
 
   # extract training data
   training_idxs <- which(!is.na(labels))
