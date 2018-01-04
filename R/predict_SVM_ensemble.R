@@ -62,14 +62,14 @@ predict_SVM_ensemble <- function(input, labels, models = 1, cv_folds = 10,
       # train model
       svm_data <- training[which(folds != fold),]
       svm_labels <- as.factor(training_labels[which(folds != fold)])
-      svm <- LiblineaR::LiblineaR(svm_data, svm_labels, type = 1)
+      svm <- LiblineaR::LiblineaR(svm_data, svm_labels, type = 2)
       
       # classify
       withheld_idxs = as.integer(rownames(training))[folds == fold]
       svm_test_data <- input[-withheld_idxs, -c(1:2)]
       predictions <- LiblineaR:::predict.LiblineaR(svm, svm_test_data, 
                                                    decisionValues = T)
-      predictions <- predictions$decisionValues[, "0"]
+      predictions <- -1.0 * predictions$decisionValues[, "0"]
       svm_scores[-withheld_idxs, fold] <- predictions
       
       # call GC
