@@ -14,6 +14,7 @@
 #' @param method method to use to calculate edge weights;
 #'   one of \code{pearson} or \code{euclidean}
 #' @param bootstraps number of bootstraps to execute to estimate z scores
+#' @param progress whether to show the progress of the function
 #' 
 #' @return a named vector of z scores for each complex in the input list
 #' 
@@ -23,7 +24,8 @@
 detect_complexes = function(mat, complexes, 
                             method = c("pearson", "euclidean"),
                             min_pairs = 10, 
-                            bootstraps = 100) {
+                            bootstraps = 100,
+                            progress = T) {
   method = match.arg(method)
   
   # construct network
@@ -75,8 +77,10 @@ detect_complexes = function(mat, complexes,
     }
     
     # tick progress bar
-    pb$tick(tokens = list(what = sprintf(
-      paste0("%-", nchar(length(complexes)), "s"), i)))
+    if (progress) {
+      pb$tick(tokens = list(what = sprintf(
+        paste0("%-", nchar(length(complexes)), "s"), i)))
+    }
   }
   
   return(z_scores)

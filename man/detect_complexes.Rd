@@ -5,7 +5,7 @@
 \title{Detect significantly interacting complexes in a chromatogram matrix}
 \usage{
 detect_complexes(mat, complexes, method = c("pearson", "euclidean"),
-  min_pairs = 10, bootstraps = 100)
+  min_pairs = 10, bootstraps = 100, progress = T)
 }
 \arguments{
 \item{mat}{a matrix of chromatograms, with proteins in the columns and
@@ -21,6 +21,8 @@ one of \code{pearson} or \code{euclidean}}
 correlation or distance towards the z score}
 
 \item{bootstraps}{number of bootstraps to execute to estimate z scores}
+
+\item{progress}{whether to show the progress of the function}
 }
 \value{
 a named vector of z scores for each complex in the input list
