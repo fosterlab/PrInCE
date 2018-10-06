@@ -72,7 +72,7 @@ build_gaussians <- function(profile_matrix,
                             method = c("guess", "random"),
                             filter_gaussians_center = T,
                             filter_gaussians_height = 0.15,
-                            filter_gaussians_variance_min = 0.1,
+                            filter_gaussians_variance_min = 0.5,
                             filter_gaussians_variance_max = 50) {
   # preprocess chromatograms: filter and clean
   filtered <- filter_profiles(profile_matrix,
