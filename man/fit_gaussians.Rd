@@ -7,7 +7,8 @@
 fit_gaussians(chromatogram, n_gaussians, max_iterations = 10,
   min_R_squared = 0.5, method = c("guess", "random"),
   filter_gaussians_center = T, filter_gaussians_height = 0.15,
-  filter_gaussians_variance_min = 0.1, filter_gaussians_variance_max = 50)
+  filter_gaussians_variance_min = 0.1,
+  filter_gaussians_variance_max = 50)
 }
 \arguments{
 \item{chromatogram}{a numeric vector corresponding to the chromatogram trace}

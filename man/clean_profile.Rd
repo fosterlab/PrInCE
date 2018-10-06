@@ -4,8 +4,8 @@
 \alias{clean_profile}
 \title{Preprocess a co-elution profile}
 \usage{
-clean_profile(chromatogram, impute_NA = T, smooth = T, smooth_width = 4,
-  noise_floor = 0.001)
+clean_profile(chromatogram, impute_NA = T, smooth = T,
+  smooth_width = 4, noise_floor = 0.001)
 }
 \arguments{
 \item{chromatogram}{a numeric vector corresponding to the chromatogram trace}

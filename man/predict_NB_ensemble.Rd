@@ -4,7 +4,8 @@
 \alias{predict_NB_ensemble}
 \title{Predict interactions using an ensemble of naive Bayes classifiers}
 \usage{
-predict_NB_ensemble(input, labels, models = 10, cv_folds = 10, seed = 0)
+predict_NB_ensemble(input, labels, models = 10, cv_folds = 10,
+  seed = 0)
 }
 \arguments{
 \item{input}{a data frame containing interacting gene/protein pairs in the

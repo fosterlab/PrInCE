@@ -4,7 +4,8 @@
 \alias{predict_SVM_ensemble}
 \title{Predict interactions using an ensemble of support vector machines}
 \usage{
-predict_SVM_ensemble(input, labels, models = 1, cv_folds = 10, seed = 0)
+predict_SVM_ensemble(input, labels, models = 1, cv_folds = 10,
+  seed = 0)
 }
 \arguments{
 \item{input}{a data frame containing interacting gene/protein pairs in the
