@@ -90,7 +90,7 @@ build_gaussians <- function(profile_matrix,
   message(".. fitting Gaussian mixture models to ", P, " profiles")
   pb <- progress::progress_bar$new(
     format = "fitting :what [:bar] :percent eta: :eta",
-    clear = F, total = P, width = 100)
+    clear = F, total = P, width = 80)
   max_len <- max(nchar(proteins))
   for (i in seq_len(P)) {
     protein <- proteins[i]

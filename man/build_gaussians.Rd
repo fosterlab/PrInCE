@@ -9,7 +9,8 @@ build_gaussians(profile_matrix, min_points = 1, min_consecutive = 5,
   criterion = c("AICc", "AIC", "BIC"), max_iterations = 10,
   min_R_squared = 0.5, method = c("guess", "random"),
   filter_gaussians_center = T, filter_gaussians_height = 0.15,
-  filter_gaussians_variance_min = 0.1, filter_gaussians_variance_max = 50)
+  filter_gaussians_variance_min = 0.1,
+  filter_gaussians_variance_max = 50)
 }
 \arguments{
 \item{profile_matrix}{a numeric matrix of co-elution profiles, with proteins
