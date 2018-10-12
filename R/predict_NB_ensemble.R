@@ -41,7 +41,7 @@ predict_NB_ensemble <- function(input, labels, models = 10, cv_folds = 10,
   total_models <- models * cv_folds
   pb <- progress::progress_bar$new(
     format = "running fold :what [:bar] :percent eta: :eta",
-    clear = F, total = total_models, width = 100)
+    clear = F, total = total_models, width = 80)
   counter <- 0
   
   # create models
