@@ -30,7 +30,10 @@ Test whether an input list of Gaussians conforms to the format expected
 by PrInCE: that is, a named list with five fields for each entry, i.e., the
 number of Gaussians in the mixture model, the {\eqn{r^2}} value, the 
 number of iterations used by \code{\link[stats]{nls}}, the coefficients of
-each model, and the fitted curve. Optionally, some extra checks will be 
+each model, and the fitted curve.
+}
+\details{
+Optionally, some extra checks will be 
 done on the fraction of proteins in the complete dataset for which a 
 Gaussian mixture model could be fit, if provided. In particular, the function
 will throw an error if fewer than \code{n_error} proteins have a fitted 

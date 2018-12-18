@@ -2,36 +2,60 @@
 % Please edit documentation in R/predict_interactions.R
 \name{predict_interactions}
 \alias{predict_interactions}
-\title{Predict interactions for a profile matrix}
+\title{Predict interactions given a set of features and examples}
 \usage{
-predict_interactions(profile_matrix, gaussians, gold_standard,
-  protein_groups = NULL)
+predict_interactions(features, gold_standard, classifier = c("NB", "SVM",
+  "RF", "LR", "ensemble"), verbose = F, models = 10, cv_folds = 10,
+  trees = 500, seed = 0)
 }
 \arguments{
-\item{profile_matrix}{a numeric matrix of co-elution profiles, with proteins
-in rows}
+\item{features}{a data frame with proteins in the first two columns, and 
+features to be passed to the classifier in the remaining columns}
 
-\item{gaussians}{a list of Gaussian mixture models fit to the profile matrix
-by \code{link{build_gaussians}}}
+\item{gold_standard}{an adjacency matrix of "gold standard" interactions
+used to train the classifier}
 
-\item{gold_standard}{a matrix or data frame of "gold standard" interactions
-used to train a naive Bayes classifier}
+\item{classifier}{the type of classifier to use: one of \code{"NB"} (naive
+Bayes), \code{"SVM"} (support vector machine), \code{"RF"} (random forest),
+\code{"LR"} (logistic regression), or \code{"ensemble"} (an ensemble of
+all four)}
 
-\item{protein_groups}{optionally, specify a list linking each protein in the 
-profile matrix to a protein group}
+\item{verbose}{if \code{TRUE}, print a series of messages about the stage
+of the analysis}
+
+\item{models}{the number of classifiers to train and average across, each
+with a different k-fold cross-validation split}
+
+\item{cv_folds}{the number of folds to use for k-fold cross-validation}
+
+\item{trees}{for random forests only, the number of trees in the forest}
+
+\item{seed}{the seed for random number generation, to ensure reproducible
+results}
 }
 \value{
 a ranked data frame of pairwise interactions, with the 
 classifier score, label, and cumulative precision for each interaction
 }
 \description{
-Predict pairwise interactions between proteins in a profile matrix, using a
-naive Bayes classifier trained on dataset-derived features including:
-* one minus the Pearson correlation coefficient and 
-* the corresponding P value, 
-* the Euclidean distance between profiles, 
-* the difference (in fractions) between the maximum values of each profile, 
-(the peak score) and
-* the co-apex score, defined as the minimum Euclidean distance between any
-two Gaussians
+Discriminate interacting from non-interacting protein pairs by training a
+machine learning model on a set of labelled examples, given a set of 
+features derived from a co-elution profile matrix (see 
+\code{\link[PrInCE]{calculate_features}}.
+}
+\details{
+PrInCE implements four different classifiers (naive Bayes, support vector
+machine, random forest, and logistic regression). Naive Bayes is used as a
+default. The classifiers are trained
+on the gold standards using a ten-fold cross-validation procedure, training
+on 90% of the data and predicting on the remaining 10%. For protein pairs
+that are part of the training data, the held-out split is used to assign
+a classifier score, whereas for the remaining protein pairs, the median of
+all ten folds is used. Furthermore, to ensure the results are not sensitive
+to the precise classifier split used, an ensemble of multiple classifiers
+(ten, by default) is trained, and the classifier score is subsequently
+averaged across classifiers.
+
+PrInCE can also ensemble across multiple different types of classifiers, 
+by supplying the \code{"ensemble"} option to the \code{classifier} argument.
 }

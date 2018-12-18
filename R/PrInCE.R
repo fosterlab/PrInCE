@@ -31,7 +31,11 @@
 #' on 90% of the data and predicting on the remaining 10%. For protein pairs
 #' that are part of the training data, the held-out split is used to assign
 #' a classifier score, whereas for the remaining protein pairs, the median of
-#' all ten folds is used. 
+#' all ten folds is used. Furthermore, to ensure the results are not sensitive
+#' to the precise classifier split used, an ensemble of multiple classifiers
+#' (ten, by default) is trained, and the classifier score is subsequently
+#' averaged across classifiers. PrInCE can also ensemble across a set of
+#' classifiers. 
 #' 
 #' By default, PrInCE calculates six features from each pair of co-elution
 #' profiles as input to the classifier, including conventional similarity 
@@ -82,7 +86,7 @@
 #'   of the analysis
 #' 
 #' @return a ranked data frame of interacting proteins, with the precision
-#' at each point in the list
+#'   at each point in the list
 #' 
 #' @export
 #' 
@@ -122,6 +126,7 @@ PrInCE = function(profiles, gold_standard, gaussians = NULL, verbose = F) {
     # also check Gaussians
     if (!is.null(gaussians)) {
       check_gaussians(gaussians)
+      gaussians = list(gaussians)
     }
   }
   
@@ -146,53 +151,39 @@ PrInCE = function(profiles, gold_standard, gaussians = NULL, verbose = F) {
     
     # read Gaussians, or fit if they haven't been yet
     if (!is.null(gaussians)) {
-      
-    }
-    if (file.exists(gauss_file)) {
-      gauss = readRDS(gauss_file)
+      gauss = gaussians[[replicate_idx]]
     } else {
-      message("    fitting Gaussians ...")
-      gauss = build_gaussians(mat, max_iterations = 50)
-      saveRDS(gauss, gauss_file)
+      if (verbose) {
+        message("  fitting Gaussians ...")
+        gauss = build_gaussians(mat, max_iterations = 50)
+      }
     }
     
     # filter matrix based on Gaussians
+    before = nrow(mat)
     mat = mat[names(gauss), ]
+    after = nrow(mat)
+    if (verbose) {
+      message("  fit mixtures of Gaussians to ", after, " of ", before, 
+              " profiles")
+    }
     
     # calculate features
-    message("    calculating features ...")
     feat = calculate_features(mat, gauss)
     features[[replicate]] = feat
   }
   
   # collapse into a single data frame 
-  message("    collapsing features ...")
+  if (verbose) {
+    message("concatenating features across replicates ...")
+  }
   input = Reduce(function(x, y)
     full_join(x, y, by = c('protein_A', 'protein_B')), 
     features)
   
-  
-  
-  
-  
-  # build Gaussians
-  gaussians = build_gaussians(profile_matrix)
-
-  # alignment
-  
   # predict interactions
-  interactions = predict_interactions(profile_matrix, gaussians, gold_standard)
+  interactions = predict_interactions(input, gold_standard, verbose = verbose)
+  
+  # return
+  return(interactions)
 }
-
-
-# 
-# # make labels
-# message("  making labels ...")
-# labels = make_labels(corum, input)
-# 
-# # predict with an ensemble of naive Bayes classifiers
-# message("  running classifier ...")
-# interactions = predict_NB_ensemble(input, labels)
-# 
-# # calculate precision
-# interactions$precision = calculate_precision(interactions$label)

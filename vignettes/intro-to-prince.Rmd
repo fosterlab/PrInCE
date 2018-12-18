@@ -92,7 +92,7 @@ data(gold_standard)
 head(gold_standard)
 ```
 
-### Predicting protein-protein interactions: default analysis
+### Predicting protein-protein interactions: one-step analysis
 
 The main function of the PrInCE package, `PrInCE::PrInCE`, provides an end-to-end workflow for predicting protein-protein interaction networks from the raw co-elution data. 
 Briefly, this function first filters proteins with too little information to permit data analysis, then cleans the profiles for the remaining proteins and fits a mixture of Gaussians to each cleaned profile. 
@@ -103,7 +103,7 @@ The entire list is returned to a user, who can select a precision threshold that
 
 
 
-### Predicting protein-protein interactions: detailed analysis
+### Predicting protein-protein interactions: step-by-step analysis
 
 Users who wish to 
 

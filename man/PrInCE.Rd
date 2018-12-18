@@ -64,7 +64,11 @@ on the gold standards using a ten-fold cross-validation procedure, training
 on 90% of the data and predicting on the remaining 10%. For protein pairs
 that are part of the training data, the held-out split is used to assign
 a classifier score, whereas for the remaining protein pairs, the median of
-all ten folds is used.
+all ten folds is used. Furthermore, to ensure the results are not sensitive
+to the precise classifier split used, an ensemble of multiple classifiers
+(ten, by default) is trained, and the classifier score is subsequently
+averaged across classifiers. PrInCE can also ensemble across a set of
+classifiers.
 
 By default, PrInCE calculates six features from each pair of co-elution
 profiles as input to the classifier, including conventional similarity 
