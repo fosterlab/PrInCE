@@ -9,6 +9,8 @@
 #' 
 #' @return an adjacency matrix between all complex subunits
 #' 
+#' @importFrom purrr map_dfr
+#' 
 #' @export
 adjacency_matrix_from_list <- function(complexes) {
   proteins <- unique(unlist(complexes))

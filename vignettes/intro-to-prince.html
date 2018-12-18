@@ -1741,7 +1741,7 @@ div.tocify {
 <p class="author-email"><span class="affil-mark">*</span><a href="mailto:michael.skinnider@msl.ubc.ca">michael.skinnider@msl.ubc.ca</a></p>
 <h4 class="date"><em>18 December 2018</em></h4>
 <h4 class="abstract">Abstract</h4>
-Co-elution proteomics provide a high-throughput method to map protein-protein interaction networks and their dynamics in stimulation or differentiation. This family of methods, also called co-migration, co-fractionation, or protein correlation profiling, separates interacting protein complexes on the basis of their diameter or biochemical properties. Protein-protein interactions can then be inferred for pairs of proteins with correlated elution profiles. PrInCE implements a machine-learning approach to identify protein-protein interactions given a set of labelled examples, using features derived exclusively from the data. This allows PrInCE to infer high-quality protein interaction networks from raw proteomics data, without bias towards known interactions or functionally associated proteins, making PrInCE a unique computational resource for discovery. We provide an overview of the key functionalities of the PrInCE R package, and demonstrate an example of the analysis of data from a co-elution experiment investigating the response of the cytoplasmic interactome to Fas-mediated apoptosis.
+Co-elution proteomics are a family of high-throughput methods to map protein-protein interaction networks and their dynamics in cellular stimulation or differentiation. These methods, also referred to as co-migration, co-fractionation, or protein correlation profiling, involve separating interacting protein complexes on the basis of their diameter or biochemical properties. Protein-protein interactions can then be inferred for pairs of proteins with similar elution profiles. PrInCE implements a machine-learning approach to identify protein-protein interactions given a set of labelled examples, using features derived exclusively from the data. This allows PrInCE to infer high-quality protein interaction networks from raw proteomics data, without bias towards known interactions or functionally associated proteins, making PrInCE a unique computational resource for discovery. We provide an overview of the key functionalities of the PrInCE R package, and demonstrate an example of the analysis of data from a co-elution experiment investigating the response of the cytoplasmic interactome to Fas-mediated apoptosis.
 <h4 class="package">Package</h4>
 <p>PrInCE 0.0.0.9000</p>
 
@@ -1778,28 +1778,53 @@ However, such a complete analysis of the dataset would take over an hour, so for
 The replicate in question is the first cytoplasmic replicate from the Fas-stimulated condition, and is bundled with the PrInCE package; it can be loaded with the following command:</p>
 <pre class="r"><code>library(PrInCE)
 data(scott)</code></pre>
-<p>The</p>
+<p>The dataset consists of ratiometric protein quantitations, achieved by SILAC (stable isotope labelling by amino acids in cell culture), for 1,560 proteins in 55 size exclusion chromatography (SEC) fractions:</p>
 <pre class="r"><code>dim(scott)</code></pre>
-<pre><code>## [1] 3216   55</code></pre>
-<pre class="r"><code>scott[1:10, 1:10]</code></pre>
-<pre><code>##          SEC_1 SEC_2 SEC_3 SEC_4 SEC_5 SEC_6   SEC_7   SEC_8 SEC_9 SEC_10
-## A0AVT1     NaN   NaN   NaN   NaN   NaN   NaN 0.23813 0.15908   NaN    NaN
-## H7BXI1     NaN   NaN   NaN   NaN   NaN   NaN     NaN     NaN   NaN    NaN
-## A0MZ66-5   NaN   NaN   NaN   NaN   NaN   NaN     NaN     NaN   NaN    NaN
-## Q86X10-2   NaN   NaN   NaN   NaN   NaN   NaN     NaN     NaN   NaN    NaN
-## Q9Y312     NaN   NaN   NaN   NaN   NaN   NaN     NaN     NaN   NaN    NaN
-## A2IDC6     NaN   NaN   NaN   NaN   NaN   NaN     NaN     NaN   NaN    NaN
-## A2VDF0     NaN   NaN   NaN   NaN   NaN   NaN     NaN     NaN   NaN    NaN
-## A3KN83     NaN   NaN   NaN   NaN   NaN   NaN     NaN     NaN   NaN    NaN
-## A5YKK6     NaN   NaN   NaN   NaN   NaN   NaN     NaN     NaN   NaN    NaN
-## A6NC98     NaN   NaN   NaN   NaN   NaN   NaN     NaN     NaN   NaN    NaN</code></pre>
-<p>However, because the complete dataset consists of</p>
-<ul>
-<li><p>control and stimulated interacotmes 3 replicates each</p></li>
-<li>ref</li>
-<li>description of experiment</li>
-<li><p>description of sub-matrix</p></li>
-</ul>
+<pre><code>## [1] 1560   55</code></pre>
+<p>Each protein was quantified in at least one fraction; however, many measurements are missing:</p>
+<pre class="r"><code>scott[1:10, 1:5]</code></pre>
+<pre><code>##            SEC_1 SEC_2 SEC_3  SEC_4  SEC_5
+## A0AVT1       NaN   NaN   NaN    NaN    NaN
+## A0MZ66-5     NaN   NaN   NaN    NaN    NaN
+## A3KN83       NaN   NaN   NaN    NaN    NaN
+## A5YKK6       NaN   NaN   NaN    NaN    NaN
+## A6NDG6       NaN   NaN   NaN    NaN    NaN
+## A6NG79       NaN   NaN   NaN    NaN    NaN
+## A6NHL2-2     NaN   NaN   NaN    NaN    NaN
+## A6NHR9       NaN   NaN   NaN 2.5125 1.8817
+## A6NIH7       NaN   NaN   NaN    NaN    NaN
+## A6NN80   0.22313   NaN   NaN    NaN    NaN</code></pre>
+<p>To predict protein-protein interactions using PrInCE’s machine-learning approach, we also need two pieces of information to train the classifier: a set of true positive interactions, and a set of true negative interactions.
+In practice, we recommend providing a list of experimentally verified protein complexes; PrInCE assumes intra-complex interactions represent true positives, and inter-complex interactions represent true negatives.
+These can be obtained from a number of sources, such as the CORUM database <span class="citation">(2)</span>, or our own subset of CORUM that removes complexes which may not always co-elute <span class="citation">(3)</span>.
+We provide a third option with the PrInCE R package due to its CC-BY license, consisting of a list of 477 human protein complexes Complex Portal <span class="citation">(4)</span>.</p>
+<pre class="r"><code>data(gold_standard)
+head(gold_standard)</code></pre>
+<pre><code>## $`5-hydroxytryptamine-3A/B receptor complex`
+## [1] &quot;O95264&quot; &quot;P46098&quot;
+## 
+## $`5-hydroxytryptamine-3A/C receptor complex`
+## [1] &quot;P46098&quot; &quot;Q8WXA8&quot;
+## 
+## $`5-hydroxytryptamine-3A/D receptor complex`
+## [1] &quot;P46098&quot; &quot;Q70Z44&quot;
+## 
+## $`5-hydroxytryptamine-3A/E receptor complex`
+## [1] &quot;P46098&quot; &quot;A5X5Y0&quot;
+## 
+## $`6-phosphofructokinase, M2L2 heterotetramer`
+## [1] &quot;P08237&quot; &quot;P17858&quot;
+## 
+## $`6-phosphofructokinase, M3L heterotetramer`
+## [1] &quot;P08237&quot; &quot;P17858&quot;</code></pre>
+<div id="predicting-protein-protein-interactions-default-analysis" class="section level3">
+<h3><span class="header-section-number">0.3.1</span> Predicting protein-protein interactions: default analysis</h3>
+<p>The main function of the PrInCE package, <code>PrInCE::PrInCE</code>, provides an end-to-end workflow for predicting protein-protein interaction networks from the raw co-elution data.</p>
+</div>
+<div id="predicting-protein-protein-interactions-detailed-analysis" class="section level3">
+<h3><span class="header-section-number">0.3.2</span> Predicting protein-protein interactions: detailed analysis</h3>
+<p>Users who wish to</p>
+</div>
 </div>
 <div id="session-info" class="section level2">
 <h2><span class="header-section-number">0.4</span> Session info</h2>
@@ -1835,9 +1860,22 @@ data(scott)</code></pre>
 ## [31] rmarkdown_1.10     stringi_1.2.4      compiler_3.5.1    
 ## [34] pillar_1.3.0       prettyunits_1.0.2  backports_1.1.2   
 ## [37] pkgconfig_2.0.2</code></pre>
+</div>
+<div id="references" class="section level2">
+<h2><span class="header-section-number">0.5</span> References</h2>
+<p> </p>
 <div id="refs" class="references">
 <div id="ref-scott2017">
 <p>1. Scott NE, et al. (2017) Interactome disassembly during apoptosis occurs independent of caspase cleavage. <em>Molecular systems biology</em> 13(1):906.</p>
+</div>
+<div id="ref-giurgiu2018">
+<p>2. Giurgiu M, et al. (2018) CORUM: The comprehensive resource of mammalian protein complexes—2019. <em>Nucleic Acids Research</em>.</p>
+</div>
+<div id="ref-stacey2018">
+<p>3. Stacey RG, Skinnider MA, Chik JH, Foster LJ (2018) Context-specific interactions in literature-curated protein interaction databases. <em>BMC genomics</em> 19(1):758.</p>
+</div>
+<div id="ref-meldal2018">
+<p>4. Meldal BH, et al. (2018) Complex portal 2018: Extended content and enhanced visualization tools for macromolecular complexes. <em>Nucleic Acids Research</em>.</p>
 </div>
 </div>
 </div>

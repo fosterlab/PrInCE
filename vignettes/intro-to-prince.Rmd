@@ -7,12 +7,12 @@ author:
   email: michael.skinnider@msl.ubc.ca
 package: PrInCE
 abstract: >
-  Co-elution proteomics provide a high-throughput method to map protein-protein 
-  interaction networks and their dynamics in stimulation or differentiation. 
-  This family of methods, also called co-migration, co-fractionation, or
-  protein correlation profiling, separates interacting protein complexes on the 
+  Co-elution proteomics are a family of high-throughput methods to map protein-protein 
+  interaction networks and their dynamics in cellular stimulation or differentiation. 
+  These methods, also referred to as co-migration, co-fractionation, or
+  protein correlation profiling, involve separating interacting protein complexes on the 
   basis of their diameter or biochemical properties. Protein-protein 
-  interactions can then be inferred for pairs of proteins with correlated 
+  interactions can then be inferred for pairs of proteins with similar 
   elution profiles. PrInCE implements a machine-learning approach to identify 
   protein-protein interactions given a set of labelled examples, using features
   derived exclusively from the data. This allows PrInCE to infer high-quality 
@@ -76,19 +76,36 @@ The dataset consists of ratiometric protein quantitations, achieved by SILAC (st
 dim(scott)
 ```
 
-Many of these measurements, 
+Each protein was quantified in at least one fraction; however, many measurements are missing:
 
 ```{r}
 scott[1:10, 1:5]
 ```
 
-However, because the complete dataset consists of 
+To predict protein-protein interactions using PrInCE's machine-learning approach, we also need two pieces of information to train the classifier: a set of true positive interactions, and a set of true negative interactions.
+In practice, we recommend providing a list of experimentally verified protein complexes; PrInCE assumes intra-complex interactions represent true positives, and inter-complex interactions represent true negatives.
+These can be obtained from a number of sources, such as the CORUM database [@giurgiu2018], or our own subset of CORUM that removes complexes which may not always co-elute [@stacey2018].
+We provide a third option with the PrInCE R package due to its CC-BY license, consisting of a list of 477 human protein complexes Complex Portal [@meldal2018]. 
 
-- control and stimulated interacotmes 3 replicates each
+```{r}
+data(gold_standard)
+head(gold_standard)
+```
 
-- ref
-- description of experiment
-- description of sub-matrix 
+### Predicting protein-protein interactions: default analysis
+
+The main function of the PrInCE package, `PrInCE::PrInCE`, provides an end-to-end workflow for predicting protein-protein interaction networks from the raw co-elution data. 
+Briefly, this function first filters proteins with too little information to permit data analysis, then cleans the profiles for the remaining proteins and fits a mixture of Gaussians to each cleaned profile. 
+PrInCE then calculates six features for each protein pair, from either the raw profiles, the cleaned profiles, or the fitted Gaussian mixture models, and concatenates features across replicates if more than one replicate was used.
+These features are used as input to a machine learning model, along with the set of 'gold standard' true positive and true negative interactions, which uses a ten-fold cross-validation procedure to assign scores to each protein pair.
+Protein pairs are ranked by their classifier scores and the precision at each point in the ranked list is calculated.
+The entire list is returned to a user, who can select a precision threshold that matches their needs.
+
+
+
+### Predicting protein-protein interactions: detailed analysis
+
+Users who wish to 
 
 ## Session info
 
@@ -96,3 +113,6 @@ However, because the complete dataset consists of
 sessionInfo()
 ```
 
+## References
+
+ 

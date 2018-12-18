@@ -18,8 +18,11 @@ or matrices, or as a list of proteins in the same complex, which will be
 converted to an adjacency matrix by PrInCE. Zeroes in the adjacency matrix 
 are interpreted by PrInCE as "true negatives" when calculating precision.}
 
-\item{gaussians}{optionally, a list of Gaussian mixture models fit by 
-the \code{\link[PrInCE]{build_gaussians}} function}
+\item{gaussians}{optionally, provide Gaussian mixture models fit by 
+the \code{\link[PrInCE]{build_gaussians}} function. If \code{profiles} is
+a numeric matrix, this should be the named list output by 
+\code{\link[PrInCE]{build_gaussians}} for that matrix; if \code{profiles} 
+is a list of numeric matrices, this should be a list of named lists}
 
 \item{verbose}{if \code{TRUE}, print a series of messages about the stage
 of the analysis}

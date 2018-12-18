@@ -73,13 +73,18 @@
 #'   or matrices, or as a list of proteins in the same complex, which will be
 #'   converted to an adjacency matrix by PrInCE. Zeroes in the adjacency matrix 
 #'   are interpreted by PrInCE as "true negatives" when calculating precision. 
-#' @param gaussians optionally, a list of Gaussian mixture models fit by 
-#'   the \code{\link[PrInCE]{build_gaussians}} function
+#' @param gaussians optionally, provide Gaussian mixture models fit by 
+#'   the \code{\link[PrInCE]{build_gaussians}} function. If \code{profiles} is
+#'   a numeric matrix, this should be the named list output by 
+#'   \code{\link[PrInCE]{build_gaussians}} for that matrix; if \code{profiles} 
+#'   is a list of numeric matrices, this should be a list of named lists
 #' @param verbose if \code{TRUE}, print a series of messages about the stage
 #'   of the analysis
 #' 
 #' @return a ranked data frame of interacting proteins, with the precision
 #' at each point in the list
+#' 
+#' @export
 #' 
 #' @references 
 #' \insertRef{stacey2017}{PrInCE}
@@ -99,6 +104,14 @@ PrInCE = function(profiles, gold_standard, gaussians = NULL, verbose = F) {
       if (!is.numeric(profile_matrix))
         stop("list input (item #", replicate_idx, 
              ") could not be coerced to numeric matrix")
+      # also check Gaussians
+      if (!is.null(gaussians)) {
+        if (length(gaussians) < replicate_idx) {
+          stop("fewer Gaussians than profiles provided")
+        }
+        check_gaussians(gaussians[[replicate_idx]], rownames(proteins),
+                        replicate_idx)
+      }
     }
   } else {
     profile_matrix = data.matrix(profiles)
@@ -106,6 +119,10 @@ PrInCE = function(profiles, gold_standard, gaussians = NULL, verbose = F) {
       stop("input could not be coerced to numeric matrix")
     # wrap in a list
     profiles = list(profile_matrix)
+    # also check Gaussians
+    if (!is.null(gaussians)) {
+      check_gaussians(gaussians)
+    }
   }
   
   # check gold standard input
@@ -113,22 +130,12 @@ PrInCE = function(profiles, gold_standard, gaussians = NULL, verbose = F) {
     # convert to adjacency matrix
     gold_standard = PrInCE::adjacency_matrix_from_data_frame(gold_standard)
   } else if (is.list(gold_standard)) {
-    gold_standard = PrInCE::adjacency_matrix_from_data_frame(gold_standard)
+    gold_standard = PrInCE::adjacency_matrix_from_list(gold_standard)
   }
   if (!PrInCE::is_unweighted(gold_standard)) {
     stop("could not convert supplied gold standards to adjacency matrix")
   }
 
-  # check Gaussians, if they exist
-  if (!is.null(gaussians)) {
-    if (!is.list(gaussians)) {
-      stop("Gaussians ")
-    }
-  }
-  ## warn if <50% of proteins have Gaussians
-  ## error if <3 have Gaussians
-  
-  
   # get features for each matrix separately 
   features = list()
   for (replicate_idx in seq_along(profiles)) {
