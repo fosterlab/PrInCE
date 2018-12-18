@@ -99,11 +99,11 @@ PrInCE = function(profiles, gold_standard, gaussians = NULL, verbose = F) {
              ") could not be coerced to numeric matrix")
     }
   } else {
-    profiles = data.matrix(profiles)
+    profile_matrix = data.matrix(profiles)
     if (!is.numeric(profile_matrix))
       stop("input could not be coerced to numeric matrix")
     # wrap in a list
-    profiles = list(profiles)
+    profiles = list(profile_matrix)
   }
   
   # check gold standard input
@@ -112,6 +112,10 @@ PrInCE = function(profiles, gold_standard, gaussians = NULL, verbose = F) {
     gold_standard = PrInCE::adjacency_matrix_from_data_frame(gold_standard)
   } else if (is.list(gold_standard)) {
     gold_standard = PrInCE::adjacency_matrix_from_data_frame(gold_standard)
+  } else {
+    if (!PrInCE::is_unweighted) {
+      
+    }
   }
   
   # 
