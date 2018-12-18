@@ -20,6 +20,7 @@ Gaussian fitting is one of the more time-consuming aspects of the package.
 }
 \details{
 As with the \code{\link[PrInCE]{scott}} dataset, the code used to generate
-this data object is provided in the \code{data-raw} directory.
+this data object is provided in the \code{data-raw} directory of the package
+source.
 }
 \keyword{datasets}
