@@ -112,13 +112,19 @@ PrInCE = function(profiles, gold_standard, gaussians = NULL, verbose = F) {
     gold_standard = PrInCE::adjacency_matrix_from_data_frame(gold_standard)
   } else if (is.list(gold_standard)) {
     gold_standard = PrInCE::adjacency_matrix_from_data_frame(gold_standard)
-  } else {
-    if (!PrInCE::is_unweighted) {
-      
+  }
+  if (!PrInCE::is_unweighted(gold_standard)) {
+    stop("could not convert supplied gold standards to adjacency matrix")
+  }
+
+  # check Gaussians, if they exist
+  if (!is.null(gaussians)) {
+    if (!is.list(gaussians)) {
+      stop("Gaussians ")
     }
   }
-  
-  # 
+  ## warn if <50% of proteins have Gaussians
+  ## error if <3 have Gaussians
   
   
   # get features for each matrix separately 
