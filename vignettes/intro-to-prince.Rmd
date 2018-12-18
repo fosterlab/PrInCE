@@ -1,0 +1,98 @@
+---
+title: "Interactome reconstruction from co-elution data with PrInCE"
+author:
+- name: Michael Skinnider
+  affiliation: Michael Smith Laboratories, University of British Columbia, 
+    Vancouver, Canada
+  email: michael.skinnider@msl.ubc.ca
+package: PrInCE
+abstract: >
+  Co-elution proteomics provide a high-throughput method to map protein-protein 
+  interaction networks and their dynamics in stimulation or differentiation. 
+  This family of methods, also called co-migration, co-fractionation, or
+  protein correlation profiling, separates interacting protein complexes on the 
+  basis of their diameter or biochemical properties. Protein-protein 
+  interactions can then be inferred for pairs of proteins with correlated 
+  elution profiles. PrInCE implements a machine-learning approach to identify 
+  protein-protein interactions given a set of labelled examples, using features
+  derived exclusively from the data. This allows PrInCE to infer high-quality 
+  protein interaction networks from raw proteomics data, without bias towards 
+  known interactions or functionally associated proteins, 
+  making PrInCE a unique computational resource for discovery. We provide an 
+  overview of the key functionalities of the PrInCE R package, and demonstrate 
+  an example of the analysis of data from a co-elution experiment investigating 
+  the response of the cytoplasmic interactome to Fas-mediated apoptosis. 
+output: 
+  BiocStyle::html_document:
+    toc_float: true
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}  
+bibliography: bibliography.bib
+csl: pnas.csl
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction: What is PrInCE?
+
+Proteins are 
+Yet cellular functions are rarely accomplished by single proteins, acting in isolation.
+Instead, most functions are accomplished by 
+
+
+- what are protein-protein networks
+- how they were historically mapped
+- what is co-migration
+
+FIGURE: heatmap, complex size going from large to small, gene names on axis
+
+- what does PrInCE do
+There are a few things that make PrInCE unique. 
+- gaussians; 
+
+## Installation
+
+## Example: Interactome rearrangements in apoptosis
+
+To demonstrate the use of PrInCE, we will work through a small example that is derived from Scott _et al._, 2017 [@scott2017]. 
+In this paper, the authors mapped rearrangements in the cytoplasmic and membrane interactome during Fas-mediated apoptosis.
+Control and stimulated cytoplasmic and membrane interactomes were quantified in three replicates each, meaning the complete dataset consists of twelve replicates. 
+In practice, each set of replicates would be analyzed together (for a total of four networks).
+However, such a complete analysis of the dataset would take over an hour, so for this vignette we focus on a single replicate.
+The replicate in question is the first cytoplasmic replicate from the Fas-stimulated condition, and is bundled with the PrInCE package; it can be loaded with the following command:
+
+```{r}
+library(PrInCE)
+data(scott)
+```
+
+The dataset consists of ratiometric protein quantitations, achieved by SILAC (stable isotope labelling by amino acids in cell culture), for 1,560 proteins in 55 size exclusion chromatography (SEC) fractions:
+
+```{r}
+dim(scott)
+```
+
+Many of these measurements, 
+
+```{r}
+scott[1:10, 1:5]
+```
+
+However, because the complete dataset consists of 
+
+- control and stimulated interacotmes 3 replicates each
+
+- ref
+- description of experiment
+- description of sub-matrix 
+
+## Session info
+
+```{r}
+sessionInfo()
+```
+

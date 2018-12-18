@@ -25,8 +25,12 @@ heavy = repl %>%
 # keep major protein group
 rownames(heavy) = gsub(";.*$", "", rownames(heavy))
 
+# drop proteins never quantified
+keep = rowSums(is.finite(scott)) > 0
+
 # rename
-scott = heavy
+scott = heavy[keep, ]
+scott = scott[order(rownames(scott)), ]
 
 # save
-devtools::use_data(scott)
+devtools::use_data(scott, overwrite = T)

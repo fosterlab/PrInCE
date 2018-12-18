@@ -24,6 +24,8 @@ Imports:
 	speedglm (>= 0.3-2),
 	tester (>= 0.1.7),
 	Rdpack
+VignetteBuilder: knitr
+Suggests: BiocStyle, knitr, rmarkdown
 License: GPL-3.0
 Encoding: UTF-8
 LazyData: true
