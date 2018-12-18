@@ -14,7 +14,7 @@
 #'
 #' @docType data
 #' @usage data(scott)
-#' @format a data frame with 3216 rows and 55 columns, with proteins in rows and
+#' @format a data frame with 1560 rows and 55 columns, with proteins in rows and
 #'   SEC fractions in columns
 #' @source \url{http://msb.embopress.org/content/13/1/906}
 "scott"

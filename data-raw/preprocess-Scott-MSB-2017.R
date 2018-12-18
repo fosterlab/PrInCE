@@ -26,7 +26,7 @@ heavy = repl %>%
 rownames(heavy) = gsub(";.*$", "", rownames(heavy))
 
 # drop proteins never quantified
-keep = rowSums(is.finite(scott)) > 0
+keep = rowSums(is.finite(heavy)) > 0
 
 # rename
 scott = heavy[keep, ]
