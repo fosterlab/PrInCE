@@ -18,6 +18,8 @@
 #' 
 #' @return a named vector of z scores for each complex in the input list
 #' 
+#' @importFrom stats cor dist na.omit median sd
+#' @importFrom utils combn
 #' @importFrom progress progress_bar
 #' @importFrom purrr map_dbl
 #' @export

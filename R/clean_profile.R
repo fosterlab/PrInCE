@@ -14,6 +14,8 @@
 #' 
 #' @return a cleaned profile
 #' 
+#' @importFrom stats runif setNames
+#' 
 #' @export
 clean_profile <- function(chromatogram, impute_NA = T, smooth = T,
                           smooth_width = 4, noise_floor = 0.001) {

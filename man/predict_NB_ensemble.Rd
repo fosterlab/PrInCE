@@ -21,6 +21,9 @@ remaining columns}
 when training each naive Bayes classifier. By default, each naive Bayes
 classifier uses ten-fold cross-validation, i.e., the classifier is trained
 on 90\% of the dataset and used to classify the remaining 10\%}
+
+\item{seed}{the seed for the random number generator, used to ensure
+reproducibility}
 }
 \value{
 the input data frame of pairwise interactions, ranked by the 

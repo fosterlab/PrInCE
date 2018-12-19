@@ -34,19 +34,19 @@ check_gaussians = function(gaussians, proteins = NULL, replicate_idx = NULL,
     if (is.null(names(gaussians))) {
       stop("`gaussians` object is not a named list")
     }
-    if (any(!purrr::map_lgl(scott_gaussians, ~ "n_gaussians" %in% names(.)))) {
+    if (any(!purrr::map_lgl(gaussians, ~ "n_gaussians" %in% names(.)))) {
       stop("not all gaussians have the `n_gaussians` field")
     }
-    if (any(!purrr::map_lgl(scott_gaussians, ~ "R2" %in% names(.)))) {
+    if (any(!purrr::map_lgl(gaussians, ~ "R2" %in% names(.)))) {
       stop("not all gaussians have the `R2` field")
     }
-    if (any(!purrr::map_lgl(scott_gaussians, ~ "iterations" %in% names(.)))) {
+    if (any(!purrr::map_lgl(gaussians, ~ "iterations" %in% names(.)))) {
       stop("not all gaussians have the `iterations` field")
     }
-    if (any(!purrr::map_lgl(scott_gaussians, ~ "coefs" %in% names(.)))) {
+    if (any(!purrr::map_lgl(gaussians, ~ "coefs" %in% names(.)))) {
       stop("not all gaussians have the `coefs` field")
     }
-    if (any(!purrr::map_lgl(scott_gaussians, ~ "curveFit" %in% names(.)))) {
+    if (any(!purrr::map_lgl(gaussians, ~ "curveFit" %in% names(.)))) {
       stop("not all gaussians have the `curveFit` field")
     }
   } else {
@@ -64,7 +64,7 @@ check_gaussians = function(gaussians, proteins = NULL, replicate_idx = NULL,
     # warn if a low % of proteins have Gaussians
     pct_gaussians = mean(proteins %in% names(gaussians))
     if (pct_gaussians < pct_warning) {
-      warning("only ", format(100 * pct_w_gaussians, digits = 2), 
+      warning("only ", format(100 * pct_gaussians, digits = 2), 
               " of proteins have fitted Gaussians", repl_string, " (minimum: ", 
               format(100 * pct_warning, digits = 2), ")")
     }

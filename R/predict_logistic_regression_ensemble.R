@@ -16,15 +16,24 @@
 #' when training each logistic regression classifier. By default, each logistic 
 #' regression classifier uses ten-fold cross-validation, i.e., the classifier 
 #' is trained on 90\% of the dataset and used to classify the remaining 10\%
+#' @param seed the seed for the random number generator, used to ensure
+#'   reproducibility
 #' 
 #' @return the input data frame of pairwise interactions, ranked by the 
 #' median of classifier scores across all ensembled models
+#' 
+#' @importFrom stats binomial
+#' 
+#' @importFrom stats predict
 #' 
 #' @export
 predict_logistic_regression_ensemble <- function(input, labels, models = 10, 
                                                  cv_folds = 10, seed = 0) {
   # set seed
   set.seed(seed)
+  
+  ## define global variables to prevent check complaining
+  score = NULL
   
   # replace missing data
   input <- replace_missing_data(input)
@@ -67,7 +76,7 @@ predict_logistic_regression_ensemble <- function(input, labels, models = 10,
 
       # classify
       withheld_idxs <- as.integer(rownames(training))[folds == fold]
-      predictions <- speedglm:::predict.speedglm(
+      predictions <- predict(
         lr, input[-withheld_idxs, -c(1:2)], type = 'response')
       lr_scores[-withheld_idxs, fold] <- predictions
     }

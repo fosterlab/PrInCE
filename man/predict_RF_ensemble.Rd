@@ -22,6 +22,9 @@ when training each random forests classifier. By default, each
 classifier uses ten-fold cross-validation, i.e., the classifier is trained
 on 90\% of the dataset and used to classify the remaining 10\%}
 
+\item{seed}{the seed for the random number generator, used to ensure
+reproducibility}
+
 \item{trees}{number of trees to grow for each fold}
 }
 \value{

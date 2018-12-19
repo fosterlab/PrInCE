@@ -40,11 +40,19 @@
 #' @return a ranked data frame of pairwise interactions, with the 
 #' classifier score, label, and cumulative precision for each interaction 
 #' 
+#' @importFrom dplyr starts_with group_by mutate_if mutate ungroup arrange
+#'   full_join
+#' @importFrom magrittr %>%
+#' 
 #' @export
 predict_interactions = function(
   features, gold_standard, classifier = c("NB", "SVM", "RF", "LR", "ensemble"),
   verbose = F, models = 10, cv_folds = 10, trees = 500, seed = 0) {
   classifier = match.arg(classifier)
+  
+  ## define global variables to prevent check complaining
+  protein_A = NULL; protein_B = NULL; score.x = NULL; score.y = NULL;
+  score.x.x = NULL; score.y.y = NULL
   
   # make labels
   if (verbose) {
@@ -63,7 +71,7 @@ predict_interactions = function(
     } else if (classifier == "RF") {
       interactions = predict_RF_ensemble(
         features, labels, models, cv_folds, seed, trees) 
-    } else if (classifer == "SVM") {
+    } else if (classifier == "SVM") {
       interactions = predict_SVM_ensemble(
         features, labels, models, cv_folds, seed)
     } else if (classifier == "LR") {

@@ -13,6 +13,8 @@
 #' @return a data frame containing features for all protein pairs across all 
 #'   replicates 
 #' 
+#' @importFrom dplyr full_join
+#' 
 #' @export
 concatenate_features = function(feature_list) {
   features = Reduce(function(x, y)

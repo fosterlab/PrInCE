@@ -16,15 +16,22 @@
 #' when training each naive Bayes classifier. By default, each naive Bayes
 #' classifier uses ten-fold cross-validation, i.e., the classifier is trained
 #' on 90\% of the dataset and used to classify the remaining 10\%
+#' @param seed the seed for the random number generator, used to ensure
+#'   reproducibility
 #' 
 #' @return the input data frame of pairwise interactions, ranked by the 
 #' median of classifier scores across all ensembled models
+#' 
+#' @importFrom stats predict
 #' 
 #' @export
 predict_NB_ensemble <- function(input, labels, models = 10, cv_folds = 10,
                                 seed = 0) {
   # set seed
   set.seed(seed)
+  
+  ## define global variables to prevent check complaining
+  score = NULL
   
   # extract training data
   training_idxs <- which(!is.na(labels))
@@ -63,7 +70,7 @@ predict_NB_ensemble <- function(input, labels, models = 10, cv_folds = 10,
       
       # classify
       withheld_idxs = as.integer(rownames(training))[folds == fold]
-      predictions = naivebayes:::predict.naive_bayes(
+      predictions = predict(
         nb, input[-withheld_idxs, -c(1:2)], type = 'prob', threshold = 1e-10)
       predictions = predictions[, "1"]
       nb_scores[-withheld_idxs, fold] <- predictions

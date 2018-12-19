@@ -14,6 +14,8 @@
 #' @return a data frame with missing values in each numeric column replaced
 #' by the column median, plus or minus some random noise
 #' 
+#' @importFrom stats rnorm
+#' 
 #' @export
 replace_missing_data <- function(input, noise_pct = 0.05) {
   for (col_name in colnames(input)) {

@@ -21,6 +21,9 @@ remaining columns}
 when training each logistic regression classifier. By default, each logistic 
 regression classifier uses ten-fold cross-validation, i.e., the classifier 
 is trained on 90\% of the dataset and used to classify the remaining 10\%}
+
+\item{seed}{the seed for the random number generator, used to ensure
+reproducibility}
 }
 \value{
 the input data frame of pairwise interactions, ranked by the 

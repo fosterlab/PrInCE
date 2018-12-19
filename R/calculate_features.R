@@ -26,6 +26,8 @@
 #' @return a data frame containing the calculated features for all possible
 #' protein pairs
 #' 
+#' @importFrom stats cor dist
+#' 
 #' @export
 calculate_features <- function(profile_matrix, gaussians,
                                pearson_R_raw = T,

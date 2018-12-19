@@ -11,6 +11,8 @@
 #' 
 #' @return a matrix of co-apex scores 
 #' 
+#' @importFrom stats dist
+#' 
 #' @export
 co_apex <- function(gaussians, proteins = NULL) {
   if (is.null(proteins)) {

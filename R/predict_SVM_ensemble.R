@@ -16,15 +16,22 @@
 #' when training each support vector machine. By default, each 
 #' classifier uses ten-fold cross-validation, i.e., the classifier is trained
 #' on 90\% of the dataset and used to classify the remaining 10\%
+#' @param seed the seed for the random number generator, used to ensure
+#'   reproducibility
 #' 
 #' @return the input data frame of pairwise interactions, ranked by the 
 #' median of classifier scores across all ensembled models
+#' 
+#' @importFrom stats predict
 #' 
 #' @export
 predict_SVM_ensemble <- function(input, labels, models = 1, cv_folds = 10,
                                  seed = 0) {
   # set seed
   set.seed(seed)
+  
+  ## define global variables to prevent check complaining
+  score = NULL
   
   # replace missing data
   input <- replace_missing_data(input)
@@ -70,8 +77,7 @@ predict_SVM_ensemble <- function(input, labels, models = 1, cv_folds = 10,
       # classify
       withheld_idxs = as.integer(rownames(training))[folds == fold]
       svm_test_data <- input[-withheld_idxs, -c(1:2)]
-      predictions <- LiblineaR:::predict.LiblineaR(svm, svm_test_data, 
-                                                   decisionValues = T)
+      predictions <- predict(svm, svm_test_data, decisionValues = T)
       predictions <- -1.0 * predictions$decisionValues[, "0"]
       svm_scores[-withheld_idxs, fold] <- predictions
       

@@ -6,7 +6,8 @@
 #' for example because their centres are outside the bounds of the profile.
 #' 
 #' @param coefs the coefficients of the Gaussian mixture model, output by 
-#' \code{\link{fit_gaussians}}
+#'   \code{\link{fit_gaussians}}
+#' @param chromatogram the raw elution profile
 #' 
 #' @return the BIC of the fit model
 gaussian_bic <- function(coefs, chromatogram) {

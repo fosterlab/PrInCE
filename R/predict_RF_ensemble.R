@@ -16,16 +16,23 @@
 #' when training each random forests classifier. By default, each 
 #' classifier uses ten-fold cross-validation, i.e., the classifier is trained
 #' on 90\% of the dataset and used to classify the remaining 10\%
+#' @param seed the seed for the random number generator, used to ensure
+#'   reproducibility
 #' @param trees number of trees to grow for each fold
 #' 
 #' @return the input data frame of pairwise interactions, ranked by the 
 #' median of classifier scores across all ensembled models
+#' 
+#' @importFrom stats predict
 #' 
 #' @export
 predict_RF_ensemble <- function(input, labels, models = 1, cv_folds = 10,
                                 seed = 0, trees = 500) {
   # set seed
   set.seed(seed)
+  
+  ## define global variables to prevent check complaining
+  score = NULL
   
   # replace missing data
   input <- replace_missing_data(input)
@@ -73,7 +80,7 @@ predict_RF_ensemble <- function(input, labels, models = 1, cv_folds = 10,
       # classify
       withheld_idxs = as.integer(rownames(training))[folds == fold]
       rf_test_data <- input[-withheld_idxs, -c(1:2)]
-      predictions <- ranger:::predict.ranger(rf, rf_test_data, seed = seed)
+      predictions <- predict(rf, rf_test_data, seed = seed)
       predictions <- predictions[[1]][, "1"]
       rf_scores[-withheld_idxs, fold] <- predictions
       

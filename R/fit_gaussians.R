@@ -29,6 +29,8 @@
 #' fit the curve with different initial conditions; the coefficients of the 
 #' fit model; and the fit curve predicted by the fit model.
 #' 
+#' @importFrom stats coef cor setNames
+#' 
 #' @export
 fit_gaussians <- function(chromatogram, n_gaussians,
                           max_iterations = 10, min_R_squared = 0.5,

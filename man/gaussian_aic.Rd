@@ -9,6 +9,8 @@ gaussian_aic(coefs, chromatogram)
 \arguments{
 \item{coefs}{the coefficients of the Gaussian mixture model, output by 
 \code{\link{fit_gaussians}}}
+
+\item{chromatogram}{the raw elution profile}
 }
 \value{
 the AIC of the fit model
