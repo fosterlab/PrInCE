@@ -24,5 +24,8 @@ gold_standard = complexes %>%
   flavin::as_annotation_list("subunits", "name") %>%
   extract(lengths(.) > 1)
 
+# remove duplicates
+gold_standard = gold_standard[!duplicated(gold_standard)]
+
 # save
-devtools::use_data(gold_standard)
+devtools::use_data(gold_standard, overwrite = T)

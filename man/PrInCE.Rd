@@ -4,8 +4,14 @@
 \alias{PrInCE}
 \title{PrInCE: Prediction of Interactomes from Co-Elution}
 \usage{
-PrInCE(profiles, gold_standard, gaussians = NULL, verbose = F,
-  seed = 0)
+PrInCE(profiles, gold_standard, gaussians = NULL, precision = NULL,
+  verbose = F, seed = 0, min_points = 1, min_consecutive = 5,
+  impute_NA = T, smooth = T, smooth_width = 4, max_gaussians = 5,
+  max_iterations = 50, min_R_squared = 0.5, method = c("guess",
+  "random"), criterion = c("AICc", "AIC", "BIC"), pearson_R_raw = T,
+  pearson_R_cleaned = T, pearson_P = T, euclidean_distance = T,
+  co_peak = T, co_apex = T, classifier = c("NB", "SVM", "RF", "LR",
+  "ensemble"), models = 10, cv_folds = 10, trees = 500)
 }
 \arguments{
 \item{profiles}{the co-elution profile matrix, or a list of profile matrices
@@ -25,11 +31,84 @@ a numeric matrix, this should be the named list output by
 \code{\link[PrInCE]{build_gaussians}} for that matrix; if \code{profiles} 
 is a list of numeric matrices, this should be a list of named lists}
 
+\item{precision}{optionally, return only interactions above the given 
+precision; by default, all interactions are returned and the user can
+subsequently threshold the list using the  
+\code{\link[PrInCE]{threshold_precision}} function}
+
 \item{verbose}{if \code{TRUE}, print a series of messages about the stage
 of the analysis}
 
 \item{seed}{the seed for random number generation, to ensure reproducible
 output}
+
+\item{min_points}{filter profiles without at least this many total, 
+non-missing points; passed to \code{\link{filter_profiles}}}
+
+\item{min_consecutive}{filter profiles without at least this many 
+consecutive, non-missing points; passed to \code{\link{filter_profiles}}}
+
+\item{impute_NA}{if true, impute single missing values with the average of
+neighboring values; passed to \code{\link{clean_profiles}}}
+
+\item{smooth}{if true, smooth the chromatogram with a moving average filter;
+passed to \code{\link{clean_profiles}}}
+
+\item{smooth_width}{width of the moving average filter, in fractions;
+passed to \code{\link{clean_profiles}}}
+
+\item{max_gaussians}{the maximum number of Gaussians to fit; defaults to 5.
+Note that Gaussian mixtures with more parameters than observed (i.e., 
+non-zero or NA) points will not be fit. Passed to  
+\code{\link{choose_gaussians}}}
+
+\item{max_iterations}{the number of times to try fitting the curve with
+different initial conditions; defaults to 50. Passed to 
+\code{\link{fit_gaussians}}}
+
+\item{min_R_squared}{the minimum R-squared value to accept when fitting the
+curve with different initial conditions; defaults to 0.5. Passed to 
+\code{\link{fit_gaussians}}}
+
+\item{method}{the method used to select the initial conditions for
+nonlinear least squares optimization (one of "guess" or "random"); 
+see \code{\link{make_initial_conditions}} for details. Passed to 
+\code{\link{fit_gaussians}}}
+
+\item{criterion}{the criterion to use for model selection;
+one of "AICc" (corrected AIC, and default), "AIC", or "BIC". Passed to
+\code{\link{choose_gaussians}}}
+
+\item{pearson_R_raw}{if true, include the Pearson correlation (R) between
+raw profiles as a feature}
+
+\item{pearson_R_cleaned}{if true, include the Pearson correlation (R) between
+cleaned profiles as a feature}
+
+\item{pearson_P}{if true, include the P-value of the Pearson correlation 
+between raw profiles as a feature}
+
+\item{euclidean_distance}{if true, include the Euclidean distance between
+cleaned profiles as a feature}
+
+\item{co_peak}{if true, include the 'co-peak score' (that is, the distance,
+in fractions, between the single highest value of each profile) as a 
+feature}
+
+\item{co_apex}{if true, include the 'co-apex score' (that is, the minimum
+Euclidean distance between any pair of fit Gaussians) as a feature}
+
+\item{classifier}{the type of classifier to use: one of \code{"NB"} (naive
+Bayes), \code{"SVM"} (support vector machine), \code{"RF"} (random forest),
+\code{"LR"} (logistic regression), or \code{"ensemble"} (an ensemble of
+all four)}
+
+\item{models}{the number of classifiers to train and average across, each
+with a different k-fold cross-validation split}
+
+\item{cv_folds}{the number of folds to use for k-fold cross-validation}
+
+\item{trees}{for random forests only, the number of trees in the forest}
 }
 \value{
 a ranked data frame of interacting proteins, with the precision

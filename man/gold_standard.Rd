@@ -4,7 +4,7 @@
 \name{gold_standard}
 \alias{gold_standard}
 \title{Reference set of human protein complexes}
-\format{a list containing 477 entries (character vectors)}
+\format{a list containing 467 entries (character vectors)}
 \source{
 \url{https://www.ebi.ac.uk/complexportal/complex/organisms}
 }
@@ -12,11 +12,11 @@
 data(gold_standard)
 }
 \description{
-A reference set of 477 experimentally confirmed human protein complexes,
+A reference set of 467 experimentally confirmed human protein complexes,
 derived from the EBI Complex Portal database.
 }
 \details{
-477 protein complexes, ranging in size from 2 to 44 proteins and involving
+467 protein complexes, ranging in size from 2 to 44 proteins and involving
 877 proteins in total, to provide a reference set of true positive and true 
 negative interactions (intra- and inter-complex interactions, respectively)
 for demonstration in PrInCE analysis of a co-elution dataset.

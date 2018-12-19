@@ -90,6 +90,54 @@
 #'   of the analysis
 #' @param seed the seed for random number generation, to ensure reproducible
 #'   output
+#' @param min_points filter profiles without at least this many total, 
+#'   non-missing points; passed to \code{\link{filter_profiles}}
+#' @param min_consecutive filter profiles without at least this many 
+#'   consecutive, non-missing points; passed to \code{\link{filter_profiles}}
+#' @param impute_NA if true, impute single missing values with the average of
+#'   neighboring values; passed to \code{\link{clean_profiles}}
+#' @param smooth if true, smooth the chromatogram with a moving average filter;
+#'   passed to \code{\link{clean_profiles}}
+#' @param smooth_width width of the moving average filter, in fractions;
+#'   passed to \code{\link{clean_profiles}}
+#' @param max_gaussians the maximum number of Gaussians to fit; defaults to 5.
+#'   Note that Gaussian mixtures with more parameters than observed (i.e., 
+#'   non-zero or NA) points will not be fit. Passed to  
+#'   \code{\link{choose_gaussians}}
+#' @param criterion the criterion to use for model selection;
+#'   one of "AICc" (corrected AIC, and default), "AIC", or "BIC". Passed to
+#'   \code{\link{choose_gaussians}}
+#' @param max_iterations the number of times to try fitting the curve with
+#'   different initial conditions; defaults to 50. Passed to 
+#'   \code{\link{fit_gaussians}}
+#' @param min_R_squared the minimum R-squared value to accept when fitting the
+#'   curve with different initial conditions; defaults to 0.5. Passed to 
+#'   \code{\link{fit_gaussians}}
+#' @param method the method used to select the initial conditions for
+#'   nonlinear least squares optimization (one of "guess" or "random"); 
+#'   see \code{\link{make_initial_conditions}} for details. Passed to 
+#'   \code{\link{fit_gaussians}}
+#' @param pearson_R_raw if true, include the Pearson correlation (R) between
+#'   raw profiles as a feature
+#' @param pearson_R_cleaned if true, include the Pearson correlation (R) between
+#'   cleaned profiles as a feature
+#' @param pearson_P if true, include the P-value of the Pearson correlation 
+#'   between raw profiles as a feature
+#' @param euclidean_distance if true, include the Euclidean distance between
+#'   cleaned profiles as a feature
+#' @param co_peak if true, include the 'co-peak score' (that is, the distance,
+#'   in fractions, between the single highest value of each profile) as a 
+#'   feature 
+#' @param co_apex if true, include the 'co-apex score' (that is, the minimum
+#'   Euclidean distance between any pair of fit Gaussians) as a feature
+#' @param classifier the type of classifier to use: one of \code{"NB"} (naive
+#'   Bayes), \code{"SVM"} (support vector machine), \code{"RF"} (random forest),
+#'   \code{"LR"} (logistic regression), or \code{"ensemble"} (an ensemble of
+#'   all four)
+#' @param models the number of classifiers to train and average across, each
+#'   with a different k-fold cross-validation split
+#' @param cv_folds the number of folds to use for k-fold cross-validation
+#' @param trees for random forests only, the number of trees in the forest
 #' 
 #' @return a ranked data frame of interacting proteins, with the precision
 #'   at each point in the list
@@ -107,7 +155,35 @@
 PrInCE = function(profiles, gold_standard, gaussians = NULL, 
                   precision = NULL,
                   verbose = F,
-                  seed = 0) {
+                  seed = 0,
+                  ## build_gaussians
+                  min_points = 1,
+                  min_consecutive = 5,
+                  impute_NA = T,
+                  smooth = T,
+                  smooth_width = 4,
+                  max_gaussians = 5,
+                  max_iterations = 50,
+                  min_R_squared = 0.5,
+                  method = c("guess", "random"),
+                  criterion = c("AICc", "AIC", "BIC"),
+                  ## calculate_features
+                  pearson_R_raw = T,
+                  pearson_R_cleaned = T,
+                  pearson_P = T,
+                  euclidean_distance = T,
+                  co_peak = T,
+                  co_apex = T,
+                  ## predict_interactions
+                  classifier = c("NB", "SVM", "RF", "LR", "ensemble"), 
+                  models = 10, 
+                  cv_folds = 10,
+                  trees = 500
+                  ) {
+  method = match.arg(method)
+  criterion = match.arg(criterion)
+  classifier = match.arg(classifier)
+  
   # check profile input 
   if (is.list(profiles)) {
     for (replicate_idx in seq_along(profiles)) {
@@ -164,7 +240,16 @@ PrInCE = function(profiles, gold_standard, gaussians = NULL,
     } else {
       if (verbose) {
         message("  fitting Gaussians ...")
-        gauss = build_gaussians(mat, max_iterations = 50)
+        gauss = build_gaussians(mat,
+                                min_points = min_points,
+                                min_consecutive = min_consecutive,
+                                impute_NA = impute_NA,
+                                smooth = smooth,
+                                smooth_width = smooth_width,
+                                max_gaussians = max_gaussians,
+                                max_iterations = max_iterations,
+                                min_R_squared = min_R_squared,
+                                method = method)
       }
     }
     
@@ -178,7 +263,13 @@ PrInCE = function(profiles, gold_standard, gaussians = NULL,
     }
     
     # calculate features
-    feat = calculate_features(mat, gauss)
+    feat = calculate_features(mat, gauss,
+                              pearson_R_raw = pearson_R_raw,
+                              pearson_R_cleaned = pearson_R_cleaned,
+                              pearson_P = pearson_P,
+                              euclidean_distance = euclidean_distance,
+                              co_peak = co_peak,
+                              co_apex = co_apex)
     features[[replicate_idx]] = feat
   }
   
@@ -189,9 +280,23 @@ PrInCE = function(profiles, gold_standard, gaussians = NULL,
   input = concatenate_features(features)
   
   # predict interactions
-  interactions = predict_interactions(input, gold_standard, verbose = verbose,
+  interactions = predict_interactions(input, gold_standard, 
+                                      classifier = classifier,
+                                      models = models,
+                                      cv_folds = cv_folds,
+                                      trees = trees,
+                                      verbose = verbose,
                                       seed = seed)
   
-  # return
+  # optionally threshold based on precison
+  if (!is.null(precision)) {
+    before = nrow(interactions)
+    interactions = threshold_precision(interactions, precision)
+    if (nrow(interactions) == 0) {
+      warning("none of ", before, " ranked protein pairs had precision >= ", 
+              precision)
+    }
+  }
+  
   return(interactions)
 }
