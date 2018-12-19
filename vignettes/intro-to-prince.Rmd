@@ -166,7 +166,7 @@ network = threshold_precision(interactions, threshold = 0.5)
 nrow(network)
 ```
 
-This results in an unweighted protein-protein interaction network with 8,757 interactions.
+This results in an unweighted protein-protein interaction network with `r nrow(network)` interactions.
 
 ### Predicting protein-protein interactions: step-by-step analysis
 
@@ -198,7 +198,7 @@ This function takes the following parameters:
 - `method`: method used to select initial conditions for `nls`; can select either random parameters (`random`) or make an educated guess based on the maximum values in the profile (`guess`, the default)
 - `filter_gaussians_center`, `filter_gaussians_height`, `filter_gaussians_variance_min`, `filter_gaussians_variance_max`: heuristics used to filter poor-quality Gaussian fits. If `TRUE` (default), `filter_gaussians_center` will remove Gaussians whose mean falls outside the bounds of the chromatogram. `filter_gaussians_height` controls the minimum height of the Gaussians, while `filter_gaussians_variance_min` and `filter_gaussians_variance_max` control the range of their standard deviation. 
 
-All of these parameters except the last four are exposed thru the `PrInCE` function. 
+All of these parameters except the last four are exposed through the `PrInCE` function. 
 
 As an example, we will re-analyze the `scott` dataset with stricter filtering criteria, requiring the presence of at least five (non-imputed) data points in addition to five consecutive points; fitting with a maximum of three Gaussians, instead of five; and requiring a better fit than the default settings. 
 For the sake of time, we allow only 10 iterations for the curve-fitting algorithm here. 
@@ -300,7 +300,6 @@ For example, the following command constructs a protein-protein interaction netw
 ```{r}
 net = threshold_precision(ppi, threshold = 0.7)
 nrow(net)
-head(net, 100)
 ```
 
 ## Session info
