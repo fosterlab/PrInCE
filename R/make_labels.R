@@ -16,8 +16,8 @@
 #' 
 #' @export
 make_labels <- function(gold_standard, input, protein_groups = NULL) {
-  proteins_1 <- input[[1]]
-  proteins_2 <- input[[2]]
+  proteins_1 <- as.character(input[[1]])
+  proteins_2 <- as.character(input[[2]])
   if (is.null(protein_groups)) {
     lab_idxs <- proteins_1 %in% rownames(gold_standard) &
       proteins_2 %in% rownames(gold_standard)

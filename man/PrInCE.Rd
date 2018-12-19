@@ -29,7 +29,7 @@ of the analysis}
 }
 \value{
 a ranked data frame of interacting proteins, with the precision
-at each point in the list
+  at each point in the list
 }
 \description{
 PrInCE is a computational approach to infer protein-protein interaction 

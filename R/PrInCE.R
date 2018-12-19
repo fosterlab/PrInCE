@@ -113,7 +113,7 @@ PrInCE = function(profiles, gold_standard, gaussians = NULL, verbose = F) {
         if (length(gaussians) < replicate_idx) {
           stop("fewer Gaussians than profiles provided")
         }
-        check_gaussians(gaussians[[replicate_idx]], rownames(proteins),
+        check_gaussians(gaussians[[replicate_idx]], rownames(profile_matrix),
                         replicate_idx)
       }
     }
@@ -170,7 +170,7 @@ PrInCE = function(profiles, gold_standard, gaussians = NULL, verbose = F) {
     
     # calculate features
     feat = calculate_features(mat, gauss)
-    features[[replicate]] = feat
+    features[[replicate_idx]] = feat
   }
   
   # collapse into a single data frame 

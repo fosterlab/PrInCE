@@ -23,6 +23,8 @@
 #' 
 #' @return \code{TRUE} if all conditions are met, but throws an error if any 
 #'   is not
+#'   
+#' @export
 check_gaussians = function(gaussians, proteins = NULL, replicate_idx = NULL,
                            n_error = 3, pct_warning = 0.1) {
   if (!is.null(gaussians)) {

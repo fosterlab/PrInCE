@@ -91,7 +91,8 @@ calculate_features <- function(profile_matrix, gaussians,
   tri <- upper.tri(first)
   idxs <- which(tri, arr.ind = T)
   input <- data.frame(protein_A = rownames(first)[idxs[, 1]], 
-                      protein_B = rownames(first)[idxs[, 2]]) 
+                      protein_B = rownames(first)[idxs[, 2]],
+                      stringsAsFactors = F) 
   input <- cbind(input, purrr::map(feature_matrices, ~ .[tri]))
   
   return(input)
