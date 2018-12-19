@@ -177,9 +177,7 @@ PrInCE = function(profiles, gold_standard, gaussians = NULL, verbose = F) {
   if (verbose) {
     message("concatenating features across replicates ...")
   }
-  input = Reduce(function(x, y)
-    full_join(x, y, by = c('protein_A', 'protein_B')), 
-    features)
+  input = concatenate_features(features)
   
   # predict interactions
   interactions = predict_interactions(input, gold_standard, verbose = verbose)
