@@ -21,3 +21,9 @@ Calculate the co-apex score for every pair of proteins. This is defined as
 the minimum Euclidean distance between any two Gaussians fit to each 
 profile.
 }
+\examples{
+data(scott_gaussians)
+gauss = scott_gaussians[seq_len(25), ]
+CA = co_apex(gauss)
+
+}

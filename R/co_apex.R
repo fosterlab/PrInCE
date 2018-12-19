@@ -11,6 +11,11 @@
 #' 
 #' @return a matrix of co-apex scores 
 #' 
+#' @examples 
+#' data(scott_gaussians)
+#' gauss = scott_gaussians[seq_len(25), ]
+#' CA = co_apex(gauss)
+#' 
 #' @importFrom stats dist
 #' 
 #' @export

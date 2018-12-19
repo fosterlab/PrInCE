@@ -4,9 +4,9 @@
 \alias{calculate_features}
 \title{Calculate the default features used to predict interactions in PrInCE}
 \usage{
-calculate_features(profile_matrix, gaussians, pearson_R_raw = T,
-  pearson_R_cleaned = T, pearson_P = T, euclidean_distance = T,
-  co_peak = T, co_apex = T)
+calculate_features(profile_matrix, gaussians, pearson_R_raw = TRUE,
+  pearson_R_cleaned = TRUE, pearson_P = TRUE,
+  euclidean_distance = TRUE, co_peak = TRUE, co_apex = TRUE)
 }
 \arguments{
 \item{profile_matrix}{a numeric matrix of co-elution profiles, with proteins

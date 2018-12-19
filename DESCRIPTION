@@ -1,6 +1,6 @@
 Package: PrInCE
 Title: Predicting Interactomes from Co-Elution
-Version: 0.1.0
+Version: 0.99.0
 Authors@R: c(
   person("Michael", "Skinnider", email = "michael.skinnider@msl.ubc.ca", role = c("aut", "trl", "cre")),
   person("R. Greg", "Stacey", email = "richard.greg.stacey@msl.ubc.ca", role = "ctb"),
@@ -9,7 +9,7 @@ Authors@R: c(
   person("Leonard", "Foster", email = "foster@msl.ubc.ca", role = c("aut", "led")))
 BugReports: https://github.com/fosterlab/PrInCE-R/issues
 Description: PrInCE (Predicting Interactomes from Co-Elution) uses a naive Bayes classifier trained on dataset-derived features to recover protein-protein interactions from co-elution chromatogram profiles. This package contains the R implementation of PrInCE. 
-Depends: R (>= 3.2.3)
+Depends: R (>= 3.5)
 Imports:
 	purrr (>= 0.2.4),
 	dplyr (>= 0.7.4),
@@ -24,10 +24,12 @@ Imports:
 	speedglm (>= 0.3-2),
 	tester (>= 0.1.7),
 	magrittr (>= 1.5),
-	nlme (>= 3.1-137),
-	Rdpack
-VignetteBuilder: knitr
+	stats,
+	utils,
+	Rdpack (>= 0.7)
 Suggests: BiocStyle, knitr, rmarkdown
+biocViews: Proteomics, SystemsBiology, NetworkInference
+VignetteBuilder: knitr
 License: GPL-3 + file LICENSE
 Encoding: UTF-8
 RdMacros: Rdpack

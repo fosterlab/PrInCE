@@ -16,21 +16,31 @@
 #' when training each random forests classifier. By default, each 
 #' classifier uses ten-fold cross-validation, i.e., the classifier is trained
 #' on 90\% of the dataset and used to classify the remaining 10\%
-#' @param seed the seed for the random number generator, used to ensure
-#'   reproducibility
 #' @param trees number of trees to grow for each fold
 #' 
 #' @return the input data frame of pairwise interactions, ranked by the 
 #' median of classifier scores across all ensembled models
 #' 
+#' @examples
+#' ## calculate features
+#' data(scott)
+#' data(scott_gaussians)
+#' subset = scott[seq_len(500), ] ## limit to first 500 proteins
+#' gauss = scott_gaussians[names(scott_gaussians) %in% rownames(subset)]
+#' features = calculate_features(subset, gauss)
+#' ## make training labels
+#' data(gold_standard)
+#' ref = adjacency_matrix_from_list(gold_standard)
+#' labels = make_labels(ref, features)
+#' ## predict interactions with random forest classifier
+#' ppi = predict_RF_ensemble(features, labels, cv_folds = 3, models = 1, 
+#'                           trees = 100)
+#' 
 #' @importFrom stats predict
 #' 
 #' @export
 predict_RF_ensemble <- function(input, labels, models = 1, cv_folds = 10,
-                                seed = 0, trees = 500) {
-  # set seed
-  set.seed(seed)
-  
+                                trees = 500) {
   ## define global variables to prevent check complaining
   score = NULL
   
@@ -40,7 +50,7 @@ predict_RF_ensemble <- function(input, labels, models = 1, cv_folds = 10,
   # extract training data
   training_idxs <- which(!is.na(labels))
   training_labels <- as.factor(labels[training_idxs])
-  training <- input[training_idxs, -c(1:2)]
+  training <- input[training_idxs, -c(1, 2)]
   
   # create matrix to hold medians from each model
   n_interactions = nrow(input)
@@ -52,12 +62,12 @@ predict_RF_ensemble <- function(input, labels, models = 1, cv_folds = 10,
   total_models <- models * cv_folds
   pb <- progress::progress_bar$new(
     format = "running fold :what [:bar] :percent eta: :eta",
-    clear = F, total = total_models, width = 80)
+    clear = FALSE, total = total_models, width = 80)
   counter <- 0
   
   # create models
   for (i in seq_len(models)) {
-    folds <- cut(seq_len(nrow(training)), breaks = cv_folds, labels = F)
+    folds <- cut(seq_len(nrow(training)), breaks = cv_folds, labels = FALSE)
     folds <- sample(folds) ## randomize
     rf_scores <- matrix(NA, ncol = cv_folds, nrow = n_interactions,
                         dimnames = list(interaction_names))
@@ -73,31 +83,31 @@ predict_RF_ensemble <- function(input, labels, models = 1, cv_folds = 10,
       rf_data_labeled <- cbind(rf_data, label = rf_labels)
       rf <- ranger::ranger(data = rf_data_labeled, 
                            dependent.variable.name = "label",
-                           probability = T,
-                           seed = seed,
+                           probability = TRUE,
                            num.trees = trees)
       
       # classify
       withheld_idxs = as.integer(rownames(training))[folds == fold]
-      rf_test_data <- input[-withheld_idxs, -c(1:2)]
-      predictions <- predict(rf, rf_test_data, seed = seed)
+      rf_test_data <- input[-withheld_idxs, -c(1, 2)]
+      predictions <- predict(rf, rf_test_data)
       predictions <- predictions[[1]][, "1"]
       rf_scores[-withheld_idxs, fold] <- predictions
       
       # call GC
       gc()
     }
-    medians <- setNames(robustbase::rowMedians(rf_scores, na.rm = T),
+    medians <- setNames(robustbase::rowMedians(rf_scores, na.rm = TRUE),
                         rownames(rf_scores))
     ensembled[, i] <- medians
   }
   
   # calculate median of medians across ensembled models
-  ensembled_medians <- setNames(robustbase::rowMedians(ensembled, na.rm = T),
+  ensembled_medians <- setNames(robustbase::rowMedians(ensembled, na.rm = TRUE),
                                 rownames(ensembled))
   
   # create ranked data frame
-  interactions <- cbind(input[, 1:2], score = ensembled_medians, label = labels)
+  interactions <- cbind(input[, c(1, 2)], score = ensembled_medians, 
+                        label = labels)
   interactions <- dplyr::arrange(interactions, -score)
   
   return(interactions)

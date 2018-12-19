@@ -5,7 +5,7 @@
 \title{Predict interactions using an ensemble of random forests}
 \usage{
 predict_RF_ensemble(input, labels, models = 1, cv_folds = 10,
-  seed = 0, trees = 500)
+  trees = 500)
 }
 \arguments{
 \item{input}{a data frame containing interacting gene/protein pairs in the
@@ -22,9 +22,6 @@ when training each random forests classifier. By default, each
 classifier uses ten-fold cross-validation, i.e., the classifier is trained
 on 90\% of the dataset and used to classify the remaining 10\%}
 
-\item{seed}{the seed for the random number generator, used to ensure
-reproducibility}
-
 \item{trees}{number of trees to grow for each fold}
 }
 \value{
@@ -37,4 +34,20 @@ co-elution dataset features. The ensemble approach ensures that
 results are robust to the partitioning of the dataset into folds. For each
 model, the median of classifier scores across all folds is calculated.
 Then, the median of all such medians across all models is calculated.
+}
+\examples{
+## calculate features
+data(scott)
+data(scott_gaussians)
+subset = scott[seq_len(500), ] ## limit to first 500 proteins
+gauss = scott_gaussians[names(scott_gaussians) \%in\% rownames(subset)]
+features = calculate_features(subset, gauss)
+## make training labels
+data(gold_standard)
+ref = adjacency_matrix_from_list(gold_standard)
+labels = make_labels(ref, features)
+## predict interactions with random forest classifier
+ppi = predict_RF_ensemble(features, labels, cv_folds = 3, models = 1, 
+                          trees = 100)
+
 }

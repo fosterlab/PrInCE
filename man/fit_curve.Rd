@@ -27,3 +27,10 @@ object. This allows individual Gaussians to be removed from the fit model:
 for example, if their height is below a certain threshold, or their 
 centres are outside the bounds of the chromatogram.
 }
+\examples{
+data(scott)
+chrom = clean_profile(scott[1, ])
+fit = fit_gaussians(chrom, n_gaussians = 1)
+curve = fit_curve(fit$coefs, seq_along(chrom))
+
+}

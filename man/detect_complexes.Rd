@@ -5,7 +5,7 @@
 \title{Detect significantly interacting complexes in a chromatogram matrix}
 \usage{
 detect_complexes(mat, complexes, method = c("pearson", "euclidean"),
-  min_pairs = 10, bootstraps = 100, progress = T)
+  min_pairs = 10, bootstraps = 100, progress = TRUE)
 }
 \arguments{
 \item{mat}{a matrix of chromatograms, with proteins in the columns and
@@ -32,4 +32,13 @@ Use a permutation testing approach to identify complexes that show a
 significant tendency to interact, relative to random sets of complexes
 of equivalent size. The function begins by calculating the Pearson 
 correlation or Euclidean distance between all proteins in the matrix, and
+}
+\examples{
+data(scott)
+data(gold_standard)
+complexes = gold_standard[lengths(gold_standard) >= 3]
+z_scores = detect_complexes(t(scott), complexes)
+length(na.omit(z_scores)) ## number of complexes that could be tested
+z_scores[which.max(z_scores)] ## most significant complex
+
 }

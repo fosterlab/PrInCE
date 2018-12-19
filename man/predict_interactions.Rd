@@ -5,8 +5,8 @@
 \title{Predict interactions given a set of features and examples}
 \usage{
 predict_interactions(features, gold_standard, classifier = c("NB", "SVM",
-  "RF", "LR", "ensemble"), verbose = F, models = 10, cv_folds = 10,
-  trees = 500, seed = 0)
+  "RF", "LR", "ensemble"), verbose = FALSE, models = 10,
+  cv_folds = 10, trees = 500)
 }
 \arguments{
 \item{features}{a data frame with proteins in the first two columns, and 
@@ -29,9 +29,6 @@ with a different k-fold cross-validation split}
 \item{cv_folds}{the number of folds to use for k-fold cross-validation}
 
 \item{trees}{for random forests only, the number of trees in the forest}
-
-\item{seed}{the seed for random number generation, to ensure reproducible
-results}
 }
 \value{
 a ranked data frame of pairwise interactions, with the 
@@ -58,4 +55,18 @@ averaged across classifiers.
 
 PrInCE can also ensemble across multiple different types of classifiers, 
 by supplying the \code{"ensemble"} option to the \code{classifier} argument.
+}
+\examples{
+## calculate features
+data(scott)
+data(scott_gaussians)
+subset = scott[seq_len(500), ] ## limit to first 500 proteins
+gauss = scott_gaussians[names(scott_gaussians) \%in\% rownames(subset)]
+features = calculate_features(subset, gauss)
+## load training data
+data(gold_standard)
+ref = adjacency_matrix_from_list(gold_standard)
+## predict interactions
+ppi = predict_interactions(features, ref, cv_folds = 3, models = 1)
+
 }

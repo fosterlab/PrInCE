@@ -21,3 +21,13 @@ Match the row and column names of a square feature matrix to the row names
 of a profile matrix, adding rows/columns containing \code{NA}s when 
 proteins in the profile matrix are missing from the feature matrix.
 }
+\examples{
+data(gold_standard)
+subset = adjacency_matrix_from_list(gold_standard[seq(1, 200)])
+target = adjacency_matrix_from_list(gold_standard)
+matched = match_matrix_dimensions(query, target)
+dim(subset)
+dim(target)
+dim(matched)
+
+}

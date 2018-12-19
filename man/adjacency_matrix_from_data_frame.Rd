@@ -4,7 +4,7 @@
 \alias{adjacency_matrix_from_data_frame}
 \title{Create an adjacency matrix from a data frame}
 \usage{
-adjacency_matrix_from_data_frame(dat, symmetric = T)
+adjacency_matrix_from_data_frame(dat, symmetric = TRUE)
 }
 \arguments{
 \item{dat}{a data frame with pairwise interactions in the first two columns}
@@ -19,4 +19,11 @@ an adjacency matrix between all interacting proteins
 Convert a data frame containing pairwise interactions into an
 adjacency matrix. The resulting square adjacency matrix contains ones for 
 proteins that are found in interactions and zeroes otherwise.
+}
+\examples{
+ppi = data.frame(protein_A = paste0("protein", seq_len(10)),
+                 protein_B = paste0("protein", c(rep(3, 2), rep(5, 5), 
+                                    rep(7, 3))))
+adj = adjacency_matrix_from_data_frame(ppi)
+
 }

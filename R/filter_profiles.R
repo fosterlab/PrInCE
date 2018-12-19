@@ -4,11 +4,19 @@
 #' profiles without a certain number of non-mising or consecutive points.
 #' 
 #' @param profile_matrix a numeric matrix of co-elution profiles, with proteins
-#' in rows
+#'   in rows
 #' @param min_points filter profiles without at least this many total, 
-#' non-missing points
+#'   non-missing points
 #' @param min_consecutive filter profiles without at least this many 
-#' consecutive, non-missing points
+#'   consecutive, non-missing points
+#' 
+#' @return the filtered profile matrix
+#' 
+#' @examples
+#' data(scott)
+#' nrow(scott)
+#' filtered = filter_profiles(scott)
+#' nrow(scott)
 #' 
 #' @export
 filter_profiles <- function(profile_matrix, min_points = 1, 
@@ -29,7 +37,7 @@ filter_profiles <- function(profile_matrix, min_points = 1,
     imputed <- t(apply(profile_matrix, 1, impute_neighbors))
     imputed_nas <- is.na(imputed)
     rles <- apply(imputed_nas, 1, rle)
-    max_consecutive <- purrr::map_int(rles, ~ max(.$lengths[.$values == F]))
+    max_consecutive <- purrr::map_int(rles, ~ max(.$lengths[.$values == FALSE]))
     profile_matrix <- profile_matrix[max_consecutive >= min_consecutive,]
   }
   

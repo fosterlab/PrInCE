@@ -18,3 +18,8 @@ Convert a list of complexes into a pairwise adjacency matrix. The resulting
 square adjacency matrix contains ones for proteins that are found in the
 same complex and zeroes otherwise.
 }
+\examples{
+data(gold_standard)
+adj = adjacency_matrix_from_list(data)
+
+}

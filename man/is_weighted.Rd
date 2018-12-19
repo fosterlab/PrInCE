@@ -16,3 +16,9 @@ true if the input network is a square numeric matrix with more than
 \description{
 Test whether a network is weighted
 }
+\examples{
+data(gold_standard)
+adj = adjacency_matrix_from_list(gold_standard)
+is_weighted(adj) ## returns FALSE
+
+}

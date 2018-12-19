@@ -24,6 +24,10 @@
 #' @return \code{TRUE} if all conditions are met, but throws an error if any 
 #'   is not
 #'   
+#' @examples 
+#' data(scott_gaussians)
+#' check_gaussians(scott_gaussians)
+#'   
 #' @export
 check_gaussians = function(gaussians, proteins = NULL, replicate_idx = NULL,
                            n_error = 3, pct_warning = 0.1) {
@@ -69,5 +73,5 @@ check_gaussians = function(gaussians, proteins = NULL, replicate_idx = NULL,
               format(100 * pct_warning, digits = 2), ")")
     }
   }
-  return(T)
+  return(TRUE)
 }

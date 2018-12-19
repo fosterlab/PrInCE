@@ -16,22 +16,30 @@
 #' when training each logistic regression classifier. By default, each logistic 
 #' regression classifier uses ten-fold cross-validation, i.e., the classifier 
 #' is trained on 90\% of the dataset and used to classify the remaining 10\%
-#' @param seed the seed for the random number generator, used to ensure
-#'   reproducibility
 #' 
 #' @return the input data frame of pairwise interactions, ranked by the 
 #' median of classifier scores across all ensembled models
 #' 
-#' @importFrom stats binomial
+#' @examples
+#' ## calculate features
+#' data(scott)
+#' data(scott_gaussians)
+#' subset = scott[seq_len(500), ] ## limit to first 500 proteins
+#' gauss = scott_gaussians[names(scott_gaussians) %in% rownames(subset)]
+#' features = calculate_features(subset, gauss)
+#' ## make training labels
+#' data(gold_standard)
+#' ref = adjacency_matrix_from_list(gold_standard)
+#' labels = make_labels(ref, features)
+#' ## predict interactions with random forest classifier
+#' ppi = predict_logistic_regression_ensemble(
+#'     features, labels, cv_folds = 3, models = 1)
 #' 
-#' @importFrom stats predict
+#' @importFrom stats binomial predict
 #' 
 #' @export
 predict_logistic_regression_ensemble <- function(input, labels, models = 10, 
-                                                 cv_folds = 10, seed = 0) {
-  # set seed
-  set.seed(seed)
-  
+                                                 cv_folds = 10) {
   ## define global variables to prevent check complaining
   score = NULL
   
@@ -41,7 +49,7 @@ predict_logistic_regression_ensemble <- function(input, labels, models = 10,
   # extract training data
   training_idxs <- which(!is.na(labels))
   training_labels <- as.factor(labels[training_idxs])
-  training <- input[training_idxs, -c(1:2)]
+  training <- input[training_idxs, -c(1, 2)]
   
   # create matrix to hold medians from each model
   n_interactions = nrow(input)
@@ -53,12 +61,12 @@ predict_logistic_regression_ensemble <- function(input, labels, models = 10,
   total_models <- models * cv_folds
   pb <- progress::progress_bar$new(
     format = "running fold :what [:bar] :percent eta: :eta",
-    clear = F, total = total_models, width = 100)
+    clear = FALSE, total = total_models, width = 100)
   counter <- 0
   
   # create models
   for (i in seq_len(models)) {
-    folds <- cut(seq_len(nrow(training)), breaks = cv_folds, labels = F)
+    folds <- cut(seq_len(nrow(training)), breaks = cv_folds, labels = FALSE)
     folds <- sample(folds) ## randomize
     lr_scores <- matrix(NA, ncol = cv_folds, nrow = n_interactions,
                      dimnames = list(interaction_names))
@@ -77,20 +85,21 @@ predict_logistic_regression_ensemble <- function(input, labels, models = 10,
       # classify
       withheld_idxs <- as.integer(rownames(training))[folds == fold]
       predictions <- predict(
-        lr, input[-withheld_idxs, -c(1:2)], type = 'response')
+        lr, input[-withheld_idxs, -c(1, 2)], type = 'response')
       lr_scores[-withheld_idxs, fold] <- predictions
     }
-    medians <- setNames(robustbase::rowMedians(lr_scores, na.rm = T),
+    medians <- setNames(robustbase::rowMedians(lr_scores, na.rm = TRUE),
                         rownames(lr_scores))
     ensembled[, i] <- medians
   }
   
   # calculate median of medians across ensembled models
-  ensembled_medians <- setNames(robustbase::rowMedians(ensembled, na.rm = T),
+  ensembled_medians <- setNames(robustbase::rowMedians(ensembled, na.rm = TRUE),
                                 rownames(ensembled))
   
   # create ranked data frame
-  interactions <- cbind(input[, 1:2], score = ensembled_medians, label = labels)
+  interactions <- cbind(input[, c(1, 2)], score = ensembled_medians,
+                        label = labels)
   interactions <- dplyr::arrange(interactions, -score)
   
   return(interactions)

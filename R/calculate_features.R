@@ -30,14 +30,14 @@
 #' 
 #' @export
 calculate_features <- function(profile_matrix, gaussians,
-                               pearson_R_raw = T,
-                               pearson_R_cleaned = T,
-                               pearson_P = T,
-                               euclidean_distance = T,
-                               co_peak = T,
-                               co_apex = T) {
+                               pearson_R_raw = TRUE,
+                               pearson_R_cleaned = TRUE,
+                               pearson_P = TRUE,
+                               euclidean_distance = TRUE,
+                               co_peak = TRUE,
+                               co_apex = TRUE) {
   # replace missing values with near-zero noise
-  cleaned <- clean_profiles(profile_matrix, impute_NA = F, smooth = F,
+  cleaned <- clean_profiles(profile_matrix, impute_NA = FALSE, smooth = FALSE,
                             noise_floor = 0.05)
   proteins <- rownames(cleaned)
   n_proteins <- length(proteins)
@@ -91,10 +91,10 @@ calculate_features <- function(profile_matrix, gaussians,
     stop("no features were calculated")
   first <- feature_matrices[[1]]
   tri <- upper.tri(first)
-  idxs <- which(tri, arr.ind = T)
+  idxs <- which(tri, arr.ind = TRUE)
   input <- data.frame(protein_A = rownames(first)[idxs[, 1]], 
                       protein_B = rownames(first)[idxs[, 2]],
-                      stringsAsFactors = F) 
+                      stringsAsFactors = FALSE) 
   input <- cbind(input, purrr::map(feature_matrices, ~ .[tri]))
   
   return(input)

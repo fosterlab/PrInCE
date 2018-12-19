@@ -24,8 +24,8 @@ replace_missing_data <- function(input, noise_pct = 0.05) {
       next
     missing <- is.na(column)
     input[[col_name]][missing] <- 
-      median(column, na.rm = T) + rnorm(sum(missing)) * 
-      sd(column, na.rm = T) * noise_pct 
+      median(column, na.rm = TRUE) + rnorm(sum(missing)) * 
+      sd(column, na.rm = TRUE) * noise_pct 
   }
   return(input)
 }

@@ -4,7 +4,7 @@
 \alias{clean_profile}
 \title{Preprocess a co-elution profile}
 \usage{
-clean_profile(chromatogram, impute_NA = T, smooth = T,
+clean_profile(chromatogram, impute_NA = TRUE, smooth = TRUE,
   smooth_width = 4, noise_floor = 0.001)
 }
 \arguments{
@@ -27,4 +27,10 @@ Clean a co-elution/co-fractionation profile by (1) imputing single missing
 values with the average of neighboring values, (2) replacing missing values
 with random, near-zero noise, and (3) smoothing with a moving average
 filter.
+}
+\examples{
+data(scott)
+chrom = scott[16, ]
+cleaned = clean_profile(chrom)
+
 }

@@ -17,6 +17,12 @@
 #' 
 #' @return the fitted curve
 #' 
+#' @examples
+#' data(scott)
+#' chrom = clean_profile(scott[1, ])
+#' fit = fit_gaussians(chrom, n_gaussians = 1)
+#' curve = fit_curve(fit$coefs, seq_along(chrom))
+#' 
 #' @export
 fit_curve <- function(coef, indices) {
   A <- coef[["A"]]

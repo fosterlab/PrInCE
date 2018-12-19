@@ -7,7 +7,7 @@
 choose_gaussians(chromatogram, points = NULL, max_gaussians = 5,
   criterion = c("AICc", "AIC", "BIC"), max_iterations = 10,
   min_R_squared = 0.5, method = c("guess", "random"),
-  filter_gaussians_center = T, filter_gaussians_height = 0.15,
+  filter_gaussians_center = TRUE, filter_gaussians_height = 0.15,
   filter_gaussians_variance_min = 0.1,
   filter_gaussians_variance_max = 50)
 }
@@ -56,4 +56,10 @@ fit model; and the curve predicted by the fit model.
 Fit mixtures of one or more Gaussians to the curve formed by a chromatogram
 profile, and choose the best fitting model using an information criterion
 of choice.
+}
+\examples{
+data(scott)
+chrom = clean_profile(scott[1, ])
+gauss = choose_gaussians(chrom, max_gaussians = 3)
+
 }

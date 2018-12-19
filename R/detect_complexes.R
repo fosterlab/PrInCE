@@ -18,6 +18,14 @@
 #' 
 #' @return a named vector of z scores for each complex in the input list
 #' 
+#' @examples 
+#' data(scott)
+#' data(gold_standard)
+#' complexes = gold_standard[lengths(gold_standard) >= 3]
+#' z_scores = detect_complexes(t(scott), complexes)
+#' length(na.omit(z_scores)) ## number of complexes that could be tested
+#' z_scores[which.max(z_scores)] ## most significant complex
+#' 
 #' @importFrom stats cor dist na.omit median sd
 #' @importFrom utils combn
 #' @importFrom progress progress_bar
@@ -27,7 +35,7 @@ detect_complexes = function(mat, complexes,
                             method = c("pearson", "euclidean"),
                             min_pairs = 10, 
                             bootstraps = 100,
-                            progress = T) {
+                            progress = TRUE) {
   method = match.arg(method)
   
   # construct network
@@ -43,9 +51,8 @@ detect_complexes = function(mat, complexes,
   z_scores = numeric(0)
   pb = progress::progress_bar$new(
     format = "complex :what [:bar] :percent eta: :eta",
-    clear = F, total = length(complexes), width = 80)
+    clear = FALSE, total = length(complexes), width = 80)
   for (i in seq_along(complexes)) {
-    set.seed(i)
     complex_name = names(complexes)[i]
     complex = complexes[[i]]
     
@@ -60,7 +67,7 @@ detect_complexes = function(mat, complexes,
       # calculate median PCC for intra-complex interactions
       idxing_mat = t(combn(overlap, 2))
       edge_weights = na.omit(network[idxing_mat])
-      obs = median(edge_weights, na.rm = T)
+      obs = median(edge_weights, na.rm = TRUE)
       
       # compare to random expectation
       rnd = purrr::map_dbl(seq_len(bootstraps), ~ {
@@ -70,11 +77,11 @@ detect_complexes = function(mat, complexes,
         # calculate observed D statistic
         idxing_mat = t(combn(rnd_complex, 2))
         rnd_weights = as.numeric(na.omit(network[idxing_mat]))
-        median(rnd_weights, na.rm = T)
+        median(rnd_weights, na.rm = TRUE)
       })
       
       # calculate Z score
-      z = (obs - mean(rnd, na.rm = T)) / sd(rnd, na.rm = T)
+      z = (obs - mean(rnd, na.rm = TRUE)) / sd(rnd, na.rm = TRUE)
       z_scores[complex_name] = z
     }
     

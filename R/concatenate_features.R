@@ -18,7 +18,7 @@
 #' @export
 concatenate_features = function(feature_list) {
   features = Reduce(function(x, y)
-    full_join(x, y, by = colnames(x)[1:2]), 
+    full_join(x, y, by = colnames(x)[c(1, 2)]), 
     feature_list)
   return(features)
 }

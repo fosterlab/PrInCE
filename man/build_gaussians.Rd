@@ -5,11 +5,11 @@
 \title{Deconvolve profiles into Gaussian mixture models}
 \usage{
 build_gaussians(profile_matrix, min_points = 1, min_consecutive = 5,
-  impute_NA = T, smooth = T, smooth_width = 4, max_gaussians = 5,
-  criterion = c("AICc", "AIC", "BIC"), max_iterations = 10,
-  min_R_squared = 0.5, method = c("guess", "random"),
-  filter_gaussians_center = T, filter_gaussians_height = 0.15,
-  filter_gaussians_variance_min = 0.5,
+  impute_NA = TRUE, smooth = TRUE, smooth_width = 4,
+  max_gaussians = 5, criterion = c("AICc", "AIC", "BIC"),
+  max_iterations = 50, min_R_squared = 0.5, method = c("guess",
+  "random"), filter_gaussians_center = TRUE,
+  filter_gaussians_height = 0.15, filter_gaussians_variance_min = 0.5,
   filter_gaussians_variance_max = 50)
 }
 \arguments{
@@ -41,7 +41,7 @@ one of "AICc" (corrected AIC, and default), "AIC", or "BIC". Passed to
 \code{\link{choose_gaussians}}}
 
 \item{max_iterations}{the number of times to try fitting the curve with
-different initial conditions; defaults to 10. Passed to 
+different initial conditions; defaults to 50. Passed to 
 \code{\link{fit_gaussians}}}
 
 \item{min_R_squared}{the minimum R-squared value to accept when fitting the
@@ -90,4 +90,10 @@ fewer than 5 consecutive points after imputation of single missing values,
 are removed. Profiles are cleaned by replacing missing values with 
 near-zero noise, imputing single missing values as the mean of neighboring 
 points, and smoothing with a moving average filter.
+}
+\examples{
+data(scott)
+mat = clean_profiles(scott[seq_len(5), ])
+gauss = build_gaussians(mat, max_gaussians = 3)
+
 }

@@ -5,6 +5,11 @@
 #' @return true if the input network is a square numeric matrix with more than
 #'   two values 
 #' 
+#' @examples 
+#' data(gold_standard)
+#' adj = adjacency_matrix_from_list(gold_standard)
+#' is_weighted(adj) ## returns FALSE
+#' 
 #' @export
 is_weighted = function(network) {
   # check input is square integer, or numeric matrix
@@ -17,5 +22,5 @@ is_weighted = function(network) {
   # convert to numeric 
   network = network * 1
   # network should contain at least three different non-missing values
-  dplyr::n_distinct(network) >= 3
+  dplyr::n_distinct(c(network)) >= 3
 }

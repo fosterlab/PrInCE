@@ -18,7 +18,7 @@ output:
   BiocStyle::html_document:
     toc_float: true
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Interactome reconstruction from co-elution data with PrInCE}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}  
 bibliography: bibliography.bib
@@ -101,7 +101,9 @@ The entire list is returned to a user, who can select a precision threshold that
 
 Once we have loaded a co-elution matrix and list of gold standard protein complexes into R, inferring the protein-protein interaction network with PrInCE is therefore as simple as the following command:
 
-```{r eval=F}
+```{r eval=FALSE}
+# set the seed to ensure reproducible output
+set.seed(0)
 ## not evaluated 
 PrInCE(scott, gold_standard)
 ```
@@ -111,7 +113,9 @@ One of the six features that PrInCE uses to score protein-protein interactions i
 The process of Gaussian fitting also allows PrInCE to filter proteins with poor-quality elution profiles (i.e., proteins for which a Gaussian mixture could not be fit with an r^2^ value above some minimum, set to 0.5 by default).
 However, the process of fitting Gaussian mixture models to thousands of curves is one of the more computationally intensive steps in PrInCE and consequently, the `PrInCE` function can also take a pre-computed list of fitted Gaussians, fit using the command `build_gaussians`:
 
-```{r eval=F}
+```{r eval=FALSE}
+# set the seed to ensure reproducible output
+set.seed(0)
 ## not evaluated
 build_gaussians(scott)
 ```
@@ -125,11 +129,14 @@ data(scott_gaussians)
 str(scott_gaussians[1:3])
 ```
 
-We therefore run PrInCE using our precomputed Gaussian curves with the following command, allowing PrInCE to print information about the status of the analysis (`verbose = T`) and seeding the random number generator to ensure reproducible output (`seed = 0`): 
+We therefore run PrInCE using our precomputed Gaussian curves with the following command, allowing PrInCE to print information about the status of the analysis (`verbose = TRUE`):
 
 ```{r}
+# set the seed to ensure reproducible output
+set.seed(0)
+# one-step analysis
 interactions = PrInCE(scott, gold_standard, gaussians = scott_gaussians, 
-                      verbose = T, seed = 0)
+                      verbose = TRUE)
 head(interactions, 50)
 ```
 
@@ -198,6 +205,8 @@ For the sake of time, we allow only 10 iterations for the curve-fitting algorith
 
 ```{r}
 data(scott)
+# set the seed to ensure reproducible output
+set.seed(0)
 # fit Gaussians
 gauss = build_gaussians(scott, 
                         min_points = 5, min_consecutive = 5, 
@@ -229,13 +238,13 @@ By default, all six are enabled.
 Continuing our example, if we wanted the classifier to omit the Euclidean distance, we could disable this feature using the following command: 
 
 ```{r}
-feat = calculate_features(scott, gauss, euclidean_distance = F)
+feat = calculate_features(scott, gauss, euclidean_distance = FALSE)
 head(feat)
 ```
 
 If we had multiple replicates, we would here concatenate them into a single feature data frame using the `concatenate_features` function:
 
-```{r eval=F}
+```{r eval=FALSE}
 ## not run
 # concatenate features from three different `scott` replicates
 feat1 = calculate_features(scott1, gauss1)
@@ -271,6 +280,9 @@ To use our list of protein complexes as a gold standard, we must first convert i
 ```{r}
 data(gold_standard)
 reference = adjacency_matrix_from_list(gold_standard)
+# set the seed to ensure reproducible output
+set.seed(0)
+# predict interactions
 ppi = predict_interactions(feat, reference, classifier = "SVM", models = 1, cv_folds = 5)
 ```
 

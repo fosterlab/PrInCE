@@ -6,7 +6,7 @@
 \usage{
 fit_gaussians(chromatogram, n_gaussians, max_iterations = 10,
   min_R_squared = 0.5, method = c("guess", "random"),
-  filter_gaussians_center = T, filter_gaussians_height = 0.15,
+  filter_gaussians_center = TRUE, filter_gaussians_height = 0.15,
   filter_gaussians_variance_min = 0.1,
   filter_gaussians_variance_max = 50)
 }
@@ -49,4 +49,10 @@ fit model; and the fit curve predicted by the fit model.
 \description{
 Fit mixtures of one or more Gaussians to the curve formed by a chromatogram
 profile, using nonlinear least-squares.
+}
+\examples{
+data(scott)
+chrom = clean_profile(scott[1, ])
+fit = fit_gaussians(chrom, n_gaussians = 1)
+
 }

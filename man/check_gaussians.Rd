@@ -39,3 +39,8 @@ Gaussian mixture model could be fit, if provided. In particular, the function
 will throw an error if fewer than \code{n_error} proteins have a fitted 
 Gaussian, and emit a warning if fewer than \code{pct_warning} do.
 }
+\examples{
+data(scott_gaussians)
+check_gaussians(scott_gaussians)
+  
+}

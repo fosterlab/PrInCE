@@ -4,6 +4,11 @@
 #' 
 #' @return true if the input network is a square logical or numeric matrix
 #' 
+#' @examples 
+#' data(gold_standard)
+#' adj = adjacency_matrix_from_list(gold_standard)
+#' is_unweighted(adj) ## returns TRUE
+#' 
 #' @export
 is_unweighted = function(network) {
   # check input is square logical, integer, or numeric matrix

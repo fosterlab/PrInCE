@@ -16,7 +16,17 @@ non-missing points}
 \item{min_consecutive}{filter profiles without at least this many 
 consecutive, non-missing points}
 }
+\value{
+the filtered profile matrix
+}
 \description{
 Filter a matrix of co-elution/co-fractionation profiles by removing
 profiles without a certain number of non-mising or consecutive points.
+}
+\examples{
+data(scott)
+nrow(scott)
+filtered = filter_profiles(scott)
+nrow(scott)
+
 }

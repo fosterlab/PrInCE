@@ -42,7 +42,7 @@ make_feature_from_data_frame <- function(dat, input, col_name,
   } else {
     feature_column <- filtered[[3]]
   }
-  feature_matrix[as.matrix(filtered[, 1:2])] <- feature_column
+  feature_matrix[as.matrix(filtered[, c(1, 2)])] <- feature_column
   # index matrix to get feature vector
   feat_idxs <- ref_proteins1 %in% rownames(feature_matrix) & 
     ref_proteins2 %in% rownames(feature_matrix)

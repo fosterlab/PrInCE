@@ -7,6 +7,11 @@
 #' 
 #' @return the imputed chromatogram 
 #' 
+#' @examples
+#' data(scott)
+#' chrom = scott[16, ]
+#' imputed = impute_neighbors(chrom)
+#' 
 #' @export
 impute_neighbors <- function(chromatogram) {
   fractions <- length(chromatogram)

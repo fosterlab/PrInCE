@@ -29,13 +29,18 @@
 #' fit the curve with different initial conditions; the coefficients of the 
 #' fit model; and the fit curve predicted by the fit model.
 #' 
+#' @examples
+#' data(scott)
+#' chrom = clean_profile(scott[1, ])
+#' fit = fit_gaussians(chrom, n_gaussians = 1)
+#' 
 #' @importFrom stats coef cor setNames
 #' 
 #' @export
 fit_gaussians <- function(chromatogram, n_gaussians,
                           max_iterations = 10, min_R_squared = 0.5,
                           method = c("guess", "random"),
-                          filter_gaussians_center = T,
+                          filter_gaussians_center = TRUE,
                           filter_gaussians_height = 0.15,
                           filter_gaussians_variance_min = 0.1,
                           filter_gaussians_variance_max = 50) {
@@ -48,7 +53,7 @@ fit_gaussians <- function(chromatogram, n_gaussians,
     iter <- iter + 1
     # make initial conditions
     initial_conditions <- make_initial_conditions(
-      chromatogram, n_gaussians, method = "guess", seed = iter)
+      chromatogram, n_gaussians, method = "guess")
     A <- initial_conditions$A
     mu <- initial_conditions$mu
     sigma <- initial_conditions$sigma
@@ -62,8 +67,8 @@ fit_gaussians <- function(chromatogram, n_gaussians,
       suppressWarnings(
         stats::nls(chromatogram ~ p_model(indices, A, mu, sigma), 
                         start = list(A = A, mu = mu, sigma = sigma), 
-                        trace = F,  
-                        control = list(warnOnly = T, minFactor = 1/2048)))
+                        trace = FALSE,  
+                        control = list(warnOnly = TRUE, minFactor = 1/2048)))
     }, error = function(e) { 
       e 
     }, simpleError = function(e) { 
@@ -74,7 +79,7 @@ fit_gaussians <- function(chromatogram, n_gaussians,
     
     # split up fit coefficients vector into list with three entries
     coefs <- coef(fit)
-    coefs <- split(coefs, rep(1:3, each = n_gaussians))
+    coefs <- split(coefs, rep(seq_len(3), each = n_gaussians))
     coefs <- setNames(coefs, c("A", "mu", "sigma"))
     
     # remove Gaussians with negative variances 

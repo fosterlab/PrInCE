@@ -5,13 +5,14 @@
 \title{PrInCE: Prediction of Interactomes from Co-Elution}
 \usage{
 PrInCE(profiles, gold_standard, gaussians = NULL, precision = NULL,
-  verbose = F, seed = 0, min_points = 1, min_consecutive = 5,
-  impute_NA = T, smooth = T, smooth_width = 4, max_gaussians = 5,
-  max_iterations = 50, min_R_squared = 0.5, method = c("guess",
-  "random"), criterion = c("AICc", "AIC", "BIC"), pearson_R_raw = T,
-  pearson_R_cleaned = T, pearson_P = T, euclidean_distance = T,
-  co_peak = T, co_apex = T, classifier = c("NB", "SVM", "RF", "LR",
-  "ensemble"), models = 10, cv_folds = 10, trees = 500)
+  verbose = FALSE, min_points = 1, min_consecutive = 5,
+  impute_NA = TRUE, smooth = TRUE, smooth_width = 4,
+  max_gaussians = 5, max_iterations = 50, min_R_squared = 0.5,
+  method = c("guess", "random"), criterion = c("AICc", "AIC", "BIC"),
+  pearson_R_raw = TRUE, pearson_R_cleaned = TRUE, pearson_P = TRUE,
+  euclidean_distance = TRUE, co_peak = TRUE, co_apex = TRUE,
+  classifier = c("NB", "SVM", "RF", "LR", "ensemble"), models = 10,
+  cv_folds = 10, trees = 500)
 }
 \arguments{
 \item{profiles}{the co-elution profile matrix, or a list of profile matrices
@@ -38,9 +39,6 @@ subsequently threshold the list using the
 
 \item{verbose}{if \code{TRUE}, print a series of messages about the stage
 of the analysis}
-
-\item{seed}{the seed for random number generation, to ensure reproducible
-output}
 
 \item{min_points}{filter profiles without at least this many total, 
 non-missing points; passed to \code{\link{filter_profiles}}}
@@ -183,6 +181,17 @@ every point in this ranked list, using the 'gold standard' set of protein
 complexes or binary interactions. Our recommendation is to select a 
 threshold for the precision and use this to construct an unweighted 
 protein interaction network.
+}
+\examples{
+data(scott)
+data(scott_gaussians)
+data(gold_standard)
+# analyze only the first 100 profiles
+subset = scott[seq_len(500), ]
+gauss = scott_gaussians[names(scott_gaussians) \%in\% rownames(subset)]
+ppi = PrInCE(subset, gold_standard, gaussians = gauss, models = 1, 
+             cv_folds = 3)
+
 }
 \references{
 \insertRef{stacey2017}{PrInCE}

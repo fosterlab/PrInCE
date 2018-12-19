@@ -29,7 +29,7 @@
 #' one of "AICc" (corrected AIC, and default), "AIC", or "BIC". Passed to
 #' \code{\link{choose_gaussians}}
 #' @param max_iterations the number of times to try fitting the curve with
-#' different initial conditions; defaults to 10. Passed to 
+#' different initial conditions; defaults to 50. Passed to 
 #' \code{\link{fit_gaussians}}
 #' @param min_R_squared the minimum R-squared value to accept when fitting the
 #' curve with different initial conditions; defaults to 0.5. Passed to 
@@ -62,15 +62,20 @@
 #' could not be fit by a Gaussian mixture model above the minimum R-squared 
 #' cutoff will be absent from the returned list.
 #' 
+#' @examples
+#' data(scott)
+#' mat = clean_profiles(scott[seq_len(5), ])
+#' gauss = build_gaussians(mat, max_gaussians = 3)
+#' 
 #' @export
 build_gaussians <- function(profile_matrix, 
                             min_points = 1, min_consecutive = 5,
-                            impute_NA = T, smooth = T, smooth_width = 4,
+                            impute_NA = TRUE, smooth = TRUE, smooth_width = 4,
                             max_gaussians = 5, 
                             criterion = c("AICc", "AIC", "BIC"),
-                            max_iterations = 10, min_R_squared = 0.5,
+                            max_iterations = 50, min_R_squared = 0.5,
                             method = c("guess", "random"),
-                            filter_gaussians_center = T,
+                            filter_gaussians_center = TRUE,
                             filter_gaussians_height = 0.15,
                             filter_gaussians_variance_min = 0.5,
                             filter_gaussians_variance_max = 50) {
@@ -90,7 +95,7 @@ build_gaussians <- function(profile_matrix,
   message(".. fitting Gaussian mixture models to ", P, " profiles")
   pb <- progress::progress_bar$new(
     format = "fitting :what [:bar] :percent eta: :eta",
-    clear = F, total = P, width = 80)
+    clear = FALSE, total = P, width = 80)
   max_len <- max(nchar(proteins))
   for (i in seq_len(P)) {
     protein <- proteins[i]

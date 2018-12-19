@@ -9,6 +9,10 @@
 #' 
 #' @return an adjacency matrix between all complex subunits
 #' 
+#' @examples
+#' data(gold_standard)
+#' adj = adjacency_matrix_from_list(data)
+#' 
 #' @importFrom purrr map_dfr
 #' 
 #' @export

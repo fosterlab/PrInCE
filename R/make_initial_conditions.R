@@ -15,7 +15,6 @@
 #' @param chromatogram a numeric vector corresponding to the chromatogram trace
 #' @param n_gaussians the number of Gaussians being fit 
 #' @param method one of "guess" or "random", discussed above
-#' @param seed the seed to use for random number generation
 #' @param sigma_default the default mean initial value of sigma
 #' @param sigma_noise the amount of random noise to add or subtract from 
 #' the default mean initial value of sigma
@@ -27,14 +26,18 @@
 #' @return a list of three numeric vectors (A, mu, and sigma), each having
 #' a length equal to the maximum number of Gaussians to fit 
 #' 
+#' @examples
+#' data(scott)
+#' chrom = clean_profile(scott[16, ])
+#' set.seed(0)
+#' start = make_initial_conditions(chrom, n_gaussians = 2, method = "guess")
+#' 
 #' @export
 make_initial_conditions <- function(chromatogram, n_gaussians, 
                                     method = c("guess", "random"),
-                                    seed = 1, sigma_default = 2, 
+                                    sigma_default = 2, 
                                     sigma_noise = 0.5, mu_noise = 1.5, 
                                     A_noise = 0.5) {
-  # set seed
-  set.seed(seed)
   method <- match.arg(method)
   if (method == "guess") {
     # find fractions that represent local maxima

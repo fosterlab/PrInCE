@@ -88,8 +88,6 @@
 #'   \code{\link[PrInCE]{threshold_precision}} function
 #' @param verbose if \code{TRUE}, print a series of messages about the stage
 #'   of the analysis
-#' @param seed the seed for random number generation, to ensure reproducible
-#'   output
 #' @param min_points filter profiles without at least this many total, 
 #'   non-missing points; passed to \code{\link{filter_profiles}}
 #' @param min_consecutive filter profiles without at least this many 
@@ -141,6 +139,18 @@
 #' 
 #' @return a ranked data frame of interacting proteins, with the precision
 #'   at each point in the list
+#'   
+#' @examples
+#' data(scott)
+#' data(scott_gaussians)
+#' data(gold_standard)
+#' # analyze only the first 100 profiles
+#' subset = scott[seq_len(500), ]
+#' gauss = scott_gaussians[names(scott_gaussians) %in% rownames(subset)]
+#' ppi = PrInCE(subset, gold_standard, gaussians = gauss, models = 1, 
+#'              cv_folds = 3)
+#' 
+#' @importFrom Rdpack reprompt
 #' 
 #' @export
 #' 
@@ -154,13 +164,12 @@
 #' \insertRef{skinnider2018}{PrInCE}
 PrInCE = function(profiles, gold_standard, gaussians = NULL, 
                   precision = NULL,
-                  verbose = F,
-                  seed = 0,
+                  verbose = FALSE,
                   ## build_gaussians
                   min_points = 1,
                   min_consecutive = 5,
-                  impute_NA = T,
-                  smooth = T,
+                  impute_NA = TRUE,
+                  smooth = TRUE,
                   smooth_width = 4,
                   max_gaussians = 5,
                   max_iterations = 50,
@@ -168,12 +177,12 @@ PrInCE = function(profiles, gold_standard, gaussians = NULL,
                   method = c("guess", "random"),
                   criterion = c("AICc", "AIC", "BIC"),
                   ## calculate_features
-                  pearson_R_raw = T,
-                  pearson_R_cleaned = T,
-                  pearson_P = T,
-                  euclidean_distance = T,
-                  co_peak = T,
-                  co_apex = T,
+                  pearson_R_raw = TRUE,
+                  pearson_R_cleaned = TRUE,
+                  pearson_P = TRUE,
+                  euclidean_distance = TRUE,
+                  co_peak = TRUE,
+                  co_apex = TRUE,
                   ## predict_interactions
                   classifier = c("NB", "SVM", "RF", "LR", "ensemble"), 
                   models = 10, 
@@ -285,8 +294,7 @@ PrInCE = function(profiles, gold_standard, gaussians = NULL,
                                       models = models,
                                       cv_folds = cv_folds,
                                       trees = trees,
-                                      verbose = verbose,
-                                      seed = seed)
+                                      verbose = verbose)
   
   # optionally threshold based on precison
   if (!is.null(precision)) {

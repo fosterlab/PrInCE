@@ -11,6 +11,15 @@
 #' @return a square matrix with the same row and column names as the input 
 #' profile matrix, for use in interaction prediction 
 #' 
+#' @examples 
+#' data(gold_standard)
+#' subset = adjacency_matrix_from_list(gold_standard[seq(1, 200)])
+#' target = adjacency_matrix_from_list(gold_standard)
+#' matched = match_matrix_dimensions(query, target)
+#' dim(subset)
+#' dim(target)
+#' dim(matched)
+#' 
 #' @export
 match_matrix_dimensions <- function(query, profile_matrix) {
   proteins <- rownames(profile_matrix)

@@ -4,7 +4,7 @@
 \alias{clean_profiles}
 \title{Preprocess a co-elution profile matrix}
 \usage{
-clean_profiles(profile_matrix, impute_NA = T, smooth = T,
+clean_profiles(profile_matrix, impute_NA = TRUE, smooth = TRUE,
   smooth_width = 4, noise_floor = 0.001)
 }
 \arguments{
@@ -29,4 +29,10 @@ Clean a matrix of co-elution/co-fractionation profiles by
 values with the average of neighboring values, (2) replacing missing values
 with random, near-zero noise, and (3) smoothing with a moving average
 filter.
+}
+\examples{
+data(scott)
+mat = scott[c(1, 16), ]
+mat_clean = clean_profiles(mat)
+
 }

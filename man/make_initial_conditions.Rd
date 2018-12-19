@@ -5,8 +5,8 @@
 \title{Make initial conditions for curve fitting with a mixture of Gaussians}
 \usage{
 make_initial_conditions(chromatogram, n_gaussians, method = c("guess",
-  "random"), seed = 1, sigma_default = 2, sigma_noise = 0.5,
-  mu_noise = 1.5, A_noise = 0.5)
+  "random"), sigma_default = 2, sigma_noise = 0.5, mu_noise = 1.5,
+  A_noise = 0.5)
 }
 \arguments{
 \item{chromatogram}{a numeric vector corresponding to the chromatogram trace}
@@ -14,8 +14,6 @@ make_initial_conditions(chromatogram, n_gaussians, method = c("guess",
 \item{n_gaussians}{the number of Gaussians being fit}
 
 \item{method}{one of "guess" or "random", discussed above}
-
-\item{seed}{the seed to use for random number generation}
 
 \item{sigma_default}{the default mean initial value of sigma}
 
@@ -44,4 +42,11 @@ within the fraction and intensity intervals as starting points for Gaussian
 curve-fitting. The initial value of sigma is set by default to a random 
 number within +/- 0.5 of two for both modes; this is based on our manual 
 inspection of a large number of chromatograms.
+}
+\examples{
+data(scott)
+chrom = clean_profile(scott[16, ])
+set.seed(0)
+start = make_initial_conditions(chrom, n_gaussians = 2, method = "guess")
+
 }

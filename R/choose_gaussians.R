@@ -32,6 +32,11 @@
 #' the curve; the R^2 of the fit; the number of iterations used to 
 #' fit the curve with different initial conditions; the coefficients of the 
 #' fit model; and the curve predicted by the fit model.
+#' 
+#' @examples
+#' data(scott)
+#' chrom = clean_profile(scott[1, ])
+#' gauss = choose_gaussians(chrom, max_gaussians = 3)
 #'
 #' @export
 choose_gaussians <- function(chromatogram, points = NULL,
@@ -39,7 +44,7 @@ choose_gaussians <- function(chromatogram, points = NULL,
                              criterion = c("AICc", "AIC", "BIC"),
                              max_iterations = 10, min_R_squared = 0.5,
                              method = c("guess", "random"),
-                             filter_gaussians_center = T,
+                             filter_gaussians_center = TRUE,
                              filter_gaussians_height = 0.15,
                              filter_gaussians_variance_min = 0.1,
                              filter_gaussians_variance_max = 50) {

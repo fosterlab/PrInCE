@@ -14,6 +14,14 @@
 #' \code{NA}s for protein pairs not in the gold standard and ones or zeroes
 #' based on the content of the adjacency matrix
 #' 
+#' @examples 
+#' data(gold_standard)
+#' adj = adjacency_matrix_from_list(gold_standard)
+#' proteins = unique(unlist(gold_standard))
+#' input = data.frame(protein_A = sample(proteins, 10), 
+#'                    protein_B = sample(proteins, 10))
+#' labels = make_labels(adj, input)
+#' 
 #' @export
 make_labels <- function(gold_standard, input, protein_groups = NULL) {
   proteins_1 <- as.character(input[[1]])

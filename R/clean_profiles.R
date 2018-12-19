@@ -16,8 +16,13 @@
 #' 
 #' @return a cleaned matrix
 #' 
+#' @examples
+#' data(scott)
+#' mat = scott[c(1, 16), ]
+#' mat_clean = clean_profiles(mat)
+#' 
 #' @export
-clean_profiles <- function(profile_matrix, impute_NA = T, smooth = T, 
+clean_profiles <- function(profile_matrix, impute_NA = TRUE, smooth = TRUE, 
                          smooth_width = 4, noise_floor = 0.001) {
   t(apply(profile_matrix, 1, clean_profile, impute_NA = impute_NA,
           smooth = smooth, smooth_width = smooth_width, 

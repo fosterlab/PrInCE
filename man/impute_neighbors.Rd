@@ -16,3 +16,9 @@ the imputed chromatogram
 Impute single missing values within a chromatogram profile as the average
 of their neighbors.
 }
+\examples{
+data(scott)
+chrom = scott[16, ]
+imputed = impute_neighbors(chrom)
+
+}

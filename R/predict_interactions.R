@@ -34,11 +34,22 @@
 #'   with a different k-fold cross-validation split
 #' @param cv_folds the number of folds to use for k-fold cross-validation
 #' @param trees for random forests only, the number of trees in the forest
-#' @param seed the seed for random number generation, to ensure reproducible
-#'   results
 #' 
 #' @return a ranked data frame of pairwise interactions, with the 
 #' classifier score, label, and cumulative precision for each interaction 
+#' 
+#' @examples 
+#' ## calculate features
+#' data(scott)
+#' data(scott_gaussians)
+#' subset = scott[seq_len(500), ] ## limit to first 500 proteins
+#' gauss = scott_gaussians[names(scott_gaussians) %in% rownames(subset)]
+#' features = calculate_features(subset, gauss)
+#' ## load training data
+#' data(gold_standard)
+#' ref = adjacency_matrix_from_list(gold_standard)
+#' ## predict interactions
+#' ppi = predict_interactions(features, ref, cv_folds = 3, models = 1)
 #' 
 #' @importFrom dplyr starts_with group_by mutate_if mutate ungroup arrange
 #'   full_join
@@ -47,7 +58,7 @@
 #' @export
 predict_interactions = function(
   features, gold_standard, classifier = c("NB", "SVM", "RF", "LR", "ensemble"),
-  verbose = F, models = 10, cv_folds = 10, trees = 500, seed = 0) {
+  verbose = FALSE, models = 10, cv_folds = 10, trees = 500) {
   classifier = match.arg(classifier)
   
   ## define global variables to prevent check complaining
@@ -67,16 +78,16 @@ predict_interactions = function(
     # predict with a classifier ensemble
     if (classifier == "NB") {
       interactions = predict_NB_ensemble(
-        features, labels, models, cv_folds, seed)
+        features, labels, models, cv_folds)
     } else if (classifier == "RF") {
       interactions = predict_RF_ensemble(
-        features, labels, models, cv_folds, seed, trees) 
+        features, labels, models, cv_folds, trees) 
     } else if (classifier == "SVM") {
       interactions = predict_SVM_ensemble(
-        features, labels, models, cv_folds, seed)
+        features, labels, models, cv_folds)
     } else if (classifier == "LR") {
       interactions = predict_logistic_regression_ensemble(
-        features, labels, models, cv_folds, seed)
+        features, labels, models, cv_folds)
     }
   } else if (classifier == "ensemble") {
     # predict all four separately 
@@ -84,22 +95,22 @@ predict_interactions = function(
       message("training naive Bayes classifiers ...")
     }
     interactions_NB = predict_NB_ensemble(
-      features, labels, models, cv_folds, seed) 
+      features, labels, models, cv_folds) 
     if (verbose) {
       message("training random forest classifiers ...")
     }
     interactions_RF = predict_RF_ensemble(
-      features, labels, models, cv_folds, seed, trees) 
+      features, labels, models, cv_folds, trees) 
     if (verbose) {
       message("training support vector machine classifiers ...")
     }
     interactions_SVM = predict_SVM_ensemble(
-      features, labels, models, cv_folds, seed)
+      features, labels, models, cv_folds)
     if (verbose) {
       message("training logistic regression classifiers ...")
     }
     interactions_LR = predict_logistic_regression_ensemble(
-      features, labels, models, cv_folds, seed)
+      features, labels, models, cv_folds)
     if (verbose) {
       message("ensembling predictions ...")
     }
@@ -111,7 +122,7 @@ predict_interactions = function(
       mutate_if(is.numeric, ~ rank(-.)) %>%
       group_by(protein_A, protein_B) %>%
       mutate(mean = mean(c(score.x.x, score.y.y, score.x, score.y), 
-                         na.rm = T)) %>%
+                         na.rm = TRUE)) %>%
       ungroup() %>%
       arrange(mean)
     interactions$label = make_labels(gold_standard, interactions)

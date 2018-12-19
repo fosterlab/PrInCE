@@ -25,3 +25,12 @@ Create labels for a classifier for protein pairs in the same order as
 in a dataset that will be used as input to a classifier, in a 
 memory-friendly way.
 }
+\examples{
+data(gold_standard)
+adj = adjacency_matrix_from_list(gold_standard)
+proteins = unique(unlist(gold_standard))
+input = data.frame(protein_A = sample(proteins, 10), 
+                   protein_B = sample(proteins, 10))
+labels = make_labels(adj, input)
+
+}
