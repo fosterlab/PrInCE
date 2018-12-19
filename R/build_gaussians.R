@@ -63,7 +63,7 @@
 #' cutoff will be absent from the returned list.
 #' 
 #' @export
-build_gaussians <- function(profile_matrix,
+build_gaussians <- function(profile_matrix, 
                             min_points = 1, min_consecutive = 5,
                             impute_NA = T, smooth = T, smooth_width = 4,
                             max_gaussians = 5, 

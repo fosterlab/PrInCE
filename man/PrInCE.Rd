@@ -4,7 +4,8 @@
 \alias{PrInCE}
 \title{PrInCE: Prediction of Interactomes from Co-Elution}
 \usage{
-PrInCE(profiles, gold_standard, gaussians = NULL, verbose = F)
+PrInCE(profiles, gold_standard, gaussians = NULL, verbose = F,
+  seed = 0)
 }
 \arguments{
 \item{profiles}{the co-elution profile matrix, or a list of profile matrices
@@ -26,6 +27,9 @@ is a list of numeric matrices, this should be a list of named lists}
 
 \item{verbose}{if \code{TRUE}, print a series of messages about the stage
 of the analysis}
+
+\item{seed}{the seed for random number generation, to ensure reproducible
+output}
 }
 \value{
 a ranked data frame of interacting proteins, with the precision

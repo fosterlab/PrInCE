@@ -39,26 +39,30 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction: What is PrInCE?
 
-Proteins are 
-Yet cellular functions are rarely accomplished by single proteins, acting in isolation.
-Instead, most functions are accomplished by 
+Proteins are the central players of life at the molecular level.
+Yet cellular functions are rarely accomplished by single proteins acting in isolation.
+Instead, most biological processes are accomplished by the dynamic organization of proteins and other biological macromolecules, such as RNA and DNA, into networks of physical interactions.
+Systematic maps of these protein interaction networks can provide a "wiring diagram" to complement the "parts list" revealed by genome sequencing, placing each protein into a functional context.
+However, historically, protein interaction networks were mapped primarily via using labour-intensive methods that involved tagging each protein for affinity purification, or heterologously expressing them in yeast.
+Besides being labour intensive, these approaches also yielded static pictures of cellular networks that offered little insight into how these networks are rewired by stimulation or in differentiation.
 
+Recently, a family of proteomic approaches, variously referred to as co-elution, co-migration, co-fractionation, or protein correlation profiling, has been developed that allow high-throughput mapping of protein interaction networks in native cellular conditions [@kristensen2012;@havugimana2012;@kirkwood2013].
+A subset of these even enable investigators to identify dynamic rearrangements in the protein-protein interactome in response to cellular stimulation [@kristensen2012;@scott2017], or across _in vivo_ samples, such as mouse tissues [@skinnider2018atlas].
+The underlying principle that unifies different experimental protocols is to separate protein complexes into a number of fractions, on the basis of their size (diameter) or biochemical properties, and to perform quantitative proteomic analysis of the fractions.
+Proteins with similar "profiles" across fractions can be inferred to physically interact. 
+However, because the number of potential pairs grows quadratically with the number of proteins quantified, and the number of potential complexes grows even faster, specialized bioinformatic approaches are required to infer protein interaction networks from the raw proteomics data. 
 
-- what are protein-protein networks
-- how they were historically mapped
-- what is co-migration
-
-FIGURE: heatmap, complex size going from large to small, gene names on axis
-
-- what does PrInCE do
-There are a few things that make PrInCE unique. 
-- gaussians; 
-
-## Installation
+PrInCE is an R package that uses a machine learning approach to infer protein-protein interaction networks at a user-defined level of precision from co-elution proteomics data.
+The input to PrInCE consists of a matrix derived from a co-elution proteomics experiment, with quantitations for each protein in each fraction (PrInCE can also handle more than one such matrix, in the case of biological replicates). 
+PrInCE also requires a set of 'gold standard' protein complexes to learn from. 
+It then calculates a series of features for each possible protein pair; importantly, these are derived directly from the data, without incorporating any external knowledge, a step that minimizes bias towards the rediscovery of known interactions [@skinnider2018]. 
+These features, and the accompanying gold standard, are used as input to the classifier, which learns to distinguish interacting and non-interacting pairs.
+A cross-validation procedure is then used to score every potential protein pair in the dataset, which are then ranked by their score in descending order, and the precision (defined as the ratio of true positives to true positives plus false positives) is calculated at every point in this ranked list.
+The user can then apply a precision threshold of their choice to this ranked list to infer the protein-protein interaction network from their experiment. 
 
 ## Example: Interactome rearrangements in apoptosis
 
-To demonstrate the use of PrInCE, we will work through a small example that is derived from Scott _et al._, 2017 [@scott2017]. 
+To demonstrate the use of PrInCE, we will work through a small example that is derived from a subset of the data presented in Scott _et al._, 2017 [@scott2017]. 
 In this paper, the authors mapped rearrangements in the cytoplasmic and membrane interactome during Fas-mediated apoptosis.
 Control and stimulated cytoplasmic and membrane interactomes were quantified in three replicates each, meaning the complete dataset consists of twelve replicates. 
 In practice, each set of replicates would be analyzed together (for a total of four networks).
@@ -82,10 +86,12 @@ Each protein was quantified in at least one fraction; however, many measurements
 scott[1:10, 1:5]
 ```
 
-To predict protein-protein interactions using PrInCE's machine-learning approach, we also need two pieces of information to train the classifier: a set of true positive interactions, and a set of true negative interactions.
-In practice, we recommend providing a list of experimentally verified protein complexes; PrInCE assumes intra-complex interactions represent true positives, and inter-complex interactions represent true negatives.
+This scenario is common: for example, a protein will be absent entirely from a given SEC fraction if they do not form a complex with a molecular weight in its range.
+
+To predict protein-protein interactions using PrInCE's machine-learning approach, we also need two additional pieces of information to train the classifier: a set of true positive interactions, and a set of true negative interactions.
+In practice, we recommend providing a list of experimentally verified protein complexes: PrInCE assumes intra-complex interactions represent true positives, and inter-complex interactions represent true negatives.
 These can be obtained from a number of sources, such as the CORUM database [@giurgiu2018], or our own subset of CORUM that removes complexes which may not always co-elute [@stacey2018].
-We provide a third option with the PrInCE R package due to its CC-BY license, consisting of a list of 477 human protein complexes Complex Portal [@meldal2018]. 
+In the PrInCE R package, we provide a third option which is distributed under a CC-BY license, consisting of a list of 477 human protein complexes Complex Portal [@meldal2018]. 
 
 ```{r}
 data(gold_standard)
@@ -94,18 +100,116 @@ head(gold_standard)
 
 ### Predicting protein-protein interactions: one-step analysis
 
-The main function of the PrInCE package, `PrInCE::PrInCE`, provides an end-to-end workflow for predicting protein-protein interaction networks from the raw co-elution data. 
+The main function of the PrInCE package, `PrInCE`, provides an end-to-end workflow for predicting protein-protein interaction networks from the raw co-elution data. 
 Briefly, this function first filters proteins with too little information to permit data analysis, then cleans the profiles for the remaining proteins and fits a mixture of Gaussians to each cleaned profile. 
 PrInCE then calculates six features for each protein pair, from either the raw profiles, the cleaned profiles, or the fitted Gaussian mixture models, and concatenates features across replicates if more than one replicate was used.
 These features are used as input to a machine learning model, along with the set of 'gold standard' true positive and true negative interactions, which uses a ten-fold cross-validation procedure to assign scores to each protein pair.
 Protein pairs are ranked by their classifier scores and the precision at each point in the ranked list is calculated.
 The entire list is returned to a user, who can select a precision threshold that matches their needs.
 
+Once we have loaded a co-elution matrix and list of gold standard protein complexes into R, inferring the protein-protein interaction network with PrInCE is therefore as simple as the following command:
 
+```{r eval=F}
+## not evaluated 
+PrInCE(scott, gold_standard)
+```
+
+However, this command is not evaluated in order to provide some information on a further parameter that the `PrInCE` function takes. 
+One of the six features that PrInCE uses to score protein-protein interactions is derived from fitting a mixture of Gaussians to each protein's elution profile. 
+The process of Gaussian fitting also allows PrInCE to filter proteins with poor-quality elution profiles (i.e., proteins for which a Gaussian mixture could not be fit with an r^2^ value above some minimum, set to 0.5 by default).
+However, the process of fitting Gaussian mixture models to thousands of curves is one of the more computationally intensive steps in PrInCE and consequently, the `PrInCE` function can also take a pre-computed list of fitted Gaussians, fit using the command `build_gaussians`:
+
+```{r eval=F}
+## not evaluated
+build_gaussians(scott)
+```
+
+In practice, the ability to provide pre-computed Gaussians can also save time when trying different parameters in PrInCE, such as different types of classifiers (described in greater detail in the following section). 
+
+We provide a list of fitted Gaussians for the `scott` dataset in the `scott_gaussians` object:
+
+```{r}
+data(scott_gaussians)
+str(scott_gaussians[1:3])
+```
+
+We therefore run PrInCE using our precomputed Gaussian curves with the following command, allowing PrInCE to print information about the status of the analysis (`verbose = T`) and seeding the random number generator to ensure reproducible output (`seed = 0`): 
+
+```{r}
+interactions = PrInCE(scott, gold_standard, gaussians = scott_gaussians, 
+                      verbose = T, seed = 0)
+head(interactions, 50)
+```
+
+The columns in the output are as follows:
+
+- `protein_A`: the identifier of the first protein in the pair;
+- `protein_B`: the identifier of the second in the pair;
+- `score`: the score assigned to the protein pair by the classifier
+- `label`: if the protein pair is in the reference set, this value will be `1` (for true positives) or `0` (for true negatives); for all other pairs, the value is `NA`
+- `precision`: the precision at this point in the ranked list 
+
+Note that at the very top of the list, the precision is not defined if no true positives _and_ no true negatives have yet been encountered. 
+
+In this toy example, the small size of our dataset and the small size of our gold-standard complexes mean that the precision curve is unstable below about 2,000 interactions, declining precipitously before returning to a precision in the ~80% range:
+
+```{r}
+precision = interactions$precision[1:10000]
+plot(precision)
+```
+
+In most real examples, the precision curve shows a smoother decline. 
+
+For illustrative purposes, we here threshold the network at 50% precision using the `threshold_precision` function:
+
+```{r}
+network = threshold_precision(interactions, threshold = 0.5)
+nrow(network)
+```
+
+This results in an unweighted protein-protein interaction network with 8,757 interactions.
 
 ### Predicting protein-protein interactions: step-by-step analysis
 
-Users who wish to 
+The `PrInCE` function accepts a large number of arguments that were omitted from the preceding discussion.
+We have strived to set reasonable defaults for each of these parameters, based on analyses that have involved much of the human co-elution proteomics data in the public domain.
+However, users may wish to change some of these defaults, based on the properties of their dataset or the biological questions motivating their investigation. 
+Here, we provide a step-by-step overview of the PrInCE workflow and a discussion of some of the most important parameters. 
+
+#### `build_gaussians`
+
+The `build_gaussians` function in PrInCE can be broken down into three steps.
+First, 
+
+    - min_points = 1
+    - min_consecutive = 5
+    - impute_NA = T
+    - smooth = T
+    - smooth_width = 4
+    - max_gaussians = 5
+    - criterion = c("AICc", "AIC", "BIC")
+    - max_iterations = 10
+    - min_R_squared = 0.5, method = c("guess", "random")
+    - filter_gaussians_center = T, filter_gaussians_height = 0.15
+    - filter_gaussians_variance_min = 0.5
+    - filter_gaussians_variance_max = 50
+
+#### `calculate_features` 
+
+concatenate_features
+
+#### `predict_interactions`
+
+By default, PrInCE averages predictions over an ensemble of ten classifiers, each with different cross-validation splits to ensure the results are robust to the split used. 
+However, for the sake of time we will take one final shortcut here, and use a single naive Bayes classifier, by setting the parameter `models = 10` in the function call.
+
+threshold_precision
+
+
+
+## Other features
+
+- Protein complexes
 
 ## Session info
 

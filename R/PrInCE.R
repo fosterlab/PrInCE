@@ -82,8 +82,14 @@
 #'   a numeric matrix, this should be the named list output by 
 #'   \code{\link[PrInCE]{build_gaussians}} for that matrix; if \code{profiles} 
 #'   is a list of numeric matrices, this should be a list of named lists
+#' @param precision optionally, return only interactions above the given 
+#'   precision; by default, all interactions are returned and the user can
+#'   subsequently threshold the list using the  
+#'   \code{\link[PrInCE]{threshold_precision}} function
 #' @param verbose if \code{TRUE}, print a series of messages about the stage
 #'   of the analysis
+#' @param seed the seed for random number generation, to ensure reproducible
+#'   output
 #' 
 #' @return a ranked data frame of interacting proteins, with the precision
 #'   at each point in the list
@@ -98,7 +104,10 @@
 #' \insertRef{kristensen2012}{PrInCE}
 #' 
 #' \insertRef{skinnider2018}{PrInCE}
-PrInCE = function(profiles, gold_standard, gaussians = NULL, verbose = F) {
+PrInCE = function(profiles, gold_standard, gaussians = NULL, 
+                  precision = NULL,
+                  verbose = F,
+                  seed = 0) {
   # check profile input 
   if (is.list(profiles)) {
     for (replicate_idx in seq_along(profiles)) {
@@ -180,7 +189,8 @@ PrInCE = function(profiles, gold_standard, gaussians = NULL, verbose = F) {
   input = concatenate_features(features)
   
   # predict interactions
-  interactions = predict_interactions(input, gold_standard, verbose = verbose)
+  interactions = predict_interactions(input, gold_standard, verbose = verbose,
+                                      seed = seed)
   
   # return
   return(interactions)
