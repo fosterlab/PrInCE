@@ -9,7 +9,7 @@ Authors@R: c(
   person("Leonard", "Foster", email = "foster@msl.ubc.ca", role = c("aut", "led")))
 BugReports: https://github.com/fosterlab/PrInCE-R/issues
 Description: PrInCE (Predicting Interactomes from Co-Elution) uses a naive Bayes classifier trained on dataset-derived features to recover protein-protein interactions from co-elution chromatogram profiles. This package contains the R implementation of PrInCE. 
-Depends: R (>= 3.5)
+Depends: R (>= 3.6)
 Imports:
 	purrr (>= 0.2.4),
 	dplyr (>= 0.7.4),
