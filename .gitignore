@@ -10,7 +10,7 @@
 /target/
 
 # Rstudio
-.R* 
+.Rhistory
 
 # Python
 *.pyc
