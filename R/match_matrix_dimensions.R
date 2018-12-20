@@ -15,7 +15,7 @@
 #' data(gold_standard)
 #' subset = adjacency_matrix_from_list(gold_standard[seq(1, 200)])
 #' target = adjacency_matrix_from_list(gold_standard)
-#' matched = match_matrix_dimensions(query, target)
+#' matched = match_matrix_dimensions(subset, target)
 #' dim(subset)
 #' dim(target)
 #' dim(matched)
