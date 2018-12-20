@@ -2,7 +2,7 @@
 # supporting information files available online at the Molecular Systems
 # Biology website.
 setwd("~/git/PrInCE-R")
-options(stringsAsFactors = F)
+options(stringsAsFactors = FALSE)
 library(tidyverse)
 library(magrittr)
 library(openxlsx)
@@ -33,4 +33,4 @@ scott = heavy[keep, ]
 scott = scott[order(rownames(scott)), ]
 
 # save
-devtools::use_data(scott, overwrite = T)
+devtools::use_data(scott, overwrite = TRUE)

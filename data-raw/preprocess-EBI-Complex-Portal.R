@@ -2,7 +2,7 @@
 # bundled with the PrInCE package from raw data downloaded frm the 
 # EBI Complex Portal website.
 setwd("~/git/PrInCE-R")
-options(stringsAsFactors = F)
+options(stringsAsFactors = FALSE)
 library(tidyverse)
 library(magrittr)
 
@@ -28,4 +28,4 @@ gold_standard = complexes %>%
 gold_standard = gold_standard[!duplicated(gold_standard)]
 
 # save
-devtools::use_data(gold_standard, overwrite = T)
+devtools::use_data(gold_standard, overwrite = TRUE)
