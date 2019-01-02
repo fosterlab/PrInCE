@@ -47,7 +47,8 @@ make_initial_conditions <- function(chromatogram, n_gaussians,
   }
   if (method == "guess") {
     # find fractions that represent local maxima
-    peaksX <- indices[which(diff(sign(diff(chromatogram))) == -2) + 1]
+    peaksX = indices[which(diff(sign(diff(chromatogram))) == -2) + 1]
+    peaksX = peaksX[is.finite(peaksX)]
     # catch local minima at start or end
     if (dplyr::first(chromatogram) > dplyr::nth(chromatogram, 2))
       peaksX <- c(peaksX, 1)
