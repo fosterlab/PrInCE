@@ -7,7 +7,7 @@
 fit_gaussians(chromatogram, n_gaussians, indices = NULL,
   max_iterations = 10, min_R_squared = 0.5, method = c("guess",
   "random"), filter_gaussians_center = TRUE,
-  filter_gaussians_height = 0.15, filter_gaussians_variance_min = 0.1,
+  filter_gaussians_height = 0.01, filter_gaussians_variance_min = 0.1,
   filter_gaussians_variance_max = 50)
 }
 \arguments{
@@ -45,10 +45,11 @@ this number of fractions will be filtered. Setting this value to
 zero disables filtering.}
 }
 \value{
-a list with six entries: the number of Gaussians used to fit
+a list with seven entries: the number of Gaussians used to fit
 the curve; the R^2 of the fit; the number of iterations used to 
 fit the curve with different initial conditions; the coefficients of the 
-fit model; and the fit curve predicted by the fit model.
+fit model; the log-likelihood of the fit model; and the fited curve predicted
+by the model.
 }
 \description{
 Fit mixtures of one or more Gaussians to the curve formed by a chromatogram

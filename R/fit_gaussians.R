@@ -40,7 +40,7 @@
 #' 
 #' @importFrom stats coef cor setNames
 #' @importFrom minpack.lm nlsLM
-#' @importFrom purrrr map
+#' @importFrom purrr map
 #' @importFrom magrittr %>%
 #' 
 #' @export
