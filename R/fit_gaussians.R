@@ -39,6 +39,8 @@
 #' 
 #' @importFrom stats coef cor setNames
 #' @importFrom minpack.lm nlsLM
+#' @importFrom purrrr map
+#' @importFrom magrittr %>%
 #' 
 #' @export
 fit_gaussians <- function(chromatogram, 
@@ -60,24 +62,36 @@ fit_gaussians <- function(chromatogram,
   while (iter < max_iterations & bestR2 < min_R_squared) {
     # increment iteration counter
     iter <- iter + 1
+    
+    # create formula
+    ## (p1 = A, p2 = mu, p3 = sigma)
+    get_equation = function(i, var_char = 'p') {
+      ## general form: A[i] * exp(-((x - mu[i])/sigma[i])^2)
+      paste0(var_char, (3 * i - 2), " * exp(-((index - ", var_char, 
+             (3 * i - 1), ")/", var_char, (3 * i), ")^2)")
+    }
+    # get the gaussian mixture part of the equation
+    gaussian_eqn = paste(get_equation(seq_len(n_gaussians)), collapse = " + ")
+    # add LHS to construct formula
+    model = as.formula(paste("abundance ~ ", gaussian_eqn))
+    
     # make initial conditions
-    initial_conditions <- make_initial_conditions(
-      chromatogram, n_gaussians, indices = indices, method = "guess")
-    A <- initial_conditions$A
-    mu <- initial_conditions$mu
-    sigma <- initial_conditions$sigma
+    init = make_initial_conditions(chromatogram, 
+                                   n_gaussians = n_gaussians,
+                                   indices = indices)
+    start = unlist(map(seq_len(n_gaussians), ~ c(
+      init$A[.], init$mu[.], init$sigma[.]))) %>%
+      setNames(paste0("p", seq_len(n_gaussians * 3)))
     
     # fit the model
-    p_model <- function(x, A, mu, sigma) {
-      rowSums(sapply(seq_len(n_gaussians), 
-                     function(i) A[i] * exp(-((x - mu[i])/sigma[i])^2)))
-    }
+    df = data.frame(abundance = chromatogram,
+                    index = indices)
     fit <- tryCatch({
       suppressWarnings(
-        stats::nls(chromatogram ~ p_model(indices, A, mu, sigma), 
-                        start = list(A = A, mu = mu, sigma = sigma), 
-                        trace = FALSE,  
-                        control = list(warnOnly = TRUE, minFactor = 1/2048)))
+        minpack.lm::nlsLM(formula = model, 
+                          data = df, 
+                          start = start,
+                          trace = FALSE))
     }, error = function(e) { 
       e 
     }, simpleError = function(e) { 
