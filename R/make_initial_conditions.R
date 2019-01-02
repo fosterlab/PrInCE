@@ -54,12 +54,18 @@ make_initial_conditions <- function(chromatogram, n_gaussians,
     peaksX = c(peaksX, max(indices))
     # drop redundant peaks
     peaksX = unique(peaksX)
-    # order local maxima by distance (on one side, only)
-    ## distances <- diff(peaksX)
-    ## peaksX <- peaksX[order(-distances)]
+    # drop peaks with missing values
+    peaksY = suppressWarnings(
+      map_dbl(peaksX, ~ max(chromatogram[indices == .], na.rm = T)))
+    peaksX = peaksX[is.finite(peaksY)]
+    # if there is still nothing, just pick the maximum value
+    if (length(peaksX) == 0) {
+      peaksX = which.max(chromatogram)
+    }
     # get intensities for sorted local maxima
     ## (picking max value at each idx if multiple exist)
-    peaksY <- map_dbl(peaksX, ~ max(chromatogram[indices == .]))
+    peaksY = suppressWarnings(
+      map_dbl(peaksX, ~ max(chromatogram[indices == .], na.rm = T)))
     # order by height
     peaksX <- peaksX[order(-peaksY)]
     peaksY <- peaksY[order(-peaksY)]
