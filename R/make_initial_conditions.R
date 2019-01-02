@@ -32,34 +32,44 @@
 #' set.seed(0)
 #' start = make_initial_conditions(chrom, n_gaussians = 2, method = "guess")
 #' 
+#' @importFrom purrr map_dbl 
+#' 
 #' @export
 make_initial_conditions <- function(chromatogram, n_gaussians, 
+                                    indices = NULL,
                                     method = c("guess", "random"),
                                     sigma_default = 2, 
                                     sigma_noise = 0.5, mu_noise = 1.5, 
                                     A_noise = 0.5) {
   method <- match.arg(method)
+  if (is.null(indices)) {
+    indices = seq_along(chromatogram)
+  }
   if (method == "guess") {
     # find fractions that represent local maxima
-    peaksX <- which(diff(sign(diff(chromatogram))) == -2) + 1
+    peaksX <- indices[which(diff(sign(diff(chromatogram))) == -2) + 1]
     # catch local minima at start or end
     if (dplyr::first(chromatogram) > dplyr::nth(chromatogram, 2))
       peaksX <- c(peaksX, 1)
     if (dplyr::last(chromatogram) > dplyr::nth(chromatogram, -2))
       peaksX <- c(peaksX, length(chromatogram))
+    # drop redundant peaks
+    peaksX = unique(peaksX)
     # order local maxima by distance (on one side, only)
     ## distances <- diff(peaksX)
     ## peaksX <- peaksX[order(-distances)]
     # get intensities for sorted local maxima
-    peaksY <- chromatogram[peaksX]
+    ## (picking max value at each idx if multiple exist)
+    peaksY <- map_dbl(peaksX, ~ max(chromatogram[indices == .]))
     # order by height
     peaksX <- peaksX[order(-peaksY)]
+    peaksY <- peaksY[order(-peaksY)]
     # use local maxima as initial conditions for Gaussian fitting
     A <- numeric(0)
     mu <- numeric(0)
     sigma <- numeric(0)
     for (i in seq_len(n_gaussians)) {
-      A[i] <- peaksY[i] + runif(1) - 0.5
+      A[i] <- abs(peaksY[i] + runif(1) - 0.5)
       mu[i] <- peaksX[i] + runif(1, max = 3) - 1.5
       sigma[i] <- sigma_default + runif(1) - 0.5
     }
