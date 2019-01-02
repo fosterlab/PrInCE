@@ -47,7 +47,7 @@
 fit_gaussians <- function(chromatogram, 
                           n_gaussians,
                           indices = NULL,
-                          max_iterations = 10, 
+                          max_iterations = 50, 
                           min_R_squared = 0.5,
                           method = c("guess", "random"),
                           filter_gaussians_center = TRUE,
@@ -57,10 +57,10 @@ fit_gaussians <- function(chromatogram,
   if (is.null(indices)) {
     indices <- seq_along(chromatogram)
   }
-  iter <- 0
-  bestR2 <- 0
+  iter = 0
+  bestR2 = -Inf
   bestLogLik = -Inf
-  bestCoefs <- NULL
+  bestCoefs = NULL
   while (iter < max_iterations & bestR2 < min_R_squared) {
     # increment iteration counter
     iter <- iter + 1
