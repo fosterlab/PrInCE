@@ -54,8 +54,9 @@ choose_gaussians <- function(chromatogram,
   
   # don't fit mixtures with more parameters than (experimental) points
   if (!is.null(points)) {
-    max_gaussians <- min(max_gaussians, floor(points / 3))
+    points = sum(!is.na(chromatogram))
   }
+  max_gaussians = min(max_gaussians, floor(points / 3))
   
   # fit and choose models 
   fits <- list()

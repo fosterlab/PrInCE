@@ -26,6 +26,9 @@
 #' @param filter_gaussians_variance_max Gaussians whose variance is above
 #' this number of fractions will be filtered. Setting this value to
 #' zero disables filtering.
+#' @param early_stopping if \code{TRUE} (default), stop as soon as a model with
+#' the minimum R2 value has been fit; may be set to false when comparing models
+#' to force repeated fitting 
 #'
 #' @return a list with seven entries: the number of Gaussians used to fit
 #' the curve; the R^2 of the fit; the number of iterations used to 
@@ -38,7 +41,7 @@
 #' chrom = clean_profile(scott[1, ])
 #' fit = fit_gaussians(chrom, n_gaussians = 1)
 #' 
-#' @importFrom stats coef cor setNames na.exclude
+#' @importFrom stats coef cor setNames na.omit
 #' @importFrom minpack.lm nlsLM
 #' @importFrom purrr map
 #' @importFrom magrittr %>%
@@ -53,7 +56,8 @@ fit_gaussians <- function(chromatogram,
                           filter_gaussians_center = TRUE,
                           filter_gaussians_height = 0.01,
                           filter_gaussians_variance_min = 0.1,
-                          filter_gaussians_variance_max = 50) {
+                          filter_gaussians_variance_max = 50,
+                          early_stopping = TRUE) {
   if (is.null(indices)) {
     indices <- seq_along(chromatogram)
   }
@@ -61,7 +65,7 @@ fit_gaussians <- function(chromatogram,
   bestR2 = -Inf
   bestRSS = -Inf
   bestCoefs = NULL
-  while (iter < max_iterations & bestR2 < min_R_squared) {
+  while (iter < max_iterations & (bestR2 < min_R_squared | !early_stopping)) {
     # increment iteration counter
     iter <- iter + 1
     
@@ -86,14 +90,13 @@ fit_gaussians <- function(chromatogram,
       setNames(paste0("p", seq_len(n_gaussians * 3)))
     
     # fit the model
-    df = data.frame(abundance = chromatogram,
-                    index = indices)
+    df = data.frame(index = indices, abundance = chromatogram)
     fit <- tryCatch({
       suppressWarnings(
         minpack.lm::nlsLM(formula = model, 
                           data = df, 
                           start = start,
-                          na.action = na.exclude,
+                          na.action = na.omit,
                           trace = FALSE))
     }, error = function(e) { 
       e 
@@ -145,12 +148,13 @@ fit_gaussians <- function(chromatogram,
     if (length(dplyr::first(coefs)) == 0)
       next
     curveFit = fit_curve(coefs, indices)
-    residuals = curveFit - chromatogram
-    RSS = sum(residuals^2)
-    R2 = cor(chromatogram, curveFit)^2
+    obs_idxs = which(!is.na(chromatogram))
+    residuals = curveFit[obs_idxs] - chromatogram[obs_idxs]
+    R2 = cor(chromatogram[obs_idxs], curveFit[obs_idxs])^2
     if (is.na(R2)) {
       next
     }
+    RSS = sum(residuals^2)
     # replace best fit with this model?
     if (R2 > bestR2 && R2 > min_R_squared) {
       bestR2 = R2

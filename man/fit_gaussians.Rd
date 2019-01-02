@@ -5,10 +5,10 @@
 \title{Fit a mixture of Gaussians to a chromatogram curve}
 \usage{
 fit_gaussians(chromatogram, n_gaussians, indices = NULL,
-  max_iterations = 10, min_R_squared = 0.5, method = c("guess",
+  max_iterations = 50, min_R_squared = 0.5, method = c("guess",
   "random"), filter_gaussians_center = TRUE,
   filter_gaussians_height = 0.01, filter_gaussians_variance_min = 0.1,
-  filter_gaussians_variance_max = 50)
+  filter_gaussians_variance_max = 50, early_stopping = TRUE)
 }
 \arguments{
 \item{chromatogram}{a numeric vector corresponding to the chromatogram trace}
@@ -43,13 +43,17 @@ zero disables filtering.}
 \item{filter_gaussians_variance_max}{Gaussians whose variance is above
 this number of fractions will be filtered. Setting this value to
 zero disables filtering.}
+
+\item{early_stopping}{if \code{TRUE} (default), stop as soon as a model with
+the minimum R2 value has been fit; may be set to false when comparing models
+to force repeated fitting}
 }
 \value{
 a list with seven entries: the number of Gaussians used to fit
 the curve; the R^2 of the fit; the number of iterations used to 
 fit the curve with different initial conditions; the coefficients of the 
-fit model; the log-likelihood of the fit model; and the fited curve predicted
-by the model.
+fit model; the residual sum of squares of the fit model; 
+and the fited curve predicted by the model.
 }
 \description{
 Fit mixtures of one or more Gaussians to the curve formed by a chromatogram
