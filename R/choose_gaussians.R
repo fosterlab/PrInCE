@@ -39,7 +39,9 @@
 #' gauss = choose_gaussians(chrom, max_gaussians = 3)
 #'
 #' @export
-choose_gaussians <- function(chromatogram, points = NULL,
+choose_gaussians <- function(chromatogram, 
+                             indices = NULL,
+                             points = NULL,
                              max_gaussians = 5, 
                              criterion = c("AICc", "AIC", "BIC"),
                              max_iterations = 10, min_R_squared = 0.5,
@@ -59,10 +61,16 @@ choose_gaussians <- function(chromatogram, points = NULL,
   fits <- list()
   for (n_gaussians in seq_len(max_gaussians))
     fits[[n_gaussians]] <- fit_gaussians(
-      chromatogram, n_gaussians, max_iterations, min_R_squared,
-      method = method, filter_gaussians_center, 
-      filter_gaussians_height, filter_gaussians_variance_min,
-      filter_gaussians_variance_max)
+      chromatogram, 
+      n_gaussians = n_gaussians,
+      indices = indices, 
+      max_iterations = max_iterations, 
+      min_R_squared = min_R_squared,
+      method = method, 
+      filter_gaussians_center = filter_gaussians_center, 
+      filter_gaussians_height = filter_gaussians_height, 
+      filter_gaussians_variance_min = filter_gaussians_variance_min,
+      filter_gaussians_variance_max = filter_gaussians_variance_max)
   
   # remove any models that failed to fit
   models <- purrr::map(fits, "coefs")

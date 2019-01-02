@@ -41,9 +41,11 @@
 #' @importFrom minpack.lm nlsLM
 #' 
 #' @export
-fit_gaussians <- function(chromatogram, n_gaussians,
+fit_gaussians <- function(chromatogram, 
+                          n_gaussians,
                           indices = NULL,
-                          max_iterations = 10, min_R_squared = 0.5,
+                          max_iterations = 10, 
+                          min_R_squared = 0.5,
                           method = c("guess", "random"),
                           filter_gaussians_center = TRUE,
                           filter_gaussians_height = 0.15,
