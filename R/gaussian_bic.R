@@ -10,18 +10,18 @@
 #' @param chromatogram the raw elution profile
 #' 
 #' @return the BIC of the fit model
-gaussian_bic <- function(coefs, chromatogram) {
+gaussian_bic = function(coefs, chromatogram) {
   # first, calculate log likelihood
-  N <- length(chromatogram)
-  indices <- seq_len(N)
-  fit <- fit_curve(coefs, indices)
-  res <- chromatogram - fit
-  w <- rep_len(1, N)
-  zw <- w == 0
-  loglik <- -N * (log(2 * pi) + 1 - log(N) - sum(log(w + zw)) + 
+  indices = which(!is.na(chromatogram))
+  N = length(indices)
+  fit = fit_curve(coefs, indices)
+  res = chromatogram[indices] - fit
+  w = rep_len(1, N)
+  zw = w == 0
+  loglik = -N * (log(2 * pi) + 1 - log(N) - sum(log(w + zw)) + 
                     log(sum(w * res^2)))/2
   # next, calculate parameters
-  k <- length(unlist(coefs)) + 1
-  BIC <- log(N) * k - 2 * loglik
+  k = length(unlist(coefs)) + 1
+  BIC = log(N) * k - 2 * loglik
   return(BIC)
 }

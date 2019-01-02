@@ -12,10 +12,10 @@
 #' @return the corrected AIC of the fit model
 gaussian_aicc <- function(coefs, chromatogram) {
   # first, calculate AIC
-  AIC <- gaussian_aic(coefs, chromatogram)
+  AIC = gaussian_aic(coefs, chromatogram)
   # second, calculate AICc
-  N <- length(chromatogram)
-  k <- length(unlist(coefs)) + 1
-  AICc <- AIC + (2 * k * (k + 1)) / (N - k - 1)
+  N = sum(!is.na(chromatogram))
+  k = length(unlist(coefs)) + 1
+  AICc = AIC + (2 * k * (k + 1)) / (N - k - 1)
   return(AICc)
 }
