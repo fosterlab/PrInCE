@@ -5,6 +5,9 @@
 #' 
 #' @param chromatogram a numeric vector corresponding to the chromatogram trace
 #' @param n_gaussians the number of Gaussians to fit
+#' @param indices optionally, specify the indices of the fractions for each
+#'   point in the chromatogram; by default, these are defined by the base 
+#'   R function \code{\link[base]{seq_along}}
 #' @param max_iterations the number of times to try fitting the curve with
 #' different initial conditions; defaults to 10
 #' @param min_R_squared the minimum R-squared value to accept when fitting the
@@ -35,16 +38,20 @@
 #' fit = fit_gaussians(chrom, n_gaussians = 1)
 #' 
 #' @importFrom stats coef cor setNames
+#' @importFrom minpack.lm nlsLM
 #' 
 #' @export
 fit_gaussians <- function(chromatogram, n_gaussians,
+                          indices = NULL,
                           max_iterations = 10, min_R_squared = 0.5,
                           method = c("guess", "random"),
                           filter_gaussians_center = TRUE,
                           filter_gaussians_height = 0.15,
                           filter_gaussians_variance_min = 0.1,
                           filter_gaussians_variance_max = 50) {
-  indices <- seq_len(length(chromatogram))
+  if (is.null(indices)) {
+    indices <- seq_along(chromatogram)
+  }
   iter <- 0
   bestR2 <- 0
   bestCoefs <- NULL
@@ -53,7 +60,7 @@ fit_gaussians <- function(chromatogram, n_gaussians,
     iter <- iter + 1
     # make initial conditions
     initial_conditions <- make_initial_conditions(
-      chromatogram, n_gaussians, method = "guess")
+      chromatogram, n_gaussians, indices = indices, method = "guess")
     A <- initial_conditions$A
     mu <- initial_conditions$mu
     sigma <- initial_conditions$sigma

@@ -4,16 +4,20 @@
 \alias{fit_gaussians}
 \title{Fit a mixture of Gaussians to a chromatogram curve}
 \usage{
-fit_gaussians(chromatogram, n_gaussians, max_iterations = 10,
-  min_R_squared = 0.5, method = c("guess", "random"),
-  filter_gaussians_center = TRUE, filter_gaussians_height = 0.15,
-  filter_gaussians_variance_min = 0.1,
+fit_gaussians(chromatogram, n_gaussians, indices = NULL,
+  max_iterations = 10, min_R_squared = 0.5, method = c("guess",
+  "random"), filter_gaussians_center = TRUE,
+  filter_gaussians_height = 0.15, filter_gaussians_variance_min = 0.1,
   filter_gaussians_variance_max = 50)
 }
 \arguments{
 \item{chromatogram}{a numeric vector corresponding to the chromatogram trace}
 
 \item{n_gaussians}{the number of Gaussians to fit}
+
+\item{indices}{optionally, specify the indices of the fractions for each
+point in the chromatogram; by default, these are defined by the base 
+R function \code{\link[base]{seq_along}}}
 
 \item{max_iterations}{the number of times to try fitting the curve with
 different initial conditions; defaults to 10}
