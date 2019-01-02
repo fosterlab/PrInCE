@@ -50,7 +50,7 @@ fit_gaussians <- function(chromatogram,
                           min_R_squared = 0.5,
                           method = c("guess", "random"),
                           filter_gaussians_center = TRUE,
-                          filter_gaussians_height = 0.15,
+                          filter_gaussians_height = 0.01,
                           filter_gaussians_variance_min = 0.1,
                           filter_gaussians_variance_max = 50) {
   if (is.null(indices)) {
@@ -105,32 +105,32 @@ fit_gaussians <- function(chromatogram,
     coefs <- split(coefs, rep(seq_len(3), each = n_gaussians))
     coefs <- setNames(coefs, c("A", "mu", "sigma"))
     
-    # remove Gaussians with negative variances 
     if (filter_gaussians_variance_min > 0) {
+      # remove Gaussians with negative variances 
       sigmas <- coefs[["sigma"]]
       drop <- which(sigmas < filter_gaussians_variance_min)
       if (length(drop) > 0)
         coefs <- lapply(coefs, `[`, -drop)
     }
     
-    # remove Gaussians with extremely large 
     if (filter_gaussians_variance_max > 0) {
+      # remove Gaussians with extremely large amplitude
       sigmas <- coefs[["sigma"]]
       drop <- which(sigmas > filter_gaussians_variance_max)
       if (length(drop) > 0)
         coefs <- lapply(coefs, `[`, -drop)
     }
     
-    # (optional): remove Gaussians outside bounds of chromatogram
     if (filter_gaussians_center) {
+      # remove Gaussians outside bounds of chromatogram
       means <- coefs[["mu"]]
       drop <- which(means < 0 | means > length(chromatogram))
       if (length(drop) > 0)
         coefs <- lapply(coefs, `[`, -drop)
     }
     
-    # (optional): remove Gaussians less than 15% of height
     if (filter_gaussians_height > 0) {
+      # remove Gaussians less than 15% of height
       minHeight <- max(chromatogram) * filter_gaussians_height
       heights <- coefs[["A"]]
       drop <- which(heights < minHeight)
