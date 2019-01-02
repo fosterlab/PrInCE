@@ -30,15 +30,15 @@
 #' @return a list with seven entries: the number of Gaussians used to fit
 #' the curve; the R^2 of the fit; the number of iterations used to 
 #' fit the curve with different initial conditions; the coefficients of the 
-#' fit model; the log-likelihood of the fit model; and the fited curve predicted
-#' by the model.
+#' fit model; the residual sum of squares of the fit model; 
+#' and the fited curve predicted by the model.
 #' 
 #' @examples
 #' data(scott)
 #' chrom = clean_profile(scott[1, ])
 #' fit = fit_gaussians(chrom, n_gaussians = 1)
 #' 
-#' @importFrom stats coef cor setNames
+#' @importFrom stats coef cor setNames na.exclude
 #' @importFrom minpack.lm nlsLM
 #' @importFrom purrr map
 #' @importFrom magrittr %>%
@@ -59,7 +59,7 @@ fit_gaussians <- function(chromatogram,
   }
   iter = 0
   bestR2 = -Inf
-  bestLogLik = -Inf
+  bestRSS = -Inf
   bestCoefs = NULL
   while (iter < max_iterations & bestR2 < min_R_squared) {
     # increment iteration counter
@@ -93,6 +93,7 @@ fit_gaussians <- function(chromatogram,
         minpack.lm::nlsLM(formula = model, 
                           data = df, 
                           start = start,
+                          na.action = na.exclude,
                           trace = FALSE))
     }, error = function(e) { 
       e 
@@ -126,7 +127,7 @@ fit_gaussians <- function(chromatogram,
     if (filter_gaussians_center) {
       # remove Gaussians outside bounds of chromatogram
       means <- coefs[["mu"]]
-      drop <- which(means < 0 | means > length(chromatogram))
+      drop <- which(means < 0 | means > max(indices))
       if (length(drop) > 0)
         coefs <- lapply(coefs, `[`, -drop)
     }
@@ -143,25 +144,30 @@ fit_gaussians <- function(chromatogram,
     # calculate R^2
     if (length(dplyr::first(coefs)) == 0)
       next
-    curveFit <- fit_curve(coefs, indices)
-    R2 <- cor(chromatogram, curveFit)^2
+    curveFit = fit_curve(coefs, indices)
+    residuals = curveFit - chromatogram
+    RSS = sum(residuals^2)
+    R2 = cor(chromatogram, curveFit)^2
+    if (is.na(R2)) {
+      next
+    }
     # replace best fit with this model?
-    if (R2 > bestR2 & R2 > min_R_squared) {
-      bestR2 <- R2
-      bestLogLik = logLik(fit)
-      bestCoefs <- coefs
+    if (R2 > bestR2 && R2 > min_R_squared) {
+      bestR2 = R2
+      bestRSS = RSS
+      bestCoefs = coefs
     }
   }
   if (!is.null(bestCoefs)) {
-    curveFit <- fit_curve(bestCoefs, indices)
+    curveFit = fit_curve(bestCoefs, indices)
   } else {
-    curveFit <- NULL
+    curveFit = NULL
   }
   results <- list(n_gaussians = n_gaussians,
                   R2 = bestR2, 
                   iterations = iter, 
                   coefs = bestCoefs, 
-                  logLik = bestLogLik,
+                  RSS = bestRSS,
                   curveFit = curveFit)
   return(results)
 }
