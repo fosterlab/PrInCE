@@ -50,10 +50,8 @@ make_initial_conditions <- function(chromatogram, n_gaussians,
     peaksX = indices[which(diff(sign(diff(chromatogram))) == -2) + 1]
     peaksX = peaksX[is.finite(peaksX)]
     # catch local minima at start or end
-    if (dplyr::first(chromatogram) > dplyr::nth(chromatogram, 2))
-      peaksX <- c(peaksX, 1)
-    if (dplyr::last(chromatogram) > dplyr::nth(chromatogram, -2))
-      peaksX <- c(peaksX, length(chromatogram))
+    peaksX = c(peaksX, 1)
+    peaksX = c(peaksX, max(indices))
     # drop redundant peaks
     peaksX = unique(peaksX)
     # order local maxima by distance (on one side, only)
