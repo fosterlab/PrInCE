@@ -27,10 +27,11 @@
 #' this number of fractions will be filtered. Setting this value to
 #' zero disables filtering.
 #'
-#' @return a list with six entries: the number of Gaussians used to fit
+#' @return a list with seven entries: the number of Gaussians used to fit
 #' the curve; the R^2 of the fit; the number of iterations used to 
 #' fit the curve with different initial conditions; the coefficients of the 
-#' fit model; and the fit curve predicted by the fit model.
+#' fit model; the log-likelihood of the fit model; and the fited curve predicted
+#' by the model.
 #' 
 #' @examples
 #' data(scott)
@@ -58,6 +59,7 @@ fit_gaussians <- function(chromatogram,
   }
   iter <- 0
   bestR2 <- 0
+  bestLogLik = -Inf
   bestCoefs <- NULL
   while (iter < max_iterations & bestR2 < min_R_squared) {
     # increment iteration counter
@@ -146,6 +148,7 @@ fit_gaussians <- function(chromatogram,
     # replace best fit with this model?
     if (R2 > bestR2 & R2 > min_R_squared) {
       bestR2 <- R2
+      bestLogLik = logLik(fit)
       bestCoefs <- coefs
     }
   }
@@ -154,7 +157,11 @@ fit_gaussians <- function(chromatogram,
   } else {
     curveFit <- NULL
   }
-  results <- list(n_gaussians = n_gaussians, R2 = bestR2, iterations = iter,
-                  coefs = bestCoefs, curveFit = curveFit)
+  results <- list(n_gaussians = n_gaussians,
+                  R2 = bestR2, 
+                  iterations = iter, 
+                  coefs = bestCoefs, 
+                  logLik = bestLogLik,
+                  curveFit = curveFit)
   return(results)
 }
