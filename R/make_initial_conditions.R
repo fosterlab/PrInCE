@@ -14,6 +14,8 @@
 #' 
 #' @param chromatogram a numeric vector corresponding to the chromatogram trace
 #' @param n_gaussians the number of Gaussians being fit 
+#' @param clean if \code{TRUE}, use the cleaned version of the profile to guess
+#' initial conditions
 #' @param method one of "guess" or "random", discussed above
 #' @param sigma_default the default mean initial value of sigma
 #' @param sigma_noise the amount of random noise to add or subtract from 
@@ -28,14 +30,14 @@
 #' 
 #' @examples
 #' data(scott)
-#' chrom = clean_profile(scott[16, ])
 #' set.seed(0)
 #' start = make_initial_conditions(chrom, n_gaussians = 2, method = "guess")
 #' 
-#' @importFrom purrr map_dbl 
+#' @importFrom purrr map_dbl map_lgl
 #' 
 #' @export
 make_initial_conditions <- function(chromatogram, n_gaussians, 
+                                    clean = TRUE, 
                                     indices = NULL,
                                     method = c("guess", "random"),
                                     sigma_default = 2, 
@@ -44,6 +46,15 @@ make_initial_conditions <- function(chromatogram, n_gaussians,
   method <- match.arg(method)
   if (is.null(indices)) {
     indices = seq_along(chromatogram)
+  }
+  if (clean) {
+    ## identify points (if any) where chromatogram should be split
+    pos = which(map_lgl(seq_len(length(indices) - 1), ~
+                          indices[. + 1] < indices[.])) + 1
+    ## clean profiles and reassemble
+    split = unname(split(chromatogram, cumsum(
+      seq_along(chromatogram) %in% pos)))
+    chromatogram = unlist(map(split, clean_profile))
   }
   if (method == "guess") {
     # find fractions that represent local maxima
