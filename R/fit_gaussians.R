@@ -150,7 +150,7 @@ fit_gaussians <- function(chromatogram,
     curveFit = fit_curve(coefs, indices)
     obs_idxs = which(!is.na(chromatogram))
     residuals = curveFit[obs_idxs] - chromatogram[obs_idxs]
-    R2 = cor(chromatogram[obs_idxs], curveFit[obs_idxs])^2
+    R2 = suppressWarnings(cor(chromatogram[obs_idxs], curveFit[obs_idxs])^2)
     if (is.na(R2)) {
       next
     }
