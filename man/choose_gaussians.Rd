@@ -9,7 +9,7 @@ choose_gaussians(chromatogram, indices = NULL, points = NULL,
   max_iterations = 50, min_R_squared = 0.5, method = c("guess",
   "random"), filter_gaussians_center = TRUE,
   filter_gaussians_height = 0.15, filter_gaussians_variance_min = 0.1,
-  filter_gaussians_variance_max = 50)
+  filter_gaussians_variance_max = 50, early_stopping = TRUE)
 }
 \arguments{
 \item{chromatogram}{a numeric vector corresponding to the chromatogram trace}
@@ -45,6 +45,10 @@ threshold will be filtered. Setting this value to zero disables filtering.}
 
 \item{filter_gaussians_variance_max}{Gaussians whose variance is above this 
 threshold will be filtered. Setting this value to zero disables filtering.}
+
+\item{early_stopping}{if \code{TRUE} (default), stop as soon as a model with
+the minimum R2 value has been fit; may be set to false when comparing models
+to force repeated fitting}
 }
 \value{
 a list with five entries: the number of Gaussians used to fit

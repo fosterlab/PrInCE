@@ -27,6 +27,9 @@
 #' threshold will be filtered. Setting this value to zero disables filtering.
 #' @param filter_gaussians_variance_max Gaussians whose variance is above this 
 #' threshold will be filtered. Setting this value to zero disables filtering.
+#' @param early_stopping if \code{TRUE} (default), stop as soon as a model with
+#' the minimum R2 value has been fit; may be set to false when comparing models
+#' to force repeated fitting 
 #'
 #' @return a list with five entries: the number of Gaussians used to fit
 #' the curve; the R^2 of the fit; the number of iterations used to 
@@ -49,7 +52,8 @@ choose_gaussians <- function(chromatogram,
                              filter_gaussians_center = TRUE,
                              filter_gaussians_height = 0.15,
                              filter_gaussians_variance_min = 0.1,
-                             filter_gaussians_variance_max = 50) {
+                             filter_gaussians_variance_max = 50,
+                             early_stopping = TRUE) {
   criterion <- match.arg(criterion)
   
   # don't fit mixtures with more parameters than (experimental) points
@@ -71,7 +75,8 @@ choose_gaussians <- function(chromatogram,
       filter_gaussians_center = filter_gaussians_center, 
       filter_gaussians_height = filter_gaussians_height, 
       filter_gaussians_variance_min = filter_gaussians_variance_min,
-      filter_gaussians_variance_max = filter_gaussians_variance_max)
+      filter_gaussians_variance_max = filter_gaussians_variance_max,
+      early_stopping = early_stopping)
   
   # remove any models that failed to fit
   models <- purrr::map(fits, "coefs")
