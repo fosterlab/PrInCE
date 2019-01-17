@@ -33,19 +33,3 @@ results are robust to the partitioning of the dataset into folds. For each
 model, the median of classifier scores across all folds is calculated.
 Then, the median of all such medians across all models is calculated.
 }
-\examples{
-## calculate features
-data(scott)
-data(scott_gaussians)
-subset = scott[seq_len(500), ] ## limit to first 500 proteins
-gauss = scott_gaussians[names(scott_gaussians) \%in\% rownames(subset)]
-features = calculate_features(subset, gauss)
-## make training labels
-data(gold_standard)
-ref = adjacency_matrix_from_list(gold_standard)
-labels = make_labels(ref, features)
-## predict interactions with random forest classifier
-ppi = predict_logistic_regression_ensemble(
-    features, labels, cv_folds = 3, models = 1)
-
-}
