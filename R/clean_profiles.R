@@ -7,7 +7,7 @@
 #' filter. 
 #' 
 #' @param profile_matrix a numeric matrix of co-elution profiles, with proteins
-#' in rows, or a \code{\link[MSnbase]{MSnSet}} object
+#' in rows, or a \code{\linkS4class{MSnSet}} object
 #' @param impute_NA if true, impute single missing values with the average of
 #' neighboring values 
 #' @param smooth if true, smooth the chromatogram with a moving average filter
@@ -22,6 +22,7 @@
 #' mat_clean = clean_profiles(mat)
 #' 
 #' @importFrom MSnbase exprs
+#' @importFrom Biobase exprs<-
 #' @importFrom methods is
 #' 
 #' @export

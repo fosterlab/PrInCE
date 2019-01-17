@@ -7,7 +7,7 @@
 #' can be disabled.
 #' 
 #' @param profile_matrix a numeric matrix of co-elution profiles, with proteins
-#' in rows, or a \code{\link[MSnbase]{MSnSet}} object
+#' in rows, or a \code{\linkS4class{MSnSet}} object
 #' @param gaussians a list of Gaussian mixture models fit to the profile matrix
 #' by \code{link{build_gaussians}}
 #' @param pearson_R_raw if true, include the Pearson correlation (R) between

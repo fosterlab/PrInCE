@@ -4,7 +4,7 @@
 #' profiles without a certain number of non-mising or consecutive points.
 #' 
 #' @param profile_matrix a numeric matrix of co-elution profiles, with proteins
-#'   in rows
+#'   in rows, or a \code{\linkS4class{MSnSet}} object
 #' @param min_points filter profiles without at least this many total, 
 #'   non-missing points
 #' @param min_consecutive filter profiles without at least this many 
@@ -19,6 +19,7 @@
 #' nrow(scott)
 #' 
 #' @importFrom MSnbase exprs
+#' @importFrom Biobase exprs<-
 #' @importFrom methods is
 #' 
 #' @export

@@ -14,7 +14,7 @@ build_gaussians(profile_matrix, min_points = 1, min_consecutive = 5,
 }
 \arguments{
 \item{profile_matrix}{a numeric matrix of co-elution profiles, with proteins
-in rows, or a \code{\link[MSnbase]{MSnSet}} object}
+in rows, or a \code{\linkS4class{MSnSet}} object}
 
 \item{min_points}{filter profiles without at least this many total, 
 non-missing points; passed to \code{\link{filter_profiles}}}

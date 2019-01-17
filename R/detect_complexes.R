@@ -6,7 +6,7 @@
 #' correlation or Euclidean distance between all proteins in the matrix, and 
 #' 
 #' @param profile_matrix a matrix of chromatograms, with proteins in the columns
-#'   and fractions in the rows, or a \code{\link[MSnbase]{MSnSet}} object
+#'   and fractions in the rows, or a \code{\linkS4class{MSnSet}} object
 #' @param complexes a named list of protein complexes, where the name is the
 #'   complex name and the entries are proteins within that complex 
 #' @param min_pairs the minimum number of pairwise observations to count a 

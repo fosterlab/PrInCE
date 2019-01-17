@@ -9,7 +9,7 @@ detect_complexes(profile_matrix, complexes, method = c("pearson",
 }
 \arguments{
 \item{profile_matrix}{a matrix of chromatograms, with proteins in the columns
-and fractions in the rows, or a \code{\link[MSnbase]{MSnSet}} object}
+and fractions in the rows, or a \code{\linkS4class{MSnSet}} object}
 
 \item{complexes}{a named list of protein complexes, where the name is the
 complex name and the entries are proteins within that complex}

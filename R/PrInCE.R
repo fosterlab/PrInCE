@@ -23,7 +23,7 @@
 #' complexes. For computational convenience, Gaussian mixture models can be
 #' pre-fit to every profile and provided separately to the \code{PrInCE} 
 #' function. The matrix, or matrices, can be provided to PrInCE either as
-#' numeric matrices or as \code{\link[MSnbase]{MSnSet}} objects.
+#' numeric matrices or as \code{\linkS4class{MSnSet}} objects.
 #' 
 #' PrInCE implements three different types of classifiers to predict 
 #' protein-protein interaction networks, including naive Bayes (the default),
@@ -72,8 +72,8 @@
 #' @param profiles the co-elution profile matrix, or a list of profile matrices
 #'   if replicate experiments were performed. Can be a single numeric matrix,
 #'   with proteins in rows and fractions in columns, or a list of matrices.
-#'   Alternatively, can be provided as a single \code{\link[MSnbase]{MSnSet}} 
-#'   object or a list of objects.
+#'   Alternatively, can be provided as a single 
+#'   \code{\linkS4class{MSnSet}} object or a list of objects.
 #' @param gold_standard a set of 'gold standard' interactions, used to train the
 #'   classifier. Can be provided either as an adjacency matrix, in which 
 #'   both rows and columns correspond to protein IDs in the co-elution matrix

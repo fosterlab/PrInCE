@@ -1,6 +1,6 @@
 Package: PrInCE
 Title: Predicting Interactomes from Co-Elution
-Version: 0.99.4
+Version: 0.99.5
 Authors@R: c(
   person("Michael", "Skinnider", email = "michael.skinnider@msl.ubc.ca", role = c("aut", "trl", "cre")),
   person("R. Greg", "Stacey", email = "richard.greg.stacey@msl.ubc.ca", role = "ctb"),
@@ -24,6 +24,7 @@ Imports:
 	speedglm (>= 0.3-2),
 	tester (>= 0.1.7),
 	magrittr (>= 1.5),
+	Biobase (>= 2.40.0),
 	MSnbase (>= 2.8.3),
 	stats,
 	utils,
