@@ -9,7 +9,7 @@ clean_profiles(profile_matrix, impute_NA = TRUE, smooth = TRUE,
 }
 \arguments{
 \item{profile_matrix}{a numeric matrix of co-elution profiles, with proteins
-in rows}
+in rows, or a \code{\link[MSnbase]{MSnSet}} object}
 
 \item{impute_NA}{if true, impute single missing values with the average of
 neighboring values}

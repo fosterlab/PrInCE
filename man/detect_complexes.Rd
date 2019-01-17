@@ -4,12 +4,12 @@
 \alias{detect_complexes}
 \title{Detect significantly interacting complexes in a chromatogram matrix}
 \usage{
-detect_complexes(mat, complexes, method = c("pearson", "euclidean"),
-  min_pairs = 10, bootstraps = 100, progress = TRUE)
+detect_complexes(profile_matrix, complexes, method = c("pearson",
+  "euclidean"), min_pairs = 10, bootstraps = 100, progress = TRUE)
 }
 \arguments{
-\item{mat}{a matrix of chromatograms, with proteins in the columns and
-fractions in the rows}
+\item{profile_matrix}{a matrix of chromatograms, with proteins in the columns
+and fractions in the rows, or a \code{\link[MSnbase]{MSnSet}} object}
 
 \item{complexes}{a named list of protein complexes, where the name is the
 complex name and the entries are proteins within that complex}

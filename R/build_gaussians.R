@@ -10,7 +10,7 @@
 #' points, and smoothing with a moving average filter. 
 #' 
 #' @param profile_matrix a numeric matrix of co-elution profiles, with proteins
-#' in rows
+#' in rows, or a \code{\link[MSnbase]{MSnSet}} object
 #' @param min_points filter profiles without at least this many total, 
 #' non-missing points; passed to \code{\link{filter_profiles}}
 #' @param min_consecutive filter profiles without at least this many 
@@ -67,6 +67,9 @@
 #' mat = clean_profiles(scott[seq_len(5), ])
 #' gauss = build_gaussians(mat, max_gaussians = 3)
 #' 
+#' @importFrom MSnbase exprs
+#' @importFrom methods is
+#' 
 #' @export
 build_gaussians <- function(profile_matrix, 
                             min_points = 1, min_consecutive = 5,
@@ -79,6 +82,10 @@ build_gaussians <- function(profile_matrix,
                             filter_gaussians_height = 0.15,
                             filter_gaussians_variance_min = 0.5,
                             filter_gaussians_variance_max = 50) {
+  if (is(profile_matrix, "MSnSet")) {
+    profile_matrix = exprs(profile_matrix)
+  }
+  
   # preprocess chromatograms: filter and clean
   filtered <- filter_profiles(profile_matrix,
                               min_points = min_points,
@@ -86,7 +93,7 @@ build_gaussians <- function(profile_matrix,
   cleaned <- clean_profiles(filtered,
                             impute_NA = impute_NA,
                             smooth = smooth,
-                            smooth_width = 4)
+                            smooth_width = smooth_width)
   
   # fit Gaussians, displaying progress bar
   gaussians <- list()

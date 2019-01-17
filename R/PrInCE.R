@@ -22,7 +22,8 @@
 #' matrix of known interactions (and non-interactions), or a list of protein
 #' complexes. For computational convenience, Gaussian mixture models can be
 #' pre-fit to every profile and provided separately to the \code{PrInCE} 
-#' function.
+#' function. The matrix, or matrices, can be provided to PrInCE either as
+#' numeric matrices or as \code{\link[MSnbase]{MSnSet}} objects.
 #' 
 #' PrInCE implements three different types of classifiers to predict 
 #' protein-protein interaction networks, including naive Bayes (the default),
@@ -70,7 +71,9 @@
 #' 
 #' @param profiles the co-elution profile matrix, or a list of profile matrices
 #'   if replicate experiments were performed. Can be a single numeric matrix,
-#'   with proteins in rows and fractions in columns, or a list of matrices  
+#'   with proteins in rows and fractions in columns, or a list of matrices.
+#'   Alternatively, can be provided as a single \code{\link[MSnbase]{MSnSet}} 
+#'   object or a list of objects.
 #' @param gold_standard a set of 'gold standard' interactions, used to train the
 #'   classifier. Can be provided either as an adjacency matrix, in which 
 #'   both rows and columns correspond to protein IDs in the co-elution matrix
@@ -151,6 +154,8 @@
 #'              cv_folds = 3)
 #' 
 #' @importFrom Rdpack reprompt
+#' @importFrom MSnbase exprs
+#' @importFrom methods is
 #' 
 #' @export
 #' 
@@ -162,7 +167,8 @@
 #' \insertRef{kristensen2012}{PrInCE}
 #' 
 #' \insertRef{skinnider2018}{PrInCE}
-PrInCE = function(profiles, gold_standard, gaussians = NULL, 
+PrInCE = function(profiles, gold_standard, 
+                  gaussians = NULL, 
                   precision = NULL,
                   verbose = FALSE,
                   ## build_gaussians
@@ -188,7 +194,7 @@ PrInCE = function(profiles, gold_standard, gaussians = NULL,
                   models = 10, 
                   cv_folds = 10,
                   trees = 500
-                  ) {
+) {
   method = match.arg(method)
   criterion = match.arg(criterion)
   classifier = match.arg(classifier)
@@ -196,12 +202,17 @@ PrInCE = function(profiles, gold_standard, gaussians = NULL,
   # check profile input 
   if (is.list(profiles)) {
     for (replicate_idx in seq_along(profiles)) {
-      profile_matrix = profiles[[replicate_idx]]
-      profile_matrix = data.matrix(profile_matrix)
-      profiles[[replicate_idx]] = profile_matrix
-      if (!is.numeric(profile_matrix))
+      replicate = profiles[[replicate_idx]]
+      if (is(replicate, "MSnSet")) {
+        profile_matrix = exprs(replicate)
+      } else {
+        profile_matrix = data.matrix(replicate)
+      }
+      if (!is.numeric(profile_matrix)) {
         stop("list input (item #", replicate_idx, 
              ") could not be coerced to numeric matrix")
+      }
+      profiles[[replicate_idx]] = profile_matrix
       # also check Gaussians
       if (!is.null(gaussians)) {
         if (length(gaussians) < replicate_idx) {
@@ -212,7 +223,11 @@ PrInCE = function(profiles, gold_standard, gaussians = NULL,
       }
     }
   } else {
-    profile_matrix = data.matrix(profiles)
+    if (is(profiles, "MSnSet")) {
+      profile_matrix = exprs(profiles)
+    } else {
+      profile_matrix = data.matrix(profiles)
+    }
     if (!is.numeric(profile_matrix))
       stop("input could not be coerced to numeric matrix")
     # wrap in a list
@@ -223,7 +238,7 @@ PrInCE = function(profiles, gold_standard, gaussians = NULL,
       gaussians = list(gaussians)
     }
   }
-  
+
   # check gold standard input
   if (is.data.frame(gold_standard)) {
     # convert to adjacency matrix
@@ -249,19 +264,19 @@ PrInCE = function(profiles, gold_standard, gaussians = NULL,
     } else {
       if (verbose) {
         message("  fitting Gaussians ...")
-        gauss = build_gaussians(mat,
-                                min_points = min_points,
-                                min_consecutive = min_consecutive,
-                                impute_NA = impute_NA,
-                                smooth = smooth,
-                                smooth_width = smooth_width,
-                                max_gaussians = max_gaussians,
-                                max_iterations = max_iterations,
-                                min_R_squared = min_R_squared,
-                                method = method)
       }
+      gauss = build_gaussians(mat,
+                              min_points = min_points,
+                              min_consecutive = min_consecutive,
+                              impute_NA = impute_NA,
+                              smooth = smooth,
+                              smooth_width = smooth_width,
+                              max_gaussians = max_gaussians,
+                              max_iterations = max_iterations,
+                              min_R_squared = min_R_squared,
+                              method = method)
     }
-    
+
     # filter matrix based on Gaussians
     before = nrow(mat)
     mat = mat[names(gauss), ]

@@ -10,7 +10,7 @@ calculate_features(profile_matrix, gaussians, pearson_R_raw = TRUE,
 }
 \arguments{
 \item{profile_matrix}{a numeric matrix of co-elution profiles, with proteins
-in rows}
+in rows, or a \code{\link[MSnbase]{MSnSet}} object}
 
 \item{gaussians}{a list of Gaussian mixture models fit to the profile matrix
 by \code{link{build_gaussians}}}

@@ -5,8 +5,8 @@
 #' of equivalent size. The function begins by calculating the Pearson 
 #' correlation or Euclidean distance between all proteins in the matrix, and 
 #' 
-#' @param mat a matrix of chromatograms, with proteins in the columns and
-#'   fractions in the rows
+#' @param profile_matrix a matrix of chromatograms, with proteins in the columns
+#'   and fractions in the rows, or a \code{\link[MSnbase]{MSnSet}} object
 #' @param complexes a named list of protein complexes, where the name is the
 #'   complex name and the entries are proteins within that complex 
 #' @param min_pairs the minimum number of pairwise observations to count a 
@@ -30,20 +30,27 @@
 #' @importFrom utils combn
 #' @importFrom progress progress_bar
 #' @importFrom purrr map_dbl
+#' @importFrom MSnbase exprs
+#' @importFrom methods is
+#' 
 #' @export
-detect_complexes = function(mat, complexes, 
+detect_complexes = function(profile_matrix, complexes, 
                             method = c("pearson", "euclidean"),
                             min_pairs = 10, 
                             bootstraps = 100,
                             progress = TRUE) {
   method = match.arg(method)
   
+  if (is(profile_matrix, "MSnSet")) {
+    profile_matrix = exprs(profile_matrix)
+  }
+  
   # construct network
-  n = crossprod(!is.na(mat))
+  n = crossprod(!is.na(profile_matrix))
   if (method == "pearson") {
-    network = cor(mat, use = 'pairwise.complete.obs')
+    network = cor(profile_matrix, use = 'pairwise.complete.obs')
   } else if (method == "euclidean") {
-    network = as.matrix(dist(t(mat)))  
+    network = as.matrix(dist(t(profile_matrix)))  
   }
   network[n < min_pairs] = NA
   
