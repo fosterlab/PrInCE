@@ -129,13 +129,15 @@ data(scott_gaussians)
 str(scott_gaussians[1:3])
 ```
 
-We therefore run PrInCE using our precomputed Gaussian curves with the following command, allowing PrInCE to print information about the status of the analysis (`verbose = TRUE`):
+We therefore run PrInCE using our precomputed Gaussian curves with the following command, allowing PrInCE to print information about the status of the analysis (`verbose = TRUE`) and limiting the number of cross-validation folds for the sake of time:
 
 ```{r}
 # set the seed to ensure reproducible output
 set.seed(0)
 # one-step analysis
-interactions = PrInCE(scott, gold_standard, gaussians = scott_gaussians, 
+interactions = PrInCE(scott, gold_standard, 
+                      gaussians = scott_gaussians, 
+                      cv_folds = 3,
                       verbose = TRUE)
 head(interactions, 50)
 ```
@@ -150,7 +152,7 @@ The columns in the output are as follows:
 
 Note that at the very top of the list, the precision is not defined if no true positives _and_ no true negatives have yet been encountered. 
 
-In this toy example, the small size of our dataset and the small size of our gold-standard complexes mean that the precision curve is unstable below about 2,000 interactions, declining precipitously before returning to a precision in the ~80% range:
+In this toy example, the small size of our dataset and the small size of our gold-standard complexes mean that the precision curve is unstable below about 2,000 interactions:
 
 ```{r}
 precision = interactions$precision[1:10000]
@@ -200,7 +202,7 @@ This function takes the following parameters:
 
 All of these parameters except the last four are exposed through the `PrInCE` function. 
 
-As an example, we will re-analyze the `scott` dataset with stricter filtering criteria, requiring the presence of at least five (non-imputed) data points in addition to five consecutive points; fitting with a maximum of three Gaussians, instead of five; and requiring a better fit than the default settings. 
+As an example, we will re-analyze the `scott` dataset with stricter filtering criteria, requiring the presence of at least ten (non-imputed) data points in addition to five consecutive points; fitting with a maximum of three Gaussians, instead of five; and requiring a better fit than the default settings. 
 For the sake of time, we allow only 10 iterations for the curve-fitting algorithm here. 
 
 ```{r}
@@ -209,7 +211,7 @@ data(scott)
 set.seed(0)
 # fit Gaussians
 gauss = build_gaussians(scott, 
-                        min_points = 5, min_consecutive = 5, 
+                        min_points = 10, min_consecutive = 5, 
                         max_gaussians = 3, min_R_squared = 0.75,
                         max_iterations = 10)
 # filter profiles that were not fit
@@ -274,7 +276,7 @@ These options are controlled using the following parameters:
 - `seed`: the seed for random number generation, used to ensure reproducible output
 
 Continuing our example, we will demonstrate the use of a support vector machine to rank potential interactions (`classifier = "SVM"`). 
-For the sake of time, we use a single model (omitting ensembling; `models = 1`) and only five cross-validation folds (`cv_folds = 5`).
+For the sake of time, we use a single model (omitting ensembling; `models = 1`) and only three-fold cross-validation folds (`cv_folds = 3`).
 To use our list of protein complexes as a gold standard, we must first convert it to an adjacency matrix; this is done using the helper function `adjacency_matrix_from_list` (see also the related function `adjacency_matrix_from_data_frame`). 
 
 ```{r}
@@ -283,7 +285,7 @@ reference = adjacency_matrix_from_list(gold_standard)
 # set the seed to ensure reproducible output
 set.seed(0)
 # predict interactions
-ppi = predict_interactions(feat, reference, classifier = "SVM", models = 1, cv_folds = 5)
+ppi = predict_interactions(feat, reference, classifier = "SVM", models = 1, cv_folds = 3)
 ```
 
 We can now plot the precision curve over the first 20,000 interactions:
