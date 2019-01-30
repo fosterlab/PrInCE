@@ -5,7 +5,7 @@
 #' memory-friendly way. 
 #' 
 #' @param gold_standard an adjacency matrix of gold-standard interactions
-#' @param input a data frame with interacting proteins in the first two
+#' @param dat a data frame with interacting proteins in the first two
 #' columns 
 #' @param protein_groups optionally, specify a list linking each protein in the 
 #' first two columns of the input data frame to a protein group 
@@ -16,23 +16,23 @@
 #' 
 #' @examples 
 #' data(gold_standard)
-#' adj = adjacency_matrix_from_list(gold_standard)
-#' proteins = unique(unlist(gold_standard))
-#' input = data.frame(protein_A = sample(proteins, 10), 
-#'                    protein_B = sample(proteins, 10))
-#' labels = make_labels(adj, input)
+#' adj <- adjacency_matrix_from_list(gold_standard)
+#' proteins <- unique(unlist(gold_standard))
+#' dat <- data.frame(protein_A = sample(proteins, 10), 
+#'                   protein_B = sample(proteins, 10))
+#' labels <- make_labels(adj, dat)
 #' 
 #' @export
-make_labels <- function(gold_standard, input, protein_groups = NULL) {
-  proteins_1 <- as.character(input[[1]])
-  proteins_2 <- as.character(input[[2]])
+make_labels <- function(gold_standard, dat, protein_groups = NULL) {
+  proteins_1 <- as.character(dat[[1]])
+  proteins_2 <- as.character(dat[[2]])
   if (is.null(protein_groups)) {
     lab_idxs <- proteins_1 %in% rownames(gold_standard) &
       proteins_2 %in% rownames(gold_standard)
     if (sum(lab_idxs) == 0)
       stop("no proteins overlap between input and gold standard")
     idxing_mat <- cbind(proteins_1[lab_idxs], proteins_2[lab_idxs])
-    labels <- rep(NA, nrow(input))
+    labels <- rep(NA, nrow(dat))
     labels[lab_idxs] <- gold_standard[idxing_mat]
   } else {
     # filter groups based on presence/absence in matrix
@@ -48,7 +48,7 @@ make_labels <- function(gold_standard, input, protein_groups = NULL) {
     if (sum(lab_idxs) == 0)
       stop("no protein groups overlap between input and gold standard")
     # create labels
-    labels <- rep(NA, nrow(input))
+    labels <- rep(NA, nrow(dat))
     # map groups of length 1 by matrix indexing 
     lengths_1 <- lengths(groups_1)
     lengths_2 <- lengths(groups_2)

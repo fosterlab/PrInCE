@@ -36,8 +36,8 @@ correlation or Euclidean distance between all proteins in the matrix, and
 \examples{
 data(scott)
 data(gold_standard)
-complexes = gold_standard[lengths(gold_standard) >= 3]
-z_scores = detect_complexes(t(scott), complexes)
+complexes <- gold_standard[lengths(gold_standard) >= 3]
+z_scores <- detect_complexes(t(scott), complexes)
 length(na.omit(z_scores)) ## number of complexes that could be tested
 z_scores[which.max(z_scores)] ## most significant complex
 

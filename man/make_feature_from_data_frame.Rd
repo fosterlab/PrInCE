@@ -4,13 +4,13 @@
 \alias{make_feature_from_data_frame}
 \title{Create a feature vector for a classifier from a data frame}
 \usage{
-make_feature_from_data_frame(dat, input, col_name, default_value = NA)
+make_feature_from_data_frame(dat, target, col_name, default_value = NA)
 }
 \arguments{
 \item{dat}{a data frame with pairwise interactions in the first two columns,
 and the features to convert to a vector in some other column}
 
-\item{input}{the data frame of features to be used by the classifier, 
+\item{target}{the data frame of features to be used by the classifier, 
 with protein pairs in the first two columns}
 
 \item{col_name}{the name of the column in the first data frame that 

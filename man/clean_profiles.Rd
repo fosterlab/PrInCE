@@ -32,7 +32,7 @@ filter.
 }
 \examples{
 data(scott)
-mat = scott[c(1, 16), ]
-mat_clean = clean_profiles(mat)
+mat <- scott[c(1, 16), ]
+mat_clean <- clean_profiles(mat)
 
 }

@@ -8,7 +8,7 @@ fit_curve(coef, indices)
 }
 \arguments{
 \item{coef}{numeric vector of coefficients for a Gaussian mixture model fit 
-by \code{\link{fit_gaussians}}. This function assumes that the heights of the 
+by \code{\link{fit_gaussians}}. This function assumes that the heights of the
 Gaussians are specified by coefficients beginning with "A" 
 ("A1", "A2", "A3", etc.), centres are specified by coefficients beginning
 with "mu", and standard deviations are specified by coefficients beginning
@@ -29,8 +29,8 @@ centres are outside the bounds of the chromatogram.
 }
 \examples{
 data(scott)
-chrom = clean_profile(scott[1, ])
-fit = fit_gaussians(chrom, n_gaussians = 1)
-curve = fit_curve(fit$coefs, seq_along(chrom))
+chrom <- clean_profile(scott[1, ])
+fit <- fit_gaussians(chrom, n_gaussians = 1)
+curve <- fit_curve(fit$coefs, seq_along(chrom))
 
 }

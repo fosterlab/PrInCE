@@ -45,8 +45,8 @@ inspection of a large number of chromatograms.
 }
 \examples{
 data(scott)
-chrom = clean_profile(scott[16, ])
+chrom <- clean_profile(scott[16, ])
 set.seed(0)
-start = make_initial_conditions(chrom, n_gaussians = 2, method = "guess")
+start <- make_initial_conditions(chrom, n_gaussians = 2, method = "guess")
 
 }

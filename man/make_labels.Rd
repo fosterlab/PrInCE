@@ -4,12 +4,12 @@
 \alias{make_labels}
 \title{Make labels for a classifier based on a gold standard}
 \usage{
-make_labels(gold_standard, input, protein_groups = NULL)
+make_labels(gold_standard, dat, protein_groups = NULL)
 }
 \arguments{
 \item{gold_standard}{an adjacency matrix of gold-standard interactions}
 
-\item{input}{a data frame with interacting proteins in the first two
+\item{dat}{a data frame with interacting proteins in the first two
 columns}
 
 \item{protein_groups}{optionally, specify a list linking each protein in the 
@@ -27,10 +27,10 @@ memory-friendly way.
 }
 \examples{
 data(gold_standard)
-adj = adjacency_matrix_from_list(gold_standard)
-proteins = unique(unlist(gold_standard))
-input = data.frame(protein_A = sample(proteins, 10), 
-                   protein_B = sample(proteins, 10))
-labels = make_labels(adj, input)
+adj <- adjacency_matrix_from_list(gold_standard)
+proteins <- unique(unlist(gold_standard))
+dat <- data.frame(protein_A = sample(proteins, 10), 
+                  protein_B = sample(proteins, 10))
+labels <- make_labels(adj, dat)
 
 }

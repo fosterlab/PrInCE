@@ -18,7 +18,7 @@ Test whether a network is weighted
 }
 \examples{
 data(gold_standard)
-adj = adjacency_matrix_from_list(gold_standard)
+adj <- adjacency_matrix_from_list(gold_standard)
 is_weighted(adj) ## returns FALSE
 
 }

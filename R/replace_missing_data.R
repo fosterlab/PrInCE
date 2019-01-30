@@ -5,7 +5,7 @@
 #' classifiers that do not easily ignore missing data (e.g. random forests or
 #' support vector machines).
 #' 
-#' @param input the data frame to 
+#' @param dat the data frame to replace missing data in 
 #' @param noise_pct the standard deviation of the random normal 
 #' distribution from which to draw added noise, expressed as a 
 #' percentage of the standard deviation of the non-missing values in each 
@@ -17,15 +17,15 @@
 #' @importFrom stats rnorm
 #' 
 #' @export
-replace_missing_data <- function(input, noise_pct = 0.05) {
-  for (col_name in colnames(input)) {
-    column <- input[[col_name]]
+replace_missing_data <- function(dat, noise_pct = 0.05) {
+  for (col_name in colnames(dat)) {
+    column <- dat[[col_name]]
     if (!is.numeric(column))
       next
     missing <- is.na(column)
-    input[[col_name]][missing] <- 
+    dat[[col_name]][missing] <- 
       median(column, na.rm = TRUE) + rnorm(sum(missing)) * 
       sd(column, na.rm = TRUE) * noise_pct 
   }
-  return(input)
+  return(dat)
 }

@@ -52,7 +52,7 @@ profile, using nonlinear least-squares.
 }
 \examples{
 data(scott)
-chrom = clean_profile(scott[1, ])
-fit = fit_gaussians(chrom, n_gaussians = 1)
+chrom <- clean_profile(scott[1, ])
+fit <- fit_gaussians(chrom, n_gaussians = 1)
 
 }

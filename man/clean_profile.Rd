@@ -30,7 +30,7 @@ filter.
 }
 \examples{
 data(scott)
-chrom = scott[16, ]
-cleaned = clean_profile(chrom)
+chrom <- scott[16, ]
+cleaned <- clean_profile(chrom)
 
 }

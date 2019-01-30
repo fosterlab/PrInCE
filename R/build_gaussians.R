@@ -64,8 +64,8 @@
 #' 
 #' @examples
 #' data(scott)
-#' mat = clean_profiles(scott[seq_len(5), ])
-#' gauss = build_gaussians(mat, max_gaussians = 3)
+#' mat <- clean_profiles(scott[seq_len(5), ])
+#' gauss <- build_gaussians(mat, max_gaussians = 3)
 #' 
 #' @importFrom MSnbase exprs
 #' @importFrom methods is
@@ -83,7 +83,7 @@ build_gaussians <- function(profile_matrix,
                             filter_gaussians_variance_min = 0.5,
                             filter_gaussians_variance_max = 50) {
   if (is(profile_matrix, "MSnSet")) {
-    profile_matrix = exprs(profile_matrix)
+    profile_matrix <- exprs(profile_matrix)
   }
   
   # preprocess chromatograms: filter and clean

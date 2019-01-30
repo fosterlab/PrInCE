@@ -42,5 +42,5 @@ Gaussian, and emit a warning if fewer than \code{pct_warning} do.
 \examples{
 data(scott_gaussians)
 check_gaussians(scott_gaussians)
-  
+
 }

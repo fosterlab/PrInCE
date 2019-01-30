@@ -31,8 +31,8 @@
 #' 
 #' @examples
 #' data(scott)
-#' chrom = clean_profile(scott[1, ])
-#' fit = fit_gaussians(chrom, n_gaussians = 1)
+#' chrom <- clean_profile(scott[1, ])
+#' fit <- fit_gaussians(chrom, n_gaussians = 1)
 #' 
 #' @importFrom stats coef cor setNames
 #' 
@@ -44,7 +44,7 @@ fit_gaussians <- function(chromatogram, n_gaussians,
                           filter_gaussians_height = 0.15,
                           filter_gaussians_variance_min = 0.1,
                           filter_gaussians_variance_max = 50) {
-  indices <- seq_len(length(chromatogram))
+  indices <- seq_along(chromatogram)
   iter <- 0
   bestR2 <- 0
   bestCoefs <- NULL
@@ -66,9 +66,9 @@ fit_gaussians <- function(chromatogram, n_gaussians,
     fit <- tryCatch({
       suppressWarnings(
         stats::nls(chromatogram ~ p_model(indices, A, mu, sigma), 
-                        start = list(A = A, mu = mu, sigma = sigma), 
-                        trace = FALSE,  
-                        control = list(warnOnly = TRUE, minFactor = 1/2048)))
+                   start = list(A = A, mu = mu, sigma = sigma), 
+                   trace = FALSE,  
+                   control = list(warnOnly = TRUE, minFactor = 1/2048)))
     }, error = function(e) { 
       e 
     }, simpleError = function(e) { 

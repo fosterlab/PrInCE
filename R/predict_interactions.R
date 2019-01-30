@@ -42,81 +42,74 @@
 #' ## calculate features
 #' data(scott)
 #' data(scott_gaussians)
-#' subset = scott[seq_len(500), ] ## limit to first 500 proteins
-#' gauss = scott_gaussians[names(scott_gaussians) %in% rownames(subset)]
-#' features = calculate_features(subset, gauss)
+#' subset <- scott[seq_len(500), ] ## limit to first 500 proteins
+#' gauss <- scott_gaussians[names(scott_gaussians) %in% rownames(subset)]
+#' features <- calculate_features(subset, gauss)
 #' ## load training data
 #' data(gold_standard)
-#' ref = adjacency_matrix_from_list(gold_standard)
+#' ref <- adjacency_matrix_from_list(gold_standard)
 #' ## predict interactions
-#' ppi = predict_interactions(features, ref, cv_folds = 3, models = 1)
+#' ppi <- predict_interactions(features, ref, cv_folds = 3, models = 1)
 #' 
 #' @importFrom dplyr starts_with group_by mutate_if mutate ungroup arrange
 #'   full_join
 #' @importFrom magrittr %>%
 #' 
 #' @export
-predict_interactions = function(
+predict_interactions <- function(
   features, gold_standard, classifier = c("NB", "SVM", "RF", "LR", "ensemble"),
   verbose = FALSE, models = 10, cv_folds = 10, trees = 500) {
-  classifier = match.arg(classifier)
+  classifier <- match.arg(classifier)
   
   ## define global variables to prevent check complaining
-  protein_A = NULL; protein_B = NULL; score.x = NULL; score.y = NULL;
-  score.x.x = NULL; score.y.y = NULL
+  protein_A <- NULL; protein_B <- NULL; score.x <- NULL; score.y <- NULL;
+  score.x.x <- NULL; score.y.y <- NULL
   
   # make labels
   if (verbose) {
     message("making labels ...")
   }
-  labels = make_labels(gold_standard, features)
+  labels <- make_labels(gold_standard, features)
   
   if (classifier %in% c("NB", "SVM", "RF", "LR")) {
     if (verbose) {
       message("training classifiers ...")
     }
     # predict with a classifier ensemble
-    if (classifier == "NB") {
-      interactions = predict_NB_ensemble(
-        features, labels, models, cv_folds)
-    } else if (classifier == "RF") {
-      interactions = predict_RF_ensemble(
-        features, labels, models, cv_folds, trees) 
-    } else if (classifier == "SVM") {
-      interactions = predict_SVM_ensemble(
-        features, labels, models, cv_folds)
-    } else if (classifier == "LR") {
-      interactions = predict_logistic_regression_ensemble(
-        features, labels, models, cv_folds)
-    }
+    interactions = predict_ensemble(features, 
+                                    labels, 
+                                    classifier = classifier, 
+                                    models = models, 
+                                    cv_folds = cv_folds, 
+                                    trees = trees)
   } else if (classifier == "ensemble") {
     # predict all four separately 
     if (verbose) {
       message("training naive Bayes classifiers ...")
     }
-    interactions_NB = predict_NB_ensemble(
-      features, labels, models, cv_folds) 
+    interactions_NB <- predict_ensemble(
+      features, labels, classifier = "NB", models, cv_folds) 
     if (verbose) {
       message("training random forest classifiers ...")
     }
-    interactions_RF = predict_RF_ensemble(
-      features, labels, models, cv_folds, trees) 
+    interactions_RF <- predict_ensemble(
+      features, labels, classifier = "RF", models, cv_folds, trees) 
     if (verbose) {
       message("training support vector machine classifiers ...")
     }
-    interactions_SVM = predict_SVM_ensemble(
-      features, labels, models, cv_folds)
+    interactions_SVM <- predict_ensemble(
+      features, labels, classifier = "SVM", models, cv_folds)
     if (verbose) {
       message("training logistic regression classifiers ...")
     }
-    interactions_LR = predict_logistic_regression_ensemble(
-      features, labels, models, cv_folds)
+    interactions_LR <- predict_ensemble(
+      features, labels, classifier = "LR", models, cv_folds)
     if (verbose) {
       message("ensembling predictions ...")
     }
-    interactions_list = list(interactions_NB, interactions_LR,
+    interactions_list <- list(interactions_NB, interactions_LR,
                              interactions_RF, interactions_SVM)
-    interactions = Reduce(function(x, y) full_join(
+    interactions <- Reduce(function(x, y) full_join(
       x, y, by = c('protein_A', 'protein_B')), interactions_list) %>%
       dplyr::select(-starts_with("label")) %>%
       mutate_if(is.numeric, ~ rank(-.)) %>%
@@ -125,11 +118,11 @@ predict_interactions = function(
                          na.rm = TRUE)) %>%
       ungroup() %>%
       arrange(mean)
-    interactions$label = make_labels(gold_standard, interactions)
+    interactions$label <- make_labels(gold_standard, interactions)
   }
   
   # calculate precision
-  interactions$precision = calculate_precision(interactions$label)
+  interactions$precision <- calculate_precision(interactions$label)
   
   return(interactions)
 }

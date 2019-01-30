@@ -18,7 +18,7 @@ of their neighbors.
 }
 \examples{
 data(scott)
-chrom = scott[16, ]
-imputed = impute_neighbors(chrom)
+chrom <- scott[16, ]
+imputed <- impute_neighbors(chrom)
 
 }

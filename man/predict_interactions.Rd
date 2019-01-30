@@ -60,13 +60,13 @@ by supplying the \code{"ensemble"} option to the \code{classifier} argument.
 ## calculate features
 data(scott)
 data(scott_gaussians)
-subset = scott[seq_len(500), ] ## limit to first 500 proteins
-gauss = scott_gaussians[names(scott_gaussians) \%in\% rownames(subset)]
-features = calculate_features(subset, gauss)
+subset <- scott[seq_len(500), ] ## limit to first 500 proteins
+gauss <- scott_gaussians[names(scott_gaussians) \%in\% rownames(subset)]
+features <- calculate_features(subset, gauss)
 ## load training data
 data(gold_standard)
-ref = adjacency_matrix_from_list(gold_standard)
+ref <- adjacency_matrix_from_list(gold_standard)
 ## predict interactions
-ppi = predict_interactions(features, ref, cv_folds = 3, models = 1)
+ppi <- predict_interactions(features, ref, cv_folds = 3, models = 1)
 
 }

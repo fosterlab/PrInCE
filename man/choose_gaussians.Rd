@@ -59,7 +59,7 @@ of choice.
 }
 \examples{
 data(scott)
-chrom = clean_profile(scott[1, ])
-gauss = choose_gaussians(chrom, max_gaussians = 3)
+chrom <- clean_profile(scott[1, ])
+gauss <- choose_gaussians(chrom, max_gaussians = 3)
 
 }

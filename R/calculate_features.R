@@ -39,7 +39,7 @@ calculate_features <- function(profile_matrix, gaussians,
                                co_peak = TRUE,
                                co_apex = TRUE) {
   if (is(profile_matrix, "MSnSet")) {
-    profile_matrix = exprs(profile_matrix)
+    profile_matrix <- exprs(profile_matrix)
   }
   
   # replace missing values with near-zero noise
@@ -98,10 +98,10 @@ calculate_features <- function(profile_matrix, gaussians,
   first <- feature_matrices[[1]]
   tri <- upper.tri(first)
   idxs <- which(tri, arr.ind = TRUE)
-  input <- data.frame(protein_A = rownames(first)[idxs[, 1]], 
-                      protein_B = rownames(first)[idxs[, 2]],
-                      stringsAsFactors = FALSE) 
-  input <- cbind(input, purrr::map(feature_matrices, ~ .[tri]))
+  dat <- data.frame(protein_A = rownames(first)[idxs[, 1]], 
+                    protein_B = rownames(first)[idxs[, 2]],
+                    stringsAsFactors = FALSE) 
+  dat <- cbind(dat, purrr::map(feature_matrices, ~ .[tri]))
   
-  return(input)
+  return(dat)
 }

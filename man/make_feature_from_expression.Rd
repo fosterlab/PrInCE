@@ -2,15 +2,15 @@
 % Please edit documentation in R/make_feature_from_expression.R
 \name{make_feature_from_expression}
 \alias{make_feature_from_expression}
-\title{Create a feature vector for a naive Bayes classifier from expression data}
+\title{Create a feature vector from expression data}
 \usage{
-make_feature_from_expression(expr, input, ...)
+make_feature_from_expression(expr, dat, ...)
 }
 \arguments{
 \item{expr}{a matrix containing gene or protein expression data, with 
 genes/proteins in columns and samples in rows}
 
-\item{input}{the data frame of features to be used by the classifier, 
+\item{dat}{the data frame of features to be used by the classifier, 
 with protein pairs in the first two columns}
 
 \item{...}{arguments passed to \code{cor}}

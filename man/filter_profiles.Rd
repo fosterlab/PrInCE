@@ -26,7 +26,7 @@ profiles without a certain number of non-mising or consecutive points.
 \examples{
 data(scott)
 nrow(scott)
-filtered = filter_profiles(scott)
+filtered <- filter_profiles(scott)
 nrow(scott)
 
 }

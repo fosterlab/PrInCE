@@ -21,8 +21,8 @@
 #' @examples 
 #' data(scott)
 #' data(gold_standard)
-#' complexes = gold_standard[lengths(gold_standard) >= 3]
-#' z_scores = detect_complexes(t(scott), complexes)
+#' complexes <- gold_standard[lengths(gold_standard) >= 3]
+#' z_scores <- detect_complexes(t(scott), complexes)
 #' length(na.omit(z_scores)) ## number of complexes that could be tested
 #' z_scores[which.max(z_scores)] ## most significant complex
 #' 
@@ -34,62 +34,62 @@
 #' @importFrom methods is
 #' 
 #' @export
-detect_complexes = function(profile_matrix, complexes, 
-                            method = c("pearson", "euclidean"),
-                            min_pairs = 10, 
-                            bootstraps = 100,
-                            progress = TRUE) {
-  method = match.arg(method)
+detect_complexes <- function(profile_matrix, complexes, 
+                             method = c("pearson", "euclidean"),
+                             min_pairs = 10, 
+                             bootstraps = 100,
+                             progress = TRUE) {
+  method <- match.arg(method)
   
   if (is(profile_matrix, "MSnSet")) {
-    profile_matrix = exprs(profile_matrix)
+    profile_matrix <- exprs(profile_matrix)
   }
   
   # construct network
-  n = crossprod(!is.na(profile_matrix))
+  n <- crossprod(!is.na(profile_matrix))
   if (method == "pearson") {
-    network = cor(profile_matrix, use = 'pairwise.complete.obs')
+    network <- cor(profile_matrix, use = 'pairwise.complete.obs')
   } else if (method == "euclidean") {
-    network = as.matrix(dist(t(profile_matrix)))  
+    network <- as.matrix(dist(t(profile_matrix)))  
   }
   network[n < min_pairs] = NA
   
   # do permutation testing
-  z_scores = numeric(0)
-  pb = progress::progress_bar$new(
+  z_scores <- numeric(0)
+  pb <- progress::progress_bar$new(
     format = "complex :what [:bar] :percent eta: :eta",
     clear = FALSE, total = length(complexes), width = 80)
   for (i in seq_along(complexes)) {
-    complex_name = names(complexes)[i]
-    complex = complexes[[i]]
+    complex_name <- names(complexes)[i]
+    complex <- complexes[[i]]
     
     # subset complex to proteins present in this network 
-    nodes = colnames(network)
-    overlap = intersect(complex, nodes)
+    nodes <- colnames(network)
+    overlap <- intersect(complex, nodes)
     
     # abort if overlap size is < 3
     if (length(overlap) < 3) {
-      z_scores[complex_name] = NA
+      z_scores[complex_name] <- NA
     } else {
       # calculate median PCC for intra-complex interactions
-      idxing_mat = t(combn(overlap, 2))
-      edge_weights = na.omit(network[idxing_mat])
-      obs = median(edge_weights, na.rm = TRUE)
+      idxing_mat <- t(combn(overlap, 2))
+      edge_weights <- na.omit(network[idxing_mat])
+      obs <- median(edge_weights, na.rm = TRUE)
       
       # compare to random expectation
-      rnd = purrr::map_dbl(seq_len(bootstraps), ~ {
+      rnd <- purrr::map_dbl(seq_len(bootstraps), ~ {
         # generate random set of proteins equivalent to # of complex subunits
         # present in this network 
-        rnd_complex = sample(nodes, length(overlap))
+        rnd_complex <- sample(nodes, length(overlap))
         # calculate observed D statistic
-        idxing_mat = t(combn(rnd_complex, 2))
-        rnd_weights = as.numeric(na.omit(network[idxing_mat]))
+        idxing_mat <- t(combn(rnd_complex, 2))
+        rnd_weights <- as.numeric(na.omit(network[idxing_mat]))
         median(rnd_weights, na.rm = TRUE)
       })
       
       # calculate Z score
-      z = (obs - mean(rnd, na.rm = TRUE)) / sd(rnd, na.rm = TRUE)
-      z_scores[complex_name] = z
+      z <- (obs - mean(rnd, na.rm = TRUE)) / sd(rnd, na.rm = TRUE)
+      z_scores[complex_name] <- z
     }
     
     # tick progress bar

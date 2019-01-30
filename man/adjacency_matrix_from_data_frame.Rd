@@ -21,9 +21,9 @@ adjacency matrix. The resulting square adjacency matrix contains ones for
 proteins that are found in interactions and zeroes otherwise.
 }
 \examples{
-ppi = data.frame(protein_A = paste0("protein", seq_len(10)),
-                 protein_B = paste0("protein", c(rep(3, 2), rep(5, 5), 
-                                    rep(7, 3))))
-adj = adjacency_matrix_from_data_frame(ppi)
+ppi <- data.frame(protein_A = paste0("protein", seq_len(10)),
+                  protein_B = paste0("protein", c(rep(3, 2), rep(5, 5), 
+                                     rep(7, 3))))
+adj <- adjacency_matrix_from_data_frame(ppi)
 
 }

@@ -25,11 +25,11 @@ data(scott)
 data(scott_gaussians)
 data(gold_standard)
 # analyze only the first 100 profiles
-subset = scott[seq_len(500), ]
-gauss = scott_gaussians[names(scott_gaussians) \%in\% rownames(subset)]
-ppi = PrInCE(subset, gold_standard, gaussians = gauss, models = 1, 
+subset <- scott[seq_len(500), ]
+gauss <- scott_gaussians[names(scott_gaussians) \%in\% rownames(subset)]
+ppi <- PrInCE(subset, gold_standard, gaussians = gauss, models = 1, 
              cv_folds = 3)
-network = threshold_precision(ppi, threshold = 0.5)
+network <- threshold_precision(ppi, threshold = 0.5)
 nrow(network)
 
 }

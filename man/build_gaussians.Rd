@@ -93,7 +93,7 @@ points, and smoothing with a moving average filter.
 }
 \examples{
 data(scott)
-mat = clean_profiles(scott[seq_len(5), ])
-gauss = build_gaussians(mat, max_gaussians = 3)
+mat <- clean_profiles(scott[seq_len(5), ])
+gauss <- build_gaussians(mat, max_gaussians = 3)
 
 }

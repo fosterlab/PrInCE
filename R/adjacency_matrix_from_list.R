@@ -11,7 +11,7 @@
 #' 
 #' @examples
 #' data(gold_standard)
-#' adj = adjacency_matrix_from_list(gold_standard)
+#' adj <- adjacency_matrix_from_list(gold_standard)
 #' 
 #' @importFrom purrr map_dfr
 #' 

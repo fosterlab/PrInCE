@@ -7,7 +7,7 @@
 #' 
 #' @param dat a data frame with pairwise interactions in the first two columns,
 #' and the features to convert to a vector in some other column
-#' @param input the data frame of features to be used by the classifier, 
+#' @param target the data frame of features to be used by the classifier, 
 #' with protein pairs in the first two columns
 #' @param col_name the name of the column in the first data frame that 
 #' contains interaction features 
@@ -18,11 +18,11 @@
 #' to use as input for a classifier in interaction prediction 
 #' 
 #' @export
-make_feature_from_data_frame <- function(dat, input, col_name, 
+make_feature_from_data_frame <- function(dat, target, col_name, 
                                          default_value = NA) {
   # get all proteins in feature data frame
-  ref_proteins1 <- input[[1]]
-  ref_proteins2 <- input[[2]]
+  ref_proteins1 <- target[[1]]
+  ref_proteins2 <- target[[2]]
   ref_proteins <- unique(c(ref_proteins1, ref_proteins2))
   # subset data frame to these proteins 
   overlap_idxs <- dat[[1]] %in% ref_proteins & dat[[2]] %in% ref_proteins
@@ -47,7 +47,7 @@ make_feature_from_data_frame <- function(dat, input, col_name,
   feat_idxs <- ref_proteins1 %in% rownames(feature_matrix) & 
     ref_proteins2 %in% rownames(feature_matrix)
   idxing_mat <- cbind(ref_proteins1[feat_idxs], ref_proteins2[feat_idxs])
-  feature <- rep(default_value, nrow(input))
+  feature <- rep(default_value, nrow(target))
   feature[feat_idxs] <- feature_matrix[idxing_mat]
   return(feature)
 }

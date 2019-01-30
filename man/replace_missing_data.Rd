@@ -4,10 +4,10 @@
 \alias{replace_missing_data}
 \title{Replace missing data with median ± random noise}
 \usage{
-replace_missing_data(input, noise_pct = 0.05)
+replace_missing_data(dat, noise_pct = 0.05)
 }
 \arguments{
-\item{input}{the data frame to}
+\item{dat}{the data frame to replace missing data in}
 
 \item{noise_pct}{the standard deviation of the random normal 
 distribution from which to draw added noise, expressed as a 

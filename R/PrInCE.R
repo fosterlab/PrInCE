@@ -148,10 +148,10 @@
 #' data(scott_gaussians)
 #' data(gold_standard)
 #' # analyze only the first 100 profiles
-#' subset = scott[seq_len(500), ]
-#' gauss = scott_gaussians[names(scott_gaussians) %in% rownames(subset)]
-#' ppi = PrInCE(subset, gold_standard, gaussians = gauss, models = 1, 
-#'              cv_folds = 3)
+#' subset <- scott[seq_len(500), ]
+#' gauss <- scott_gaussians[names(scott_gaussians) %in% rownames(subset)]
+#' ppi <- PrInCE(subset, gold_standard, gaussians = gauss, models = 1, 
+#'               cv_folds = 3)
 #' 
 #' @importFrom Rdpack reprompt
 #' @importFrom MSnbase exprs
@@ -195,24 +195,24 @@ PrInCE = function(profiles, gold_standard,
                   cv_folds = 10,
                   trees = 500
 ) {
-  method = match.arg(method)
-  criterion = match.arg(criterion)
-  classifier = match.arg(classifier)
+  method <- match.arg(method)
+  criterion <- match.arg(criterion)
+  classifie <- match.arg(classifier)
   
   # check profile input 
   if (is.list(profiles)) {
     for (replicate_idx in seq_along(profiles)) {
-      replicate = profiles[[replicate_idx]]
+      replicate <- profiles[[replicate_idx]]
       if (is(replicate, "MSnSet")) {
-        profile_matrix = exprs(replicate)
+        profile_matrix <- exprs(replicate)
       } else {
-        profile_matrix = data.matrix(replicate)
+        profile_matrix <- data.matrix(replicate)
       }
       if (!is.numeric(profile_matrix)) {
         stop("list input (item #", replicate_idx, 
              ") could not be coerced to numeric matrix")
       }
-      profiles[[replicate_idx]] = profile_matrix
+      profiles[[replicate_idx]] <- profile_matrix
       # also check Gaussians
       if (!is.null(gaussians)) {
         if (length(gaussians) < replicate_idx) {
@@ -224,97 +224,97 @@ PrInCE = function(profiles, gold_standard,
     }
   } else {
     if (is(profiles, "MSnSet")) {
-      profile_matrix = exprs(profiles)
+      profile_matrix <- exprs(profiles)
     } else {
-      profile_matrix = data.matrix(profiles)
+      profile_matrix <- data.matrix(profiles)
     }
     if (!is.numeric(profile_matrix))
       stop("input could not be coerced to numeric matrix")
     # wrap in a list
-    profiles = list(profile_matrix)
+    profiles <- list(profile_matrix)
     # also check Gaussians
     if (!is.null(gaussians)) {
       check_gaussians(gaussians)
-      gaussians = list(gaussians)
+      gaussians <- list(gaussians)
     }
   }
-
+  
   # check gold standard input
   if (is.data.frame(gold_standard)) {
     # convert to adjacency matrix
-    gold_standard = PrInCE::adjacency_matrix_from_data_frame(gold_standard)
+    gold_standard <- PrInCE::adjacency_matrix_from_data_frame(gold_standard)
   } else if (is.list(gold_standard)) {
-    gold_standard = PrInCE::adjacency_matrix_from_list(gold_standard)
+    gold_standard <- PrInCE::adjacency_matrix_from_list(gold_standard)
   }
   if (!PrInCE::is_unweighted(gold_standard)) {
     stop("could not convert supplied gold standards to adjacency matrix")
   }
-
+  
   # get features for each matrix separately 
-  features = list()
+  features <- list()
   for (replicate_idx in seq_along(profiles)) {
     if (verbose) {
       message("generating features for replicate ", replicate_idx, " ...")
     }
-    mat = profiles[[replicate_idx]]
+    mat <- profiles[[replicate_idx]]
     
     # read Gaussians, or fit if they haven't been yet
     if (!is.null(gaussians)) {
-      gauss = gaussians[[replicate_idx]]
+      gauss <- gaussians[[replicate_idx]]
     } else {
       if (verbose) {
         message("  fitting Gaussians ...")
       }
-      gauss = build_gaussians(mat,
-                              min_points = min_points,
-                              min_consecutive = min_consecutive,
-                              impute_NA = impute_NA,
-                              smooth = smooth,
-                              smooth_width = smooth_width,
-                              max_gaussians = max_gaussians,
-                              max_iterations = max_iterations,
-                              min_R_squared = min_R_squared,
-                              method = method)
+      gauss <- build_gaussians(mat,
+                               min_points = min_points,
+                               min_consecutive = min_consecutive,
+                               impute_NA = impute_NA,
+                               smooth = smooth,
+                               smooth_width = smooth_width,
+                               max_gaussians = max_gaussians,
+                               max_iterations = max_iterations,
+                               min_R_squared = min_R_squared,
+                               method = method)
     }
-
+    
     # filter matrix based on Gaussians
-    before = nrow(mat)
-    mat = mat[names(gauss), ]
-    after = nrow(mat)
+    before <- nrow(mat)
+    mat <- mat[names(gauss), ]
+    after <- nrow(mat)
     if (verbose) {
       message("  fit mixtures of Gaussians to ", after, " of ", before, 
               " profiles")
     }
     
     # calculate features
-    feat = calculate_features(mat, gauss,
-                              pearson_R_raw = pearson_R_raw,
-                              pearson_R_cleaned = pearson_R_cleaned,
-                              pearson_P = pearson_P,
-                              euclidean_distance = euclidean_distance,
-                              co_peak = co_peak,
-                              co_apex = co_apex)
-    features[[replicate_idx]] = feat
+    feat <- calculate_features(mat, gauss,
+                               pearson_R_raw = pearson_R_raw,
+                               pearson_R_cleaned = pearson_R_cleaned,
+                               pearson_P = pearson_P,
+                               euclidean_distance = euclidean_distance,
+                               co_peak = co_peak,
+                               co_apex = co_apex)
+    features[[replicate_idx]] <- feat
   }
   
   # collapse into a single data frame 
   if (verbose) {
     message("concatenating features across replicates ...")
   }
-  input = concatenate_features(features)
+  input <- concatenate_features(features)
   
   # predict interactions
-  interactions = predict_interactions(input, gold_standard, 
-                                      classifier = classifier,
-                                      models = models,
-                                      cv_folds = cv_folds,
-                                      trees = trees,
-                                      verbose = verbose)
+  interactions <- predict_interactions(input, gold_standard, 
+                                       classifier = classifier,
+                                       models = models,
+                                       cv_folds = cv_folds,
+                                       trees = trees,
+                                       verbose = verbose)
   
   # optionally threshold based on precison
   if (!is.null(precision)) {
-    before = nrow(interactions)
-    interactions = threshold_precision(interactions, precision)
+    before <- nrow(interactions)
+    interactions <- threshold_precision(interactions, precision)
     if (nrow(interactions) == 0) {
       warning("none of ", before, " ranked protein pairs had precision >= ", 
               precision)

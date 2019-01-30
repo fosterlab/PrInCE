@@ -11,15 +11,15 @@
 #' @return an adjacency matrix between all interacting proteins
 #' 
 #' @examples
-#' ppi = data.frame(protein_A = paste0("protein", seq_len(10)),
-#'                  protein_B = paste0("protein", c(rep(3, 2), rep(5, 5), 
-#'                                     rep(7, 3))))
-#' adj = adjacency_matrix_from_data_frame(ppi)
+#' ppi <- data.frame(protein_A = paste0("protein", seq_len(10)),
+#'                   protein_B = paste0("protein", c(rep(3, 2), rep(5, 5), 
+#'                                      rep(7, 3))))
+#' adj <- adjacency_matrix_from_data_frame(ppi)
 #' 
 #' @export
 adjacency_matrix_from_data_frame <- function(dat, symmetric = TRUE) {
   # remove self-interactions
-  dat = dat[as.character(dat[[1]]) != as.character(dat[[2]]), ]
+  dat <- dat[as.character(dat[[1]]) != as.character(dat[[2]]), ]
   # create empty matrix
   proteins <- unique(c(as.character(dat[[1]]), as.character(dat[[2]])))
   n_proteins <- length(proteins)
