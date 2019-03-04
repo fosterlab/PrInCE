@@ -1,6 +1,6 @@
 Package: PrInCE
 Title: Predicting Interactomes from Co-Elution
-Version: 0.99.10
+Version: 0.99.11
 Authors@R: c(
   person("Michael", "Skinnider", email = "michael.skinnider@msl.ubc.ca",
          role = c("aut", "trl", "cre")),
