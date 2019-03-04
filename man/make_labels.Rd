@@ -4,13 +4,19 @@
 \alias{make_labels}
 \title{Make labels for a classifier based on a gold standard}
 \usage{
-make_labels(gold_standard, dat, protein_groups = NULL)
+make_labels(gold_standard, dat, node_columns = c(1, 2),
+  protein_groups = NULL)
 }
 \arguments{
 \item{gold_standard}{an adjacency matrix of gold-standard interactions}
 
 \item{dat}{a data frame with interacting proteins in the first two
 columns}
+
+\item{node_columns}{a vector of length two, denoting either the indices 
+(integer vector) or column names (character vector) of the columns within 
+the data frame containing the nodes participating in pairwise interactions;
+defaults to the first two columns of the data frame (\code{c(1, 2)})}
 
 \item{protein_groups}{optionally, specify a list linking each protein in the 
 first two columns of the input data frame to a protein group}

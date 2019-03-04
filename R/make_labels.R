@@ -6,9 +6,13 @@
 #' 
 #' @param gold_standard an adjacency matrix of gold-standard interactions
 #' @param dat a data frame with interacting proteins in the first two
-#' columns 
+#'   columns 
+#' @param node_columns a vector of length two, denoting either the indices 
+#'   (integer vector) or column names (character vector) of the columns within 
+#'   the data frame containing the nodes participating in pairwise interactions;
+#'   defaults to the first two columns of the data frame (\code{c(1, 2)})
 #' @param protein_groups optionally, specify a list linking each protein in the 
-#' first two columns of the input data frame to a protein group 
+#'   first two columns of the input data frame to a protein group 
 #' 
 #' @return a vector of the same length as the input dataset, containing 
 #' \code{NA}s for protein pairs not in the gold standard and ones or zeroes
@@ -26,9 +30,17 @@
 #' @importFrom tidyr crossing
 #' 
 #' @export
-make_labels <- function(gold_standard, dat, protein_groups = NULL) {
-  proteins_1 <- as.character(dat[[1]])
-  proteins_2 <- as.character(dat[[2]])
+make_labels <- function(gold_standard, dat, 
+                        node_columns = c(1, 2),
+                        protein_groups = NULL) {
+  # length of node columns must be exactly two (pairwise interactions)
+  if (length(node_columns) != 2) {
+    stop("length of `node_columns` must be exactly 2")
+  }
+  col1 <- node_columns[1]
+  col2 <- node_columns[2]
+  proteins_1 <- as.character(dat[[col1]])
+  proteins_2 <- as.character(dat[[col2]])
   if (is.null(protein_groups)) {
     lab_idxs <- proteins_1 %in% rownames(gold_standard) &
       proteins_2 %in% rownames(gold_standard)

@@ -4,17 +4,28 @@
 \alias{make_feature_from_data_frame}
 \title{Create a feature vector for a classifier from a data frame}
 \usage{
-make_feature_from_data_frame(dat, target, col_name, default_value = NA)
+make_feature_from_data_frame(dat, target, dat_node_cols = c(1, 2),
+  target_node_cols = c(1, 2), feature_col = 3, default_value = NA)
 }
 \arguments{
-\item{dat}{a data frame with pairwise interactions in the first two columns,
-and the features to convert to a vector in some other column}
+\item{dat}{a data frame containing pairwise interactions and a feature to be
+converted to a vector in a third column}
 
-\item{target}{the data frame of features to be used by the classifier, 
-with protein pairs in the first two columns}
+\item{target}{the data frame of features that will be provided as input to a 
+classifier}
 
-\item{col_name}{the name of the column in the first data frame that 
-contains interaction features}
+\item{dat_node_cols}{a vector of length two, denoting either the indices 
+(integer vector) or column names (character vector) of the columns within 
+the feature data frame; defaults to the first two columns of the data 
+frame (\code{c(1, 2)})}
+
+\item{target_node_cols}{a vector of length two, denoting either the indices 
+(integer vector) or column names (character vector) of the columns within 
+the target data frame; defaults to the first two columns of the data 
+frame (\code{c(1, 2)})}
+
+\item{feature_col}{the name or index of the column in the first data frame 
+that contains a feature for each interaction}
 
 \item{default_value}{the default value for protein pairs that are not in the 
 first data frame (set, by default, to \code{NA})}

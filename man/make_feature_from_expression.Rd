@@ -4,14 +4,20 @@
 \alias{make_feature_from_expression}
 \title{Create a feature vector from expression data}
 \usage{
-make_feature_from_expression(expr, dat, ...)
+make_feature_from_expression(expr, dat, node_columns = c(1, 2), ...)
 }
 \arguments{
 \item{expr}{a matrix containing gene or protein expression data, with 
 genes/proteins in columns and samples in rows}
 
 \item{dat}{the data frame of features to be used by the classifier, 
-with protein pairs in the first two columns}
+with protein pairs in the columns specified by the \code{node_columns}
+argument}
+
+\item{node_columns}{a vector of length two, denoting either the indices 
+(integer vector) or column names (character vector) of the columns within 
+the data frame containing the nodes participating in pairwise interactions;
+defaults to the first two columns of the data frame (\code{c(1, 2)})}
 
 \item{...}{arguments passed to \code{cor}}
 }

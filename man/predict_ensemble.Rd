@@ -5,7 +5,7 @@
 \title{Predict interactions using an ensemble of classifiers}
 \usage{
 predict_ensemble(dat, labels, classifier = c("NB", "SVM", "RF", "LR"),
-  models = 10, cv_folds = 10, trees = 500)
+  models = 10, cv_folds = 10, trees = 500, node_columns = c(1, 2))
 }
 \arguments{
 \item{dat}{a data frame containing interacting gene/protein pairs in the
@@ -28,6 +28,12 @@ on 90\% of the dataset and used to classify the remaining 10\%}
 
 \item{trees}{for random forest classifiers only, the number of trees to 
 grow for each fold}
+
+\item{node_columns}{a vector of length two, denoting either the indices 
+(integer vector) or column names (character vector) of the columns within 
+the input data frame containing the nodes participating in pairwise 
+interactions; defaults to the first two columns of the data frame 
+(\code{c(1, 2)})}
 }
 \value{
 the input data frame of pairwise interactions, ranked by the 

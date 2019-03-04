@@ -4,13 +4,19 @@
 \alias{adjacency_matrix_from_data_frame}
 \title{Create an adjacency matrix from a data frame}
 \usage{
-adjacency_matrix_from_data_frame(dat, symmetric = TRUE)
+adjacency_matrix_from_data_frame(dat, symmetric = TRUE,
+  node_columns = c(1, 2))
 }
 \arguments{
-\item{dat}{a data frame with pairwise interactions in the first two columns}
+\item{dat}{a data frame containing pairwise interactions}
 
 \item{symmetric}{if true, interactions in both directions will be 
 added to the adjacency matrix}
+
+\item{node_columns}{a vector of length two, denoting either the indices 
+(integer vector) or column names (character vector) of the columns within 
+the data frame containing the nodes participating in pairwise interactions;
+defaults to the first two columns of the data frame (\code{c(1, 2)})}
 }
 \value{
 an adjacency matrix between all interacting proteins

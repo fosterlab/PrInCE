@@ -21,6 +21,11 @@
 #'   on 90\% of the dataset and used to classify the remaining 10\%
 #' @param trees for random forest classifiers only, the number of trees to 
 #'   grow for each fold
+#' @param node_columns a vector of length two, denoting either the indices 
+#'   (integer vector) or column names (character vector) of the columns within 
+#'   the input data frame containing the nodes participating in pairwise 
+#'   interactions; defaults to the first two columns of the data frame 
+#'   (\code{c(1, 2)})
 #'  
 #' @return the input data frame of pairwise interactions, ranked by the 
 #' median of classifier scores across all ensembled models
@@ -55,8 +60,13 @@ predict_ensemble <- function(dat,
                              classifier = c("NB", "SVM", "RF", "LR"), 
                              models = 10, 
                              cv_folds = 10,
-                             trees = 500) {
+                             trees = 500,
+                             node_columns = c(1, 2)) {
   classifier <- match.arg(classifier)
+  # length of node columns must be exactly two (pairwise interactions)
+  if (length(node_columns) != 2) {
+    stop("length of `node_columns` must be exactly 2")
+  }
   
   ## define global variables to prevent check complaining
   score <- NULL
@@ -67,18 +77,28 @@ predict_ensemble <- function(dat,
   }
   
   # scale all features
+  if (is.integer(node_columns)) {
+    node_colnames <- colnames(dat)[node_columns]
+  } else if (is.character(node_columns)) {
+    node_colnames <- node_columns
+  } else {
+    stop("`node_columns` must be an integer or character vector")
+  }
   if (classifier == "SVM") {
-    dat[, -c(1, 2)] <- sapply(dat[, -c(1, 2)], scale)
+    dat[, !colnames(dat) %in% node_colnames] <- sapply(
+      dat[, !colnames(dat) %in% node_colnames], scale)
   }
   
   # extract training data
   training_idxs <- which(!is.na(labels))
   training_labels <- as.factor(labels[training_idxs])
-  training <- dat[training_idxs, -c(1, 2)]
+  training <- dat[training_idxs, !colnames(dat) %in% node_colnames]
   
   # create matrix to hold medians from each model
   n_interactions <- nrow(dat)
-  interaction_names <- paste0(dat[[1]], "_", dat[[2]])
+  col1 <- node_columns[1]
+  col2 <- node_columns[2]
+  interaction_names <- paste0(dat[[col1]], "_", dat[[col2]])
   ensembled <- matrix(NA, ncol = models, nrow = n_interactions,
                       dimnames = list(interaction_names))
   
@@ -117,7 +137,7 @@ predict_ensemble <- function(dat,
       
       # classify
       withheld_idxs <- as.integer(rownames(training))[folds == fold]
-      test_data <- dat[-withheld_idxs, -c(1, 2)]
+      test_data <- dat[-withheld_idxs, !colnames(dat) %in% node_colnames]
       predictions <- switch(
         classifier, 
         NB = predict(clf, test_data, type = 'prob', threshold = 1e-10),
@@ -147,7 +167,7 @@ predict_ensemble <- function(dat,
                                 rownames(ensembled))
   
   # create ranked data frame
-  interactions <- cbind(dat[, c(1, 2)], score = ensembled_medians, 
+  interactions <- cbind(dat[, node_columns], score = ensembled_medians, 
                         label = labels)
   interactions <- arrange(interactions, -score)
   
