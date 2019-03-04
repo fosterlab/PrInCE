@@ -29,7 +29,6 @@
 clean_profiles <- function(profile_matrix, impute_NA = TRUE, smooth = TRUE, 
                            smooth_width = 4, noise_floor = 0.001) {
   if (is(profile_matrix, "MSnSet")) {
-    msn <- profile_matrix
     profile_matrix <- exprs(profile_matrix)
   }
   
@@ -39,10 +38,5 @@ clean_profiles <- function(profile_matrix, impute_NA = TRUE, smooth = TRUE,
                             smooth_width = smooth_width, 
                             noise_floor = noise_floor))
   
-  if (exists("msn")) {
-    exprs(msn) <- profile_matrix
-    return(msn)
-  } else {
-    return(profile_matrix)
-  }
+  return(profile_matrix)
 }
