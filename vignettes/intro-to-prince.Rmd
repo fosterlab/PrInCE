@@ -333,7 +333,7 @@ This function takes the following parameters:
   `filter_gaussians_center` will remove Gaussians whose mean falls outside 
   the bounds of the chromatogram. `filter_gaussians_height` controls the 
   minimum height of the Gaussians, while `filter_gaussians_variance_min` and 
-  `filter_gaussians_variance_max` control the range of their standard deviation.
+  `filter_gaussians_variance_max` control the range of their standard deviation.  
 
 All of these parameters except the last four are exposed through the `PrInCE`
 function. 
@@ -483,6 +483,76 @@ network at 70% precision:
 net <- threshold_precision(ppi, threshold = 0.7)
 nrow(net)
 ```
+
+### Identifying co-eluting protein complexes
+
+The core functionality of PrInCE involves the use of a machine-learning 
+framework to predict binary interactions from co-elution data, with discovery
+of novel interactions being a primary goal.
+However, PrInCE also implements one alternative to this analytical framework, 
+which asks whether statistically significant co-elution is observed for 
+_known_ protein complexes.  
+This is achieved using a permutation-based approach, inspired by methods 
+developed for another proteomic method for interactome profiling,
+thermal proximity co-aggregation (TPCA) [@tan2018]. 
+Briefly, given a list of known complexes, PrInCE calculates the median 
+Pearson correlation between all pairs of complex members.
+(To reduce the effect of spurious correlations between proteins that are 
+rarely observed in the same fractions, PrInCE requires a certain minimum
+number of paired observations to include any given correlation in this 
+analysis---by default, 10 pairs).
+Then, PrInCE simulates a large number of complexes of equivalent size 
+(by default, 100), and calculates the median Pearson correlation between
+pairs of random 'complexes'. 
+The resulting null distribution is used to assess the statistical significance
+of the observed co-elution profile at the protein complex level. 
+
+To identify complexes from the Complex Portal dataset that are significantly
+co-eluting in this replicate, we first use PrInCE's `filter_profiles` and
+`clean_profiles` functions:
+
+```{r}
+# analyze cleaned profiles
+filtered = filter_profiles(scott)
+chromatograms = clean_profiles(filtered)
+```
+
+The `filter_profiles` function uses a permissive set of filters to discard
+chromatograms that do not contain enough information to make inferences
+about that protein's interaction partners. 
+Similarly, the `clean_profiles` applies some simple preprocessing steps to the
+filtered chromatograms.
+By default, this function is applied to calculate Pearson correlations
+during interaction prediction in PrInCE. 
+It imputes single missing values as the average of the two neighbors,
+remaining missing values with near-zero noise, then passes a moving-average
+filter over the chromatogram to smooth it. 
+
+We can now test for complex co-elution in the preprocessed chromatogram matrix
+using the `detect_complexes` function:
+
+```{r}
+# detect significantly co-eluting complexes
+set.seed(0)
+z_scores = detect_complexes(chromatograms, gold_standard)
+```
+
+Complexes that could not be tested (that is, with fewer than three complex 
+members present in the elution matrix) are given `NA` values, which we remove.
+
+```{r}
+# remove complexes that could not be analyzed
+z_scores = na.omit(z_scores)
+# how many could be tested?
+length(z_scores)
+# how many were significant at uncorrected, two-tailed p < 0.05?
+sum(z_scores > 1.96)
+# print the top complexes
+head(sort(z_scores, decreasing = TRUE))
+```
+
+Of the 11 complexes that could be tested in this (unusually sparse) replicate, 
+5 were significant at an uncorrected, two-tailed p-value threshold of 0.05 
 
 ## Session info
 

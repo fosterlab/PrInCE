@@ -5,8 +5,8 @@
 #' of equivalent size. The function begins by calculating the Pearson 
 #' correlation or Euclidean distance between all proteins in the matrix, and 
 #' 
-#' @param profile_matrix a matrix of chromatograms, with proteins in the columns
-#'   and fractions in the rows, or a \code{\linkS4class{MSnSet}} object
+#' @param profile_matrix a matrix of chromatograms, with proteins in the rows
+#'   and fractions in the columns, or a \code{\linkS4class{MSnSet}} object
 #' @param complexes a named list of protein complexes, where the name is the
 #'   complex name and the entries are proteins within that complex 
 #' @param min_pairs the minimum number of pairwise observations to count a 
@@ -44,6 +44,9 @@ detect_complexes <- function(profile_matrix, complexes,
   if (is(profile_matrix, "MSnSet")) {
     profile_matrix <- exprs(profile_matrix)
   }
+  
+  # transpose for correlations
+  profile_matrix = t(profile_matrix)
   
   # construct network
   n <- crossprod(!is.na(profile_matrix))

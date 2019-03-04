@@ -8,8 +8,8 @@ detect_complexes(profile_matrix, complexes, method = c("pearson",
   "euclidean"), min_pairs = 10, bootstraps = 100, progress = TRUE)
 }
 \arguments{
-\item{profile_matrix}{a matrix of chromatograms, with proteins in the columns
-and fractions in the rows, or a \code{\linkS4class{MSnSet}} object}
+\item{profile_matrix}{a matrix of chromatograms, with proteins in the rows
+and fractions in the columns, or a \code{\linkS4class{MSnSet}} object}
 
 \item{complexes}{a named list of protein complexes, where the name is the
 complex name and the entries are proteins within that complex}

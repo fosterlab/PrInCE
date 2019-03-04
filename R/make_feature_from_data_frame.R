@@ -65,7 +65,7 @@ make_feature_from_data_frame <- function(dat,
                            dimnames = list(new_proteins, new_proteins))
   
   # fill interaction scores
-  feature_column <- filtered[[col_name]]
+  feature_column <- filtered[[feature_col]]
   feature_matrix[as.matrix(filtered[, dat_node_cols])] <- feature_column
   
   # index matrix to get feature vector

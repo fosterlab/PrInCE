@@ -34,7 +34,7 @@
 #' chrom <- clean_profile(scott[1, ])
 #' fit <- fit_gaussians(chrom, n_gaussians = 1)
 #' 
-#' @importFrom stats coef cor setNames
+#' @importFrom stats coef cor setNames nls
 #' @importFrom dplyr first
 #' 
 #' @export

@@ -77,7 +77,7 @@ predict_ensemble <- function(dat,
   }
   
   # scale all features
-  if (is.integer(node_columns)) {
+  if (is.numeric(node_columns)) {
     node_colnames <- colnames(dat)[node_columns]
   } else if (is.character(node_columns)) {
     node_colnames <- node_columns
