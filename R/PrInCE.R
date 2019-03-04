@@ -242,11 +242,11 @@ PrInCE = function(profiles, gold_standard,
   # check gold standard input
   if (is.data.frame(gold_standard)) {
     # convert to adjacency matrix
-    gold_standard <- PrInCE::adjacency_matrix_from_data_frame(gold_standard)
+    gold_standard <- adjacency_matrix_from_data_frame(gold_standard)
   } else if (is.list(gold_standard)) {
-    gold_standard <- PrInCE::adjacency_matrix_from_list(gold_standard)
+    gold_standard <- adjacency_matrix_from_list(gold_standard)
   }
-  if (!PrInCE::is_unweighted(gold_standard)) {
+  if (!is_unweighted(gold_standard)) {
     stop("could not convert supplied gold standards to adjacency matrix")
   }
   

@@ -35,6 +35,7 @@
 #' fit <- fit_gaussians(chrom, n_gaussians = 1)
 #' 
 #' @importFrom stats coef cor setNames
+#' @importFrom dplyr first
 #' 
 #' @export
 fit_gaussians <- function(chromatogram, n_gaussians,
@@ -65,10 +66,10 @@ fit_gaussians <- function(chromatogram, n_gaussians,
     }
     fit <- tryCatch({
       suppressWarnings(
-        stats::nls(chromatogram ~ p_model(indices, A, mu, sigma), 
-                   start = list(A = A, mu = mu, sigma = sigma), 
-                   trace = FALSE,  
-                   control = list(warnOnly = TRUE, minFactor = 1/2048)))
+        nls(chromatogram ~ p_model(indices, A, mu, sigma), 
+            start = list(A = A, mu = mu, sigma = sigma), 
+            trace = FALSE,  
+            control = list(warnOnly = TRUE, minFactor = 1/2048)))
     }, error = function(e) { 
       e 
     }, simpleError = function(e) { 
@@ -116,7 +117,7 @@ fit_gaussians <- function(chromatogram, n_gaussians,
     }
     
     # calculate R^2
-    if (length(dplyr::first(coefs)) == 0)
+    if (length(first(coefs)) == 0)
       next
     curveFit <- fit_curve(coefs, indices)
     R2 <- cor(chromatogram, curveFit)^2

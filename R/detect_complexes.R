@@ -56,7 +56,7 @@ detect_complexes <- function(profile_matrix, complexes,
   
   # do permutation testing
   z_scores <- numeric(0)
-  pb <- progress::progress_bar$new(
+  pb <- progress_bar$new(
     format = "complex :what [:bar] :percent eta: :eta",
     clear = FALSE, total = length(complexes), width = 80)
   for (i in seq_along(complexes)) {
@@ -77,7 +77,7 @@ detect_complexes <- function(profile_matrix, complexes,
       obs <- median(edge_weights, na.rm = TRUE)
       
       # compare to random expectation
-      rnd <- purrr::map_dbl(seq_len(bootstraps), ~ {
+      rnd <- map_dbl(seq_len(bootstraps), ~ {
         # generate random set of proteins equivalent to # of complex subunits
         # present in this network 
         rnd_complex <- sample(nodes, length(overlap))

@@ -22,6 +22,9 @@
 #'                   protein_B = sample(proteins, 10))
 #' labels <- make_labels(adj, dat)
 #' 
+#' @importFrom purrr map map_lgl
+#' @importFrom tidyr crossing
+#' 
 #' @export
 make_labels <- function(gold_standard, dat, protein_groups = NULL) {
   proteins_1 <- as.character(dat[[1]])
@@ -36,14 +39,13 @@ make_labels <- function(gold_standard, dat, protein_groups = NULL) {
     labels[lab_idxs] <- gold_standard[idxing_mat]
   } else {
     # filter groups based on presence/absence in matrix
-    protein_groups <- purrr::map(protein_groups,
-                                 ~ .[. %in% rownames(gold_standard)])
+    protein_groups <- map(protein_groups, ~ .[. %in% rownames(gold_standard)])
     # identify rows that overlap with the gold standard matrix
     groups_1 <- protein_groups[proteins_1]
     groups_2 <- protein_groups[proteins_2]
     ref_proteins <- rownames(gold_standard)
-    overlap_1 <- purrr::map_lgl(groups_1, ~ any(. %in% ref_proteins))
-    overlap_2 <- purrr::map_lgl(groups_2, ~ any(. %in% ref_proteins))
+    overlap_1 <- map_lgl(groups_1, ~ any(. %in% ref_proteins))
+    overlap_2 <- map_lgl(groups_2, ~ any(. %in% ref_proteins))
     lab_idxs <- overlap_1 & overlap_2
     if (sum(lab_idxs) == 0)
       stop("no protein groups overlap between input and gold standard")
@@ -58,8 +60,8 @@ make_labels <- function(gold_standard, dat, protein_groups = NULL) {
     labels[single_lab_idxs] <- gold_standard[idxing_mat]
     # map groups of length > 1
     multi_lab_idxs <- lab_idxs & !single_lab_idxs
-    labels[multi_lab_idxs] <- purrr::map_lgl(which(multi_lab_idxs), ~ any(
-      gold_standard[as.matrix(tidyr::crossing(groups_1[[.]], groups_2[[.]]))]))
+    labels[multi_lab_idxs] <- map_lgl(which(multi_lab_idxs), ~ any(
+      gold_standard[as.matrix(crossing(groups_1[[.]], groups_2[[.]]))]))
   } 
   return(labels)
 }

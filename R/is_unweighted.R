@@ -9,14 +9,16 @@
 #' adj <- adjacency_matrix_from_list(gold_standard)
 #' is_unweighted(adj) ## returns TRUE
 #' 
+#' @importFrom tester is_square_matrix is_logical_matrix is_numeric_matrix
+#' 
 #' @export
 is_unweighted <- function(network) {
   # check input is square logical, integer, or numeric matrix
-  square <- tester::is_square_matrix(network)
+  square <- is_square_matrix(network)
   if (!square)
     stop("input is not a square matrix")
-  lgl <- tester::is_logical_matrix(network)
-  dbl <- tester::is_numeric_matrix(network)
+  lgl <- is_logical_matrix(network)
+  dbl <- is_numeric_matrix(network)
   if (!lgl & !dbl)
     stop("input could not be converted to adjacency matrix")
   # convert to numeric 

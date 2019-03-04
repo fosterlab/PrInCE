@@ -52,7 +52,7 @@
 #' ppi <- predict_interactions(features, ref, cv_folds = 3, models = 1)
 #' 
 #' @importFrom dplyr starts_with group_by mutate_if mutate ungroup arrange
-#'   full_join
+#'   full_join select
 #' @importFrom magrittr %>%
 #' 
 #' @export
@@ -111,7 +111,7 @@ predict_interactions <- function(
                              interactions_RF, interactions_SVM)
     interactions <- Reduce(function(x, y) full_join(
       x, y, by = c('protein_A', 'protein_B')), interactions_list) %>%
-      dplyr::select(-starts_with("label")) %>%
+      select(-starts_with("label")) %>%
       mutate_if(is.numeric, ~ rank(-.)) %>%
       group_by(protein_A, protein_B) %>%
       mutate(mean = mean(c(score.x.x, score.y.y, score.x, score.y), 

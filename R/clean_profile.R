@@ -20,6 +20,7 @@
 #' cleaned <- clean_profile(chrom)
 #' 
 #' @importFrom stats runif setNames
+#' @importFrom forecast ma
 #' 
 #' @export
 clean_profile <- function(chromatogram, impute_NA = TRUE, smooth = TRUE,
@@ -41,7 +42,7 @@ clean_profile <- function(chromatogram, impute_NA = TRUE, smooth = TRUE,
     smooth_input <- c(runif(smooth_width, min = 0, max = noise_floor),
                       cleaned, 
                       runif(smooth_width, min = 0, max = noise_floor))
-    smoothed <- forecast::ma(smooth_input, smooth_width)
+    smoothed <- ma(smooth_input, smooth_width)
     smoothed <- smoothed[seq(smooth_width + 1, length(smoothed) - smooth_width)]
     cleaned <- setNames(smoothed, names(cleaned))
   }

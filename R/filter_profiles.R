@@ -21,6 +21,7 @@
 #' @importFrom MSnbase exprs
 #' @importFrom Biobase exprs<-
 #' @importFrom methods is
+#' @importFrom purrr map_int
 #' 
 #' @export
 filter_profiles <- function(profile_matrix, min_points = 1, 
@@ -45,7 +46,7 @@ filter_profiles <- function(profile_matrix, min_points = 1,
     imputed <- t(apply(expr, 1, impute_neighbors))
     imputed_nas <- is.na(imputed)
     rles <- apply(imputed_nas, 1, rle)
-    max_consecutive <- purrr::map_int(rles, ~ max(.$lengths[.$values == FALSE]))
+    max_consecutive <- map_int(rles, ~ max(.$lengths[.$values == FALSE]))
     profile_matrix <- profile_matrix[max_consecutive >= min_consecutive, ]
   }
 

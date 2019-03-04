@@ -14,6 +14,7 @@
 #' adj <- adjacency_matrix_from_list(gold_standard)
 #' 
 #' @importFrom purrr map_dfr
+#' @importFrom tidyr crossing
 #' 
 #' @export
 adjacency_matrix_from_list <- function(complexes) {
@@ -23,7 +24,7 @@ adjacency_matrix_from_list <- function(complexes) {
                       dimnames = list(proteins, proteins))
   
   # identify pairwise interactions
-  pairs <- map_dfr(complexes, ~ tidyr::crossing(., .))
+  pairs <- map_dfr(complexes, ~ crossing(., .))
   adjacency[as.matrix(pairs)] <- 1
   
   return(adjacency)

@@ -69,6 +69,7 @@
 #' 
 #' @importFrom MSnbase exprs
 #' @importFrom methods is
+#' @importFrom progress progress_bar
 #' 
 #' @export
 build_gaussians <- function(profile_matrix, 
@@ -100,7 +101,7 @@ build_gaussians <- function(profile_matrix,
   proteins <- rownames(cleaned)
   P <- length(proteins)
   message(".. fitting Gaussian mixture models to ", P, " profiles")
-  pb <- progress::progress_bar$new(
+  pb <- progress_bar$new(
     format = "fitting :what [:bar] :percent eta: :eta",
     clear = FALSE, total = P, width = 80)
   max_len <- max(nchar(proteins))

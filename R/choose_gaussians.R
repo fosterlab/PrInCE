@@ -37,6 +37,8 @@
 #' data(scott)
 #' chrom <- clean_profile(scott[1, ])
 #' gauss <- choose_gaussians(chrom, max_gaussians = 3)
+#' 
+#' @importFrom purrr map_lgl map
 #'
 #' @export
 choose_gaussians <- function(chromatogram, points = NULL,
@@ -65,10 +67,10 @@ choose_gaussians <- function(chromatogram, points = NULL,
       filter_gaussians_variance_max)
   
   # remove any models that failed to fit
-  models <- purrr::map(fits, "coefs")
-  drop <- purrr::map_lgl(models, is.null)
+  models <- map(fits, "coefs")
+  drop <- map_lgl(models, is.null)
   fits <- fits[!drop]
-  coefs <- purrr::map(fits, "coefs")
+  coefs <- map(fits, "coefs")
   
   if (criterion == "AICc") {
     criteria <- lapply(coefs, gaussian_aicc, chromatogram)

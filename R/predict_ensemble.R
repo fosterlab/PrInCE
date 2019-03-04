@@ -41,6 +41,13 @@
 #'                         cv_folds = 3, models = 1)
 #' 
 #' @importFrom stats predict binomial
+#' @importFrom robustbase rowMedians
+#' @importFrom progress progress_bar
+#' @importFrom naivebayes naive_bayes
+#' @importFrom LiblineaR LiblineaR
+#' @importFrom ranger ranger
+#' @importFrom speedglm speedglm
+#' @importFrom dplyr arrange
 #' 
 #' @export
 predict_ensemble <- function(dat, 
@@ -77,7 +84,7 @@ predict_ensemble <- function(dat,
   
   # create progress bar
   total_models <- models * cv_folds
-  pb <- progress::progress_bar$new(
+  pb <- progress_bar$new(
     format = "running fold :what [:bar] :percent eta: :eta",
     clear = FALSE, total = total_models, width = 80)
   counter <- 0
@@ -99,14 +106,14 @@ predict_ensemble <- function(dat,
       clf_labels <- as.factor(training_labels[which(folds != fold)])
       clf_data_labeled <- cbind(clf_data, label = clf_labels)
       clf <- switch(classifier,
-                    NB = naivebayes::naive_bayes(clf_data, clf_labels),
-                    SVM = LiblineaR::LiblineaR(clf_data, clf_labels, type = 2),
-                    RF = ranger::ranger(data = clf_data_labeled, 
-                                        dependent.variable.name = "label",
-                                        probability = TRUE,
-                                        num.trees = trees),
-                    LR = speedglm::speedglm(label ~ ., clf_data_labeled, 
-                                            family = binomial()))
+                    NB = naive_bayes(clf_data, clf_labels),
+                    SVM = LiblineaR(clf_data, clf_labels, type = 2),
+                    RF = ranger(data = clf_data_labeled, 
+                                dependent.variable.name = "label",
+                                probability = TRUE,
+                                num.trees = trees),
+                    LR = speedglm(label ~ ., clf_data_labeled, 
+                                  family = binomial()))
       
       # classify
       withheld_idxs <- as.integer(rownames(training))[folds == fold]
@@ -130,20 +137,19 @@ predict_ensemble <- function(dat,
       # call GC
       gc()
     }
-    medians <- setNames(robustbase::rowMedians(clf_scores, na.rm = TRUE),
+    medians <- setNames(rowMedians(clf_scores, na.rm = TRUE),
                         rownames(clf_scores))
     ensembled[, i] <- medians
   }
   
   # calculate median of medians across ensembled models
-  ensembled_medians <- setNames(
-    robustbase::rowMedians(ensembled, na.rm = TRUE),
-    rownames(ensembled))
+  ensembled_medians <- setNames(rowMedians(ensembled, na.rm = TRUE),
+                                rownames(ensembled))
   
   # create ranked data frame
   interactions <- cbind(dat[, c(1, 2)], score = ensembled_medians, 
                         label = labels)
-  interactions <- dplyr::arrange(interactions, -score)
+  interactions <- arrange(interactions, -score)
   
   return(interactions)
 }

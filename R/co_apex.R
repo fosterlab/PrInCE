@@ -17,6 +17,7 @@
 #' CA <- co_apex(gauss)
 #' 
 #' @importFrom stats dist
+#' @importFrom purrr map
 #' 
 #' @export
 co_apex <- function(gaussians, proteins = NULL) {
@@ -27,8 +28,8 @@ co_apex <- function(gaussians, proteins = NULL) {
   n_gaussians <- length(gaussians)
   gaussian_names <- names(gaussians)
   ## first, calculate Euclidean distance between every pair of Gaussians 
-  gaussian_centers <- purrr::map(gaussians, c("coefs", "mu"))
-  gaussian_sigmas <- purrr::map(gaussians, c("coefs", "sigma"))
+  gaussian_centers <- map(gaussians, c("coefs", "mu"))
+  gaussian_sigmas <- map(gaussians, c("coefs", "sigma"))
   gaussian_matrix <- cbind(unlist(gaussian_centers), unlist(gaussian_sigmas))
   CA <- as.matrix(dist(gaussian_matrix))
   ## get indices for each protein 

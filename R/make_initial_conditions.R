@@ -32,6 +32,8 @@
 #' set.seed(0)
 #' start <- make_initial_conditions(chrom, n_gaussians = 2, method = "guess")
 #' 
+#' @importFrom dplyr first last nth
+#' 
 #' @export
 make_initial_conditions <- function(chromatogram, n_gaussians, 
                                     method = c("guess", "random"),
@@ -43,9 +45,9 @@ make_initial_conditions <- function(chromatogram, n_gaussians,
     # find fractions that represent local maxima
     peaksX <- which(diff(sign(diff(chromatogram))) == -2) + 1
     # catch local minima at start or end
-    if (dplyr::first(chromatogram) > dplyr::nth(chromatogram, 2))
+    if (first(chromatogram) > nth(chromatogram, 2))
       peaksX <- c(peaksX, 1)
-    if (dplyr::last(chromatogram) > dplyr::nth(chromatogram, -2))
+    if (last(chromatogram) > nth(chromatogram, -2))
       peaksX <- c(peaksX, length(chromatogram))
     # order local maxima by distance (on one side, only)
     ## distances <- diff(peaksX)
