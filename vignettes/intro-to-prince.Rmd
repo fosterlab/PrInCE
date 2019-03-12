@@ -582,8 +582,16 @@ length(kristensen_gaussians)
 The co-elution matrix contains quantifications for 1,875 proteins across 48
 SEC fractions.
 Mixtures of Gaussians were fit to 1,117 of these. 
+For the sake of time, we subset this matrix further to the first 500 proteins:
 
-We also have to load our gold standard: in this case, the Complex Portal human
+```{r}
+kristensen <- kristensen[names(kristensen_gaussians), ]
+kristensen <- kristensen[seq_len(500), ]
+kristensen_gaussians <- kristensen_gaussians[rownames(kristensen)]
+```
+
+We also have to load our reference set of binary interactions or protein 
+complexes, which in this case is derived from the Complex Portal human 
 complexes.
 
 ```{r}
@@ -614,7 +622,7 @@ network <- threshold_precision(interactions, 0.5)
 nrow(network)
 ```
 
-PrInCE predicts a total of 7,182 interactions at a precision of 50%. 
+PrInCE predicts a total of 1,047 interactions at a precision of 50%. 
 
 ## Session info
 
