@@ -1,6 +1,6 @@
-# R script used to generate the data matrix bundled with the PrInCE package from 
-# supporting information files available online at the Molecular Systems
-# Biology website.
+# R script used to generate the `scott` data matrix bundled with the
+# PrInCE package from supporting information files available online at the 
+# Molecular Systems Biology website.
 setwd("~/git/PrInCE-R")
 options(stringsAsFactors = FALSE)
 library(tidyverse)

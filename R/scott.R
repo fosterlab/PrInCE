@@ -1,6 +1,6 @@
 #' Cytoplasmic interactome of Jurkat T cells during apoptosis
 #' 
-#' Co-migration profiles derived from size exclusion chromatography (SEC) of
+#' Co-elution profiles derived from size exclusion chromatography (SEC) of
 #' cytoplasmic fractions from Jurkat T cells, 4 hours following Fas stimulation.
 #' 
 #' Protein quantitation was accomplished by SILAC (stable isotopic labelling

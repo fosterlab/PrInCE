@@ -1,0 +1,21 @@
+#' Interactome of HeLa cells
+#' 
+#' Co-elution profiles derived from size exclusion chromatography (SEC) of
+#' HeLa cell lysates.
+#' 
+#' Protein quantitation was accomplished by SILAC (stable isotopic labelling
+#' by amino acids in cell culture), and is ratiometric, i.e., it reflects 
+#' the ratio between the intensity of the heavy isotope and the light isotope 
+#' ("H/L"). The dataset was initially described in Kristensen et al., 
+#' \emph{Nat. Methods} 2012. The medium isotope channel from replicate
+#' 1 (Supplementary Table 1a in the online supplementary information) is 
+#' included in the \code{PrInCE} package. The R script used to generate
+#' this matrix from the supplementary materials of the paper is provided in the
+#' \code{data-raw} directory of the package source code.
+#'
+#' @docType data
+#' @usage data(kristensen)
+#' @format a data frame with 1875 rows and 48 columns, with proteins in rows and
+#'   SEC fractions in columns
+#' @source \url{https://www.nature.com/articles/nmeth.2131}
+"kristensen"
