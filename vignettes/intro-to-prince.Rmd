@@ -99,7 +99,7 @@ plus false positives) is calculated at every point in this ranked list.
 The user can then apply a precision threshold of their choice to this ranked 
 list to infer the protein-protein interaction network from their experiment. 
 
-## Example: Interactome rearrangements in apoptosis
+## Example 1: Interactome rearrangements in apoptosis
 
 To demonstrate the use of PrInCE, we will work through a small example that 
 is derived from a subset of the data presented in Scott _et al._, 2017 
@@ -555,6 +555,66 @@ head(sort(z_scores, decreasing = TRUE))
 
 Of the 23 complexes that could be tested in this (unusually sparse) replicate, 
 13 were significant at an uncorrected, two-tailed p-value threshold of 0.05 
+
+## Example 2: Interactome of HeLa cells
+
+As a second example, we can reanalyze another dataset bundled with the PrInCE
+R package.
+This dataset consists of a subset of the data presented by Kristensen _et al._, 
+2012 [@kristensen2012], who applied SEC-PCP-SILAC to monitor the interactome 
+of HeLa cell lysates, then mapped interactome rearrangements induced by 
+epidermal growth factor (EGF) stimulation. 
+Three biological replicate experiments were performed, and in practice, 
+all three replicates from each condition would be analyzed together.
+However, for the purposes of demonstrating the use of the PrInCE R package, 
+we limit our analysis to the first replicate from the unstimulated condition. 
+
+We first load the data matrix and fitted Gaussians, provided with the PrInCE
+R package:
+
+```{r}
+data("kristensen")
+data("kristensen_gaussians")
+dim(kristensen)
+length(kristensen_gaussians)
+```
+
+The co-elution matrix contains quantifications for 1,875 proteins across 48
+SEC fractions.
+Mixtures of Gaussians were fit to 1,117 of these. 
+
+We also have to load our gold standard: in this case, the Complex Portal human
+complexes.
+
+```{r}
+data("gold_standard")
+head(gold_standard, 5)
+```
+
+We can predict interactions in a single step using the main `PrInCE` function, 
+here using a single model (instead of the default ensemble of ten) and five
+cross-validation folds (instead of the default of ten) for time: 
+
+```{r}
+# set seed for reproducibility
+set.seed(0)
+# predict interactions
+interactions <- PrInCE(profiles = kristensen, 
+                       gold_standard = gold_standard,
+                       gaussians = kristensen_gaussians,
+                       models = 1,
+                       cv_folds = 5)
+```
+
+Finally, we can subset our list of interactions to obtain set of high-confidence
+interactions for further analysis, using a relaxed precision cutoff of 50%. 
+
+```{r}
+network <- threshold_precision(interactions, 0.5)
+nrow(network)
+```
+
+PrInCE predicts a total of 7,182 interactions at a precision of 50%. 
 
 ## Session info
 
