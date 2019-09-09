@@ -6,3 +6,4 @@ For a detailed introduction to PrInCE, see the vignette:
 
 ```
 browseVignettes("PrInCE")
+```
