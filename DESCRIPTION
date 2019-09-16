@@ -1,6 +1,6 @@
 Package: PrInCE
 Title: Predicting Interactomes from Co-Elution
-Version: 0.99.14
+Version: 0.99.15
 Authors@R: c(
   person("Michael", "Skinnider", email = "michael.skinnider@msl.ubc.ca",
          role = c("aut", "trl", "cre")),
@@ -16,7 +16,7 @@ Description: PrInCE (Predicting Interactomes from Co-Elution) uses a naive
   Bayes classifier trained on dataset-derived features to recover
   protein-protein interactions from co-elution chromatogram profiles. This
   package contains the R implementation of PrInCE.
-Depends: R (>= 3.5.0)
+Depends: R (>= 3.6.0)
 Imports:
 	purrr (>= 0.2.4),
 	dplyr (>= 0.7.4),
