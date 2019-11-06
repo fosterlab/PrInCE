@@ -95,6 +95,8 @@
 #'   non-missing points; passed to \code{\link{filter_profiles}}
 #' @param min_consecutive filter profiles without at least this many 
 #'   consecutive, non-missing points; passed to \code{\link{filter_profiles}}
+#' @param min_pairs minimum number of overlapping fractions between any given
+#'   protein pair to consider a potential interaction
 #' @param impute_NA if true, impute single missing values with the average of
 #'   neighboring values; passed to \code{\link{clean_profiles}}
 #' @param smooth if true, smooth the chromatogram with a moving average filter;
@@ -174,6 +176,7 @@ PrInCE = function(profiles, gold_standard,
                   ## build_gaussians
                   min_points = 1,
                   min_consecutive = 5,
+                  min_pairs = 3,
                   impute_NA = TRUE,
                   smooth = TRUE,
                   smooth_width = 4,
@@ -288,6 +291,7 @@ PrInCE = function(profiles, gold_standard,
     
     # calculate features
     feat <- calculate_features(mat, gauss,
+                               min_pairs = min_pairs,
                                pearson_R_raw = pearson_R_raw,
                                pearson_R_cleaned = pearson_R_cleaned,
                                pearson_P = pearson_P,
