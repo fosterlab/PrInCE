@@ -43,7 +43,9 @@ calculate_features <- function(profile_matrix, gaussians,
                                pearson_P = TRUE,
                                euclidean_distance = TRUE,
                                co_peak = TRUE,
-                               co_apex = TRUE) {
+                               co_apex = TRUE,
+                               n_pairs = FALSE
+                               ) {
   if (is(profile_matrix, "MSnSet")) {
     profile_matrix <- exprs(profile_matrix)
   }
@@ -114,6 +116,10 @@ calculate_features <- function(profile_matrix, gaussians,
   
   # filter features based on n_pairs
   dat <- filter(dat, n_pairs >= min_pairs)
+  # remove n_pairs from the feature list
+  if (!n_pairs) {
+    dat$n_pairs <- NULL
+  }
   
   return(dat)
 }

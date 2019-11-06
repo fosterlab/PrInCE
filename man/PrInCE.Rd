@@ -6,13 +6,13 @@
 \usage{
 PrInCE(profiles, gold_standard, gaussians = NULL, precision = NULL,
   verbose = FALSE, min_points = 1, min_consecutive = 5,
-  impute_NA = TRUE, smooth = TRUE, smooth_width = 4,
+  min_pairs = 3, impute_NA = TRUE, smooth = TRUE, smooth_width = 4,
   max_gaussians = 5, max_iterations = 50, min_R_squared = 0.5,
   method = c("guess", "random"), criterion = c("AICc", "AIC", "BIC"),
   pearson_R_raw = TRUE, pearson_R_cleaned = TRUE, pearson_P = TRUE,
   euclidean_distance = TRUE, co_peak = TRUE, co_apex = TRUE,
-  classifier = c("NB", "SVM", "RF", "LR", "ensemble"), models = 10,
-  cv_folds = 10, trees = 500)
+  n_pairs = FALSE, classifier = c("NB", "SVM", "RF", "LR", "ensemble"),
+  models = 10, cv_folds = 10, trees = 500)
 }
 \arguments{
 \item{profiles}{the co-elution profile matrix, or a list of profile matrices
@@ -47,6 +47,9 @@ non-missing points; passed to \code{\link{filter_profiles}}}
 
 \item{min_consecutive}{filter profiles without at least this many 
 consecutive, non-missing points; passed to \code{\link{filter_profiles}}}
+
+\item{min_pairs}{minimum number of overlapping fractions between any given
+protein pair to consider a potential interaction}
 
 \item{impute_NA}{if true, impute single missing values with the average of
 neighboring values; passed to \code{\link{clean_profiles}}}
@@ -97,6 +100,9 @@ feature}
 
 \item{co_apex}{if true, include the 'co-apex score' (that is, the minimum
 Euclidean distance between any pair of fit Gaussians) as a feature}
+
+\item{n_pairs}{if \code{TRUE}, include the number of fractions in which
+both of a given pair of proteins were detected as a feature}
 
 \item{classifier}{the type of classifier to use: one of \code{"NB"} (naive
 Bayes), \code{"SVM"} (support vector machine), \code{"RF"} (random forest),

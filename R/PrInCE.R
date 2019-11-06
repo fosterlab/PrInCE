@@ -133,6 +133,8 @@
 #'   feature 
 #' @param co_apex if true, include the 'co-apex score' (that is, the minimum
 #'   Euclidean distance between any pair of fit Gaussians) as a feature
+#' @param n_pairs if \code{TRUE}, include the number of fractions in which
+#'   both of a given pair of proteins were detected as a feature
 #' @param classifier the type of classifier to use: one of \code{"NB"} (naive
 #'   Bayes), \code{"SVM"} (support vector machine), \code{"RF"} (random forest),
 #'   \code{"LR"} (logistic regression), or \code{"ensemble"} (an ensemble of
@@ -192,6 +194,7 @@ PrInCE = function(profiles, gold_standard,
                   euclidean_distance = TRUE,
                   co_peak = TRUE,
                   co_apex = TRUE,
+                  n_pairs = FALSE,
                   ## predict_interactions
                   classifier = c("NB", "SVM", "RF", "LR", "ensemble"), 
                   models = 10, 
@@ -297,7 +300,8 @@ PrInCE = function(profiles, gold_standard,
                                pearson_P = pearson_P,
                                euclidean_distance = euclidean_distance,
                                co_peak = co_peak,
-                               co_apex = co_apex)
+                               co_apex = co_apex,
+                               n_pairs = n_pairs)
     features[[replicate_idx]] <- feat
   }
   
