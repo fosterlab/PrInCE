@@ -140,7 +140,7 @@ predict_ensemble <- function(dat,
       test_data <- dat[-withheld_idxs, !colnames(dat) %in% node_colnames]
       predictions <- switch(
         classifier, 
-        NB = predict(clf, test_data, type = 'prob', threshold = 1e-10),
+        NB = predict(clf, test_data, type = 'prob', threshold = 5e-324),
         SVM = predict(clf, test_data, decisionValues = TRUE),
         RF = predict(clf, test_data),
         LR = predict(clf, test_data, type = 'response'))
