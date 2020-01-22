@@ -105,5 +105,13 @@ calculate_features <- function(profile_matrix, gaussians,
                     stringsAsFactors = FALSE) 
   dat <- cbind(dat, map(feature_matrices, ~ .[tri]))
   
+  ## cap Euclidean distance at the 99.5th %ile
+  max_euclidean_quantile = 0.995
+  if ("euclidean_distance" %in% colnames(dat)) {
+    vec = dat$euclidean_distance
+    threshold = quantile(vec, probs = max_euclidean_quantile, na.rm = T)
+    dat$euclidean_distance[vec >= threshold] <- threshold
+  }
+  
   return(dat)
 }
