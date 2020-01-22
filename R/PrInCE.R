@@ -200,7 +200,7 @@ PrInCE = function(profiles, gold_standard,
   classifie <- match.arg(classifier)
   
   # check profile input 
-  if (is.list(profiles)) {
+  if (is.list(profiles) & !is.data.frame(profiles)) {
     for (replicate_idx in seq_along(profiles)) {
       replicate <- profiles[[replicate_idx]]
       if (is(replicate, "MSnSet")) {
