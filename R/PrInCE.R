@@ -95,6 +95,8 @@
 #'   non-missing points; passed to \code{\link{filter_profiles}}
 #' @param min_consecutive filter profiles without at least this many 
 #'   consecutive, non-missing points; passed to \code{\link{filter_profiles}}
+#' @param min_pairs minimum number of overlapping fractions between any given
+#'   protein pair to consider a potential interaction
 #' @param impute_NA if true, impute single missing values with the average of
 #'   neighboring values; passed to \code{\link{clean_profiles}}
 #' @param smooth if true, smooth the chromatogram with a moving average filter;
@@ -131,6 +133,8 @@
 #'   feature 
 #' @param co_apex if true, include the 'co-apex score' (that is, the minimum
 #'   Euclidean distance between any pair of fit Gaussians) as a feature
+#' @param n_pairs if \code{TRUE}, include the number of fractions in which
+#'   both of a given pair of proteins were detected as a feature
 #' @param classifier the type of classifier to use: one of \code{"NB"} (naive
 #'   Bayes), \code{"SVM"} (support vector machine), \code{"RF"} (random forest),
 #'   \code{"LR"} (logistic regression), or \code{"ensemble"} (an ensemble of
@@ -174,6 +178,7 @@ PrInCE = function(profiles, gold_standard,
                   ## build_gaussians
                   min_points = 1,
                   min_consecutive = 5,
+                  min_pairs = 3,
                   impute_NA = TRUE,
                   smooth = TRUE,
                   smooth_width = 4,
@@ -189,6 +194,7 @@ PrInCE = function(profiles, gold_standard,
                   euclidean_distance = TRUE,
                   co_peak = TRUE,
                   co_apex = TRUE,
+                  n_pairs = FALSE,
                   ## predict_interactions
                   classifier = c("NB", "SVM", "RF", "LR", "ensemble"), 
                   models = 10, 
@@ -288,12 +294,14 @@ PrInCE = function(profiles, gold_standard,
     
     # calculate features
     feat <- calculate_features(mat, gauss,
+                               min_pairs = min_pairs,
                                pearson_R_raw = pearson_R_raw,
                                pearson_R_cleaned = pearson_R_cleaned,
                                pearson_P = pearson_P,
                                euclidean_distance = euclidean_distance,
                                co_peak = co_peak,
-                               co_apex = co_apex)
+                               co_apex = co_apex,
+                               n_pairs = n_pairs)
     features[[replicate_idx]] <- feat
   }
   

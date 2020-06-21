@@ -10,6 +10,8 @@
 #' in rows, or a \code{\linkS4class{MSnSet}} object
 #' @param gaussians a list of Gaussian mixture models fit to the profile matrix
 #' by \code{link{build_gaussians}}
+#' @param min_pairs minimum number of overlapping fractions between any given
+#'   protein pair to consider a potential interaction
 #' @param pearson_R_raw if true, include the Pearson correlation (R) between
 #' raw profiles as a feature
 #' @param pearson_R_cleaned if true, include the Pearson correlation (R) between
@@ -31,17 +33,25 @@
 #' @importFrom methods is
 #' @importFrom Hmisc rcorr
 #' @importFrom purrr map map_int
+#' @importFrom dplyr filter
 #' 
 #' @export
 calculate_features <- function(profile_matrix, gaussians,
+                               min_pairs = 0,
                                pearson_R_raw = TRUE,
                                pearson_R_cleaned = TRUE,
                                pearson_P = TRUE,
                                euclidean_distance = TRUE,
                                co_peak = TRUE,
-                               co_apex = TRUE) {
+                               co_apex = TRUE,
+                               n_pairs = FALSE
+) {
   if (is(profile_matrix, "MSnSet")) {
     profile_matrix <- exprs(profile_matrix)
+  }
+  # remove at least pairs supported by only 2 points
+  if (min_pairs < 3) {
+    min_pairs <- 3
   }
   
   # replace missing values with near-zero noise
@@ -59,8 +69,6 @@ calculate_features <- function(profile_matrix, gaussians,
   if (pearson_R_raw) {
     cor_R_raw <- suppressWarnings(
       1 - cor(t(profile_matrix), use = 'pairwise.complete.obs'))
-    ## set correlations with 2 pairwise observations to zero
-    cor_R_raw[pairs <= 2] <- 0
     feature_matrices[["cor_R_raw"]] <- cor_R_raw
   }
   if (pearson_R_cleaned) {
@@ -70,8 +78,6 @@ calculate_features <- function(profile_matrix, gaussians,
   if (pearson_P) {
     cor_P <- suppressWarnings(
       rcorr(t(profile_matrix))$P)
-    ## set P-values with 2 pairwise observations to 1
-    cor_P[pairs <= 2] <- 1
     feature_matrices[["cor_P"]] <- cor_P  
   }
   # calculate Euclidean distance
@@ -90,6 +96,9 @@ calculate_features <- function(profile_matrix, gaussians,
     CA <- co_apex(gaussians, proteins)
     feature_matrices[["co_apex"]] <- CA
   }
+  
+  # add number of pairs to the feature matrix list
+  feature_matrices[["n_pairs"]] <- pairs
   
   ## make sure all dimensions are identical
   if (!all(map_int(feature_matrices, nrow) == n_proteins) |
@@ -111,6 +120,13 @@ calculate_features <- function(profile_matrix, gaussians,
     vec = dat$euclidean_distance
     threshold = quantile(vec, probs = max_euclidean_quantile, na.rm = T)
     dat$euclidean_distance[vec >= threshold] <- threshold
+  }
+  
+  # filter features based on n_pairs
+  dat <- filter(dat, n_pairs >= min_pairs)
+  # remove n_pairs from the feature list
+  if (!n_pairs) {
+    dat$n_pairs <- NULL
   }
   
   return(dat)
