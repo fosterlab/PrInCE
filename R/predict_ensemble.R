@@ -131,7 +131,8 @@ predict_ensemble <- function(dat,
                     RF = ranger(data = clf_data_labeled, 
                                 dependent.variable.name = "label",
                                 probability = TRUE,
-                                num.trees = trees),
+                                num.trees = trees,
+                                num.threads = 1),
                     LR = speedglm(label ~ ., clf_data_labeled, 
                                   family = binomial()))
       
@@ -142,7 +143,7 @@ predict_ensemble <- function(dat,
         classifier, 
         NB = predict(clf, test_data, type = 'prob', threshold = 5e-324),
         SVM = predict(clf, test_data, decisionValues = TRUE),
-        RF = predict(clf, test_data),
+        RF = predict(clf, test_data, num.threads = 1),
         LR = predict(clf, test_data, type = 'response'))
       ## extract predictions as numeric vector
       predictions <- switch(
