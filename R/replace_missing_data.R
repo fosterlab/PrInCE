@@ -22,7 +22,7 @@ replace_missing_data <- function(dat, noise_pct = 0.05) {
     column <- dat[[col_name]]
     if (!is.numeric(column))
       next
-    missing <- is.na(column)
+    missing <- !is.finite(column)
     dat[[col_name]][missing] <- 
       median(column, na.rm = TRUE) + rnorm(sum(missing)) * 
       sd(column, na.rm = TRUE) * noise_pct 
