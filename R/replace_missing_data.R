@@ -22,6 +22,10 @@ replace_missing_data <- function(dat, noise_pct = 0.05) {
     column <- dat[[col_name]]
     if (!is.numeric(column))
       next
+    ## first, replace infinite values
+    infinite = is.infinite(column)
+    dat[[col_name]][infinite] <- NA
+    ## second, replace other missing values
     missing <- !is.finite(column)
     dat[[col_name]][missing] <- 
       median(column, na.rm = TRUE) + rnorm(sum(missing)) * 
