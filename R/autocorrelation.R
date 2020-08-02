@@ -54,12 +54,12 @@ autocorrelation <- function(profile1,
   fracnum1 <- apply(profile1, 1, function(x) {
     sum(is.finite(x))
   }) >= min_fractions
-  profile1 <- profile1[fracnum1]
+  profile1 <- profile1[fracnum1, ]
 
   fracnum2 <- apply(profile2, 1, function(x) {
     sum(is.finite(x))
   }) >= min_fractions
-  profile2 <- profile1[fracnum2]
+  profile2 <- profile1[fracnum2, ]
 
   # filter to proteins in both conditions
   overlap <- intersect(rownames(profile1), rownames(profile2))
