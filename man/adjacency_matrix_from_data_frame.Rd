@@ -4,8 +4,7 @@
 \alias{adjacency_matrix_from_data_frame}
 \title{Create an adjacency matrix from a data frame}
 \usage{
-adjacency_matrix_from_data_frame(dat, symmetric = TRUE,
-  node_columns = c(1, 2))
+adjacency_matrix_from_data_frame(dat, symmetric = TRUE, node_columns = c(1, 2))
 }
 \arguments{
 \item{dat}{a data frame containing pairwise interactions}

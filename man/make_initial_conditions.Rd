@@ -4,9 +4,15 @@
 \alias{make_initial_conditions}
 \title{Make initial conditions for curve fitting with a mixture of Gaussians}
 \usage{
-make_initial_conditions(chromatogram, n_gaussians, method = c("guess",
-  "random"), sigma_default = 2, sigma_noise = 0.5, mu_noise = 1.5,
-  A_noise = 0.5)
+make_initial_conditions(
+  chromatogram,
+  n_gaussians,
+  method = c("guess", "random"),
+  sigma_default = 2,
+  sigma_noise = 0.5,
+  mu_noise = 1.5,
+  A_noise = 0.5
+)
 }
 \arguments{
 \item{chromatogram}{a numeric vector corresponding to the chromatogram trace}

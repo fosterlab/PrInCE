@@ -4,9 +4,15 @@
 \alias{predict_interactions}
 \title{Predict interactions given a set of features and examples}
 \usage{
-predict_interactions(features, gold_standard, classifier = c("NB", "SVM",
-  "RF", "LR", "ensemble"), verbose = FALSE, models = 10,
-  cv_folds = 10, trees = 500)
+predict_interactions(
+  features,
+  gold_standard,
+  classifier = c("NB", "SVM", "RF", "LR", "ensemble"),
+  verbose = FALSE,
+  models = 10,
+  cv_folds = 10,
+  trees = 500
+)
 }
 \arguments{
 \item{features}{a data frame with proteins in the first two columns, and 
@@ -51,7 +57,7 @@ a classifier score, whereas for the remaining protein pairs, the median of
 all ten folds is used. Furthermore, to ensure the results are not sensitive
 to the precise classifier split used, an ensemble of multiple classifiers
 (ten, by default) is trained, and the classifier score is subsequently
-averaged across classifiers.
+averaged across classifiers. 
 
 PrInCE can also ensemble across multiple different types of classifiers, 
 by supplying the \code{"ensemble"} option to the \code{classifier} argument.

@@ -4,8 +4,10 @@
 \name{scott}
 \alias{scott}
 \title{Cytoplasmic interactome of Jurkat T cells during apoptosis}
-\format{a data frame with 1560 rows and 55 columns, with proteins in rows and
-  SEC fractions in columns}
+\format{
+a data frame with 1560 rows and 55 columns, with proteins in rows and
+  SEC fractions in columns
+}
 \source{
 \url{http://msb.embopress.org/content/13/1/906}
 }

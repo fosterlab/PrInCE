@@ -4,8 +4,13 @@
 \alias{clean_profiles}
 \title{Preprocess a co-elution profile matrix}
 \usage{
-clean_profiles(profile_matrix, impute_NA = TRUE, smooth = TRUE,
-  smooth_width = 4, noise_floor = 0.001)
+clean_profiles(
+  profile_matrix,
+  impute_NA = TRUE,
+  smooth = TRUE,
+  smooth_width = 4,
+  noise_floor = 0.001
+)
 }
 \arguments{
 \item{profile_matrix}{a numeric matrix of co-elution profiles, with proteins
