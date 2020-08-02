@@ -85,4 +85,5 @@ autocorrelation <- function(profile1,
     use = "pairwise.complete.obs"
   ))
   names(autocors) <- overlap
+  return(autocors)
 }
