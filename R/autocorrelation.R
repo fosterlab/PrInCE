@@ -33,7 +33,7 @@ autocorrelation <- function(profile1,
                             profile2,
                             cor_method = c("pearson", "spearman", "kendall"),
                             min_fractions = 1,
-                            min_pairs = 0) {
+                            min_pairs = 10) {
   cor_method <- match.arg(cor_method)
 
   # check profile inputs
@@ -59,7 +59,7 @@ autocorrelation <- function(profile1,
   fracnum2 <- apply(profile2, 1, function(x) {
     sum(is.finite(x))
   }) >= min_fractions
-  profile2 <- profile1[fracnum2, ]
+  profile2 <- profile2[fracnum2, ]
 
   # filter to proteins in both conditions
   overlap <- intersect(rownames(profile1), rownames(profile2))
@@ -75,7 +75,7 @@ autocorrelation <- function(profile1,
   ))
   ns <- map(chroms, ~ crossprod(!is.na(t(.))))
 
-  # censor correlations with < 10 pairs in the raw chromatograms
+  # censor correlations with < min_pairs in the raw chromatograms
   cors[[1]][ns[[1]] < min_pairs] <- NA
   cors[[2]][ns[[2]] < min_pairs] <- NA
 
