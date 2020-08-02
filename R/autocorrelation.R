@@ -38,7 +38,7 @@ autocorrelation <- function(profile1,
 
   # check profile inputs
   if (!(is.matrix(profile1) && is.matrix(profile2))) {
-    if (is.data.frame((profile1) && is.data.frame(profile2))) {
+    if (is.data.frame(profile1) && is.data.frame(profile2)) {
       profile1 <- as.matrix(profile1)
       profile2 <- as.matrix(profile2)
     } else {
