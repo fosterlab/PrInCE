@@ -25,8 +25,8 @@
 #' both matricies
 #'
 #' @importFrom dplyr na_if
-#' @importFrom purr map
-#' @importFrom purr map_dbl
+#' @importFrom purrr map
+#' @importFrom purrr map_dbl
 #'
 #' @export
 autocorrelation <- function(profile1,

@@ -9,7 +9,7 @@ autocorrelation(
   profile2,
   cor_method = c("pearson", "spearman", "kendall"),
   min_fractions = 1,
-  min_pairs = 0
+  min_pairs = 10
 )
 }
 \arguments{
