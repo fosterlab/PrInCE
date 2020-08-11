@@ -13,16 +13,19 @@
 #' with proteins in rows and fractions in columns.
 #'
 #' @param cor_method the correlation method to use. (One of "Pearson",
-#' "Spearman", "Kendall")
+#' "Spearman", "Kendall").
+#'
+#' @param min_replicates the minimum number of replicates a fraction must appear
+#' in to be included in average.
 #'
 #' @param min_fractions the minimum number of fractions a protein must appear
-#' in to be included in autocorrelation
+#' in to be included in autocorrelation.
 #'
 #' @param min_pairs ignores pairs of chromatograms within a profile that don't
 #' co-occur in at least this many fractions.
 #'
 #' @return a named vector of autocorrelation scores for all proteins found in
-#' both matricies
+#' both matricies.
 #'
 #' @importFrom dplyr na_if
 #' @importFrom purrr map
@@ -32,6 +35,7 @@
 autocorrelation <- function(profile1,
                             profile2,
                             cor_method = c("pearson", "spearman", "kendall"),
+                            min_replicates = 1,
                             min_fractions = 1,
                             min_pairs = 10) {
   cor_method <- match.arg(cor_method)
@@ -41,8 +45,11 @@ autocorrelation <- function(profile1,
     if (is.data.frame(profile1) && is.data.frame(profile2)) {
       profile1 <- as.matrix(profile1)
       profile2 <- as.matrix(profile2)
+    } else if (is.list(profile1) && is.list(profile2)) {
+      profile1 <- average_chromatogram_replicates(profile1, min_replicates)
+      profile2 <- average_chromatogram_replicates(profile2, min_replicates)
     } else {
-      stop("Input pair must be matricies or dataframes")
+      stop("Input pair must be matricies, dataframes, or lists of replicates")
     }
   }
 

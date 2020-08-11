@@ -8,6 +8,7 @@ autocorrelation(
   profile1,
   profile2,
   cor_method = c("pearson", "spearman", "kendall"),
+  min_replicates = 1,
   min_fractions = 1,
   min_pairs = 10
 )
@@ -20,17 +21,20 @@ rows and fractions in columns.}
 with proteins in rows and fractions in columns.}
 
 \item{cor_method}{the correlation method to use. (One of "Pearson",
-"Spearman", "Kendall")}
+"Spearman", "Kendall").}
+
+\item{min_replicates}{the minimum number of replicates a fraction must appear
+in to be included in average.}
 
 \item{min_fractions}{the minimum number of fractions a protein must appear
-in to be included in autocorrelation}
+in to be included in autocorrelation.}
 
 \item{min_pairs}{ignores pairs of chromatograms within a profile that don't
 co-occur in at least this many fractions.}
 }
 \value{
 a named vector of autocorrelation scores for all proteins found in
-both matricies
+both matricies.
 }
 \description{
 Calculates a protein's chromatogram to all other eluted proteins. The
