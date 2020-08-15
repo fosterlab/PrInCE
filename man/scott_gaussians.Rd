@@ -4,8 +4,10 @@
 \name{scott_gaussians}
 \alias{scott_gaussians}
 \title{Fitted Gaussian mixture models for the \code{scott} dataset}
-\format{a named list with 970 entries; names are proteins, and list items 
-  conain information about fitted Gaussians in the format that PrInCE expects}
+\format{
+a named list with 970 entries; names are proteins, and list items 
+  conain information about fitted Gaussians in the format that PrInCE expects
+}
 \usage{
 data(scott_gaussians)
 }

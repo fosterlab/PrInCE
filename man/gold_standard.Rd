@@ -4,7 +4,9 @@
 \name{gold_standard}
 \alias{gold_standard}
 \title{Reference set of human protein complexes}
-\format{a list containing 467 entries (character vectors)}
+\format{
+a list containing 467 entries (character vectors)
+}
 \source{
 \url{https://www.ebi.ac.uk/complexportal/complex/organisms}
 }

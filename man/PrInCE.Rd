@@ -4,15 +4,35 @@
 \alias{PrInCE}
 \title{PrInCE: Prediction of Interactomes from Co-Elution}
 \usage{
-PrInCE(profiles, gold_standard, gaussians = NULL, precision = NULL,
-  verbose = FALSE, min_points = 1, min_consecutive = 5,
-  min_pairs = 3, impute_NA = TRUE, smooth = TRUE, smooth_width = 4,
-  max_gaussians = 5, max_iterations = 50, min_R_squared = 0.5,
-  method = c("guess", "random"), criterion = c("AICc", "AIC", "BIC"),
-  pearson_R_raw = TRUE, pearson_R_cleaned = TRUE, pearson_P = TRUE,
-  euclidean_distance = TRUE, co_peak = TRUE, co_apex = TRUE,
-  n_pairs = FALSE, classifier = c("NB", "SVM", "RF", "LR", "ensemble"),
-  models = 10, cv_folds = 10, trees = 500)
+PrInCE(
+  profiles,
+  gold_standard,
+  gaussians = NULL,
+  precision = NULL,
+  verbose = FALSE,
+  min_points = 1,
+  min_consecutive = 5,
+  min_pairs = 3,
+  impute_NA = TRUE,
+  smooth = TRUE,
+  smooth_width = 4,
+  max_gaussians = 5,
+  max_iterations = 50,
+  min_R_squared = 0.5,
+  method = c("guess", "random"),
+  criterion = c("AICc", "AIC", "BIC"),
+  pearson_R_raw = TRUE,
+  pearson_R_cleaned = TRUE,
+  pearson_P = TRUE,
+  euclidean_distance = TRUE,
+  co_peak = TRUE,
+  co_apex = TRUE,
+  n_pairs = FALSE,
+  classifier = c("NB", "SVM", "RF", "LR", "ensemble"),
+  models = 10,
+  cv_folds = 10,
+  trees = 500
+)
 }
 \arguments{
 \item{profiles}{the co-elution profile matrix, or a list of profile matrices
@@ -158,7 +178,7 @@ all ten folds is used. Furthermore, to ensure the results are not sensitive
 to the precise classifier split used, an ensemble of multiple classifiers
 (ten, by default) is trained, and the classifier score is subsequently
 averaged across classifiers. PrInCE can also ensemble across a set of
-classifiers.
+classifiers. 
 
 By default, PrInCE calculates six features from each pair of co-elution
 profiles as input to the classifier, including conventional similarity 
@@ -166,7 +186,7 @@ metrics but also several features specifically adapted to co-elution
 proteomics. For example, one such feature is derived
 from fitting a Gaussian mixture model to each elution profile, then 
 calculating the smallest Euclidean distance between any pair of fitted 
-Gaussians. The complete set of features includes:
+Gaussians. The complete set of features includes: 
 
 \enumerate{
   \item the Pearson correlation between raw co-elution profiles;

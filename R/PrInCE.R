@@ -203,7 +203,7 @@ PrInCE = function(profiles, gold_standard,
 ) {
   method <- match.arg(method)
   criterion <- match.arg(criterion)
-  classifie <- match.arg(classifier)
+  classifier <- match.arg(classifier)
   
   # check profile input 
   if (is.list(profiles) & !is.data.frame(profiles)) {

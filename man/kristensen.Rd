@@ -4,8 +4,10 @@
 \name{kristensen}
 \alias{kristensen}
 \title{Interactome of HeLa cells}
-\format{a data frame with 1875 rows and 48 columns, with proteins in rows and
-  SEC fractions in columns}
+\format{
+a data frame with 1875 rows and 48 columns, with proteins in rows and
+  SEC fractions in columns
+}
 \source{
 \url{https://www.nature.com/articles/nmeth.2131}
 }

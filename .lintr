@@ -1,0 +1,60 @@
+linters: with_defaults(
+    trailing_whitespace_linter = NULL, # 604
+    object_name_linter = NULL, # 66
+    assignment_linter = NULL, # 10
+    single_quotes_linter = NULL, # 7
+    infix_spaces_linter = NULL, # 5
+    commas_linter = NULL, # 3
+    object_usage_linter = NULL, # 3
+    open_curly_linter = NULL, # 3
+    cyclocomp_linter = NULL, # 2
+    spaces_left_parentheses_linter = NULL, # 2
+    trailing_blank_lines_linter = NULL, # 2
+    line_length_linter = NULL, # 1
+    object_length_linter = NULL, # 1
+    dummy_linter = NULL
+  )
+exclusions: list(
+    "data/gold_standard.rda",
+    "data/kristensen.rda",
+    "data/kristensen_gaussians.rda",
+    "data/scott.rda",
+    "data/scott_gaussians.rda",
+    "man/adjacency_matrix_from_data_frame.Rd",
+    "man/adjacency_matrix_from_list.Rd",
+    "man/aic.Rd",
+    "man/build_gaussians.Rd",
+    "man/calculate_features.Rd",
+    "man/calculate_precision.Rd",
+    "man/check_gaussians.Rd",
+    "man/choose_gaussians.Rd",
+    "man/clean_profile.Rd",
+    "man/clean_profiles.Rd",
+    "man/co_apex.Rd",
+    "man/concatenate_features.Rd",
+    "man/detect_complexes.Rd",
+    "man/filter_profiles.Rd",
+    "man/fit_curve.Rd",
+    "man/fit_gaussians.Rd",
+    "man/gold_standard.Rd",
+    "man/impute_neighbors.Rd",
+    "man/is_unweighted.Rd",
+    "man/is_weighted.Rd",
+    "man/kristensen.Rd",
+    "man/kristensen_gaussians.Rd",
+    "man/make_feature_from_data_frame.Rd",
+    "man/make_feature_from_expression.Rd",
+    "man/make_initial_conditions.Rd",
+    "man/make_labels.Rd",
+    "man/match_matrix_dimensions.Rd",
+    "man/predict_ensemble.Rd",
+    "man/predict_interactions.Rd",
+    "man/PrInCE.Rd",
+    "man/replace_missing_data.Rd",
+    "man/scott.Rd",
+    "man/scott_gaussians.Rd",
+    "man/threshold_precision.Rd",
+    "vignettes/bibliography.bib",
+    "vignettes/intro-to-prince.Rmd",
+    "vignettes/pnas.csl"
+  )

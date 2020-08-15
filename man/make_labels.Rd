@@ -4,8 +4,7 @@
 \alias{make_labels}
 \title{Make labels for a classifier based on a gold standard}
 \usage{
-make_labels(gold_standard, dat, node_columns = c(1, 2),
-  protein_groups = NULL)
+make_labels(gold_standard, dat, node_columns = c(1, 2), protein_groups = NULL)
 }
 \arguments{
 \item{gold_standard}{an adjacency matrix of gold-standard interactions}

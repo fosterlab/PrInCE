@@ -4,13 +4,23 @@
 \alias{build_gaussians}
 \title{Deconvolve profiles into Gaussian mixture models}
 \usage{
-build_gaussians(profile_matrix, min_points = 1, min_consecutive = 5,
-  impute_NA = TRUE, smooth = TRUE, smooth_width = 4,
-  max_gaussians = 5, criterion = c("AICc", "AIC", "BIC"),
-  max_iterations = 50, min_R_squared = 0.5, method = c("guess",
-  "random"), filter_gaussians_center = TRUE,
-  filter_gaussians_height = 0.15, filter_gaussians_variance_min = 0.5,
-  filter_gaussians_variance_max = 50)
+build_gaussians(
+  profile_matrix,
+  min_points = 1,
+  min_consecutive = 5,
+  impute_NA = TRUE,
+  smooth = TRUE,
+  smooth_width = 4,
+  max_gaussians = 5,
+  criterion = c("AICc", "AIC", "BIC"),
+  max_iterations = 50,
+  min_R_squared = 0.5,
+  method = c("guess", "random"),
+  filter_gaussians_center = TRUE,
+  filter_gaussians_height = 0.15,
+  filter_gaussians_variance_min = 0.5,
+  filter_gaussians_variance_max = 50
+)
 }
 \arguments{
 \item{profile_matrix}{a numeric matrix of co-elution profiles, with proteins

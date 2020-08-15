@@ -4,8 +4,14 @@
 \alias{make_feature_from_data_frame}
 \title{Create a feature vector for a classifier from a data frame}
 \usage{
-make_feature_from_data_frame(dat, target, dat_node_cols = c(1, 2),
-  target_node_cols = c(1, 2), feature_col = 3, default_value = NA)
+make_feature_from_data_frame(
+  dat,
+  target,
+  dat_node_cols = c(1, 2),
+  target_node_cols = c(1, 2),
+  feature_col = 3,
+  default_value = NA
+)
 }
 \arguments{
 \item{dat}{a data frame containing pairwise interactions and a feature to be

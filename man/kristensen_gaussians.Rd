@@ -4,8 +4,10 @@
 \name{kristensen_gaussians}
 \alias{kristensen_gaussians}
 \title{Fitted Gaussian mixture models for the \code{kristensen} dataset}
-\format{a named list with 1117 entries; names are proteins, and list items 
-  conain information about fitted Gaussians in the format that PrInCE expects}
+\format{
+a named list with 1117 entries; names are proteins, and list items 
+  conain information about fitted Gaussians in the format that PrInCE expects
+}
 \usage{
 data(kristensen_gaussians)
 }

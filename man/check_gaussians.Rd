@@ -4,8 +4,13 @@
 \alias{check_gaussians}
 \title{Check the format of a list of Gaussians}
 \usage{
-check_gaussians(gaussians, proteins = NULL, replicate_idx = NULL,
-  n_error = 3, pct_warning = 0.1)
+check_gaussians(
+  gaussians,
+  proteins = NULL,
+  replicate_idx = NULL,
+  n_error = 3,
+  pct_warning = 0.1
+)
 }
 \arguments{
 \item{gaussians}{the list of Gaussians}

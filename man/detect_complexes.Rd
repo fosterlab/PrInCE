@@ -4,8 +4,14 @@
 \alias{detect_complexes}
 \title{Detect significantly interacting complexes in a chromatogram matrix}
 \usage{
-detect_complexes(profile_matrix, complexes, method = c("pearson",
-  "euclidean"), min_pairs = 10, bootstraps = 100, progress = TRUE)
+detect_complexes(
+  profile_matrix,
+  complexes,
+  method = c("pearson", "euclidean"),
+  min_pairs = 10,
+  bootstraps = 100,
+  progress = TRUE
+)
 }
 \arguments{
 \item{profile_matrix}{a matrix of chromatograms, with proteins in the rows

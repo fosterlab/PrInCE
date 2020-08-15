@@ -4,8 +4,15 @@
 \alias{predict_ensemble}
 \title{Predict interactions using an ensemble of classifiers}
 \usage{
-predict_ensemble(dat, labels, classifier = c("NB", "SVM", "RF", "LR"),
-  models = 10, cv_folds = 10, trees = 500, node_columns = c(1, 2))
+predict_ensemble(
+  dat,
+  labels,
+  classifier = c("NB", "SVM", "RF", "LR"),
+  models = 10,
+  cv_folds = 10,
+  trees = 500,
+  node_columns = c(1, 2)
+)
 }
 \arguments{
 \item{dat}{a data frame containing interacting gene/protein pairs in the
