@@ -24,7 +24,7 @@ replace_missing_data <- function(dat, noise_pct = 0.05) {
       next
     ## first, replace infinite values
     infinite = is.infinite(column)
-    dat[[col_name]][infinite] <- NA
+    column[infinite] <- NA
     ## second, replace other missing values
     missing <- !is.finite(column)
     dat[[col_name]][missing] <- 
