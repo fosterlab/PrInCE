@@ -197,7 +197,7 @@ PrInCE = function(profiles, gold_standard,
                   n_pairs = FALSE,
                   ## predict_interactions
                   classifier = c("NB", "SVM", "RF", "LR", "ensemble"), 
-                  models = 10, 
+                  models = 1, 
                   cv_folds = 10,
                   trees = 500
 ) {

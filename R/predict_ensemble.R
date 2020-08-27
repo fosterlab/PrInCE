@@ -58,7 +58,7 @@
 predict_ensemble <- function(dat, 
                              labels, 
                              classifier = c("NB", "SVM", "RF", "LR"), 
-                             models = 10, 
+                             models = 1, 
                              cv_folds = 10,
                              trees = 500,
                              node_columns = c(1, 2)) {
