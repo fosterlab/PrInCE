@@ -311,6 +311,9 @@ PrInCE = function(profiles, gold_standard,
   }
   input <- concatenate_features(features)
   
+  # impute missing values
+  input <- replace_missing_data(input)
+  
   # predict interactions
   interactions <- predict_interactions(input, gold_standard, 
                                        classifier = classifier,

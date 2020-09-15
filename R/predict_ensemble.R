@@ -71,11 +71,6 @@ predict_ensemble <- function(dat,
   ## define global variables to prevent check complaining
   score <- NULL
   
-  # replace missing data
-  if (classifier != "NB") {
-    dat <- replace_missing_data(dat)
-  }
-  
   # scale all features
   if (is.numeric(node_columns)) {
     node_colnames <- colnames(dat)[node_columns]
