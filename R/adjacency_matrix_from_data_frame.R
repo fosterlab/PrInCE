@@ -33,9 +33,9 @@ adjacency_matrix_from_data_frame <- function(dat,
   # remove self-interactions
   col1 <- node_columns[1]
   col2 <- node_columns[2]
+  dat <- dat[dat[[col1]] != dat[[col2]], ]
   nodes1 <- as.character(dat[[col1]])
   nodes2 <- as.character(dat[[col2]])
-  dat <- dat[nodes1 != nodes2, ]
   
   # create empty matrix
   proteins <- unique(c(nodes1, nodes2))
