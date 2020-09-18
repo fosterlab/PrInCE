@@ -7,11 +7,11 @@
 threshold_precision(interactions, threshold)
 }
 \arguments{
-\item{interactions}{the ranked list of interactions output by 
-\code{\link[PrInCE]{predict_interactions}}, including a \code{precision} 
+\item{interactions}{the ranked list of interactions output by
+\code{\link[PrInCE]{predict_interactions}}, including a \code{precision}
 column}
 
-\item{threshold}{the minimum precision of the unweighted interaction 
+\item{threshold}{the minimum precision of the unweighted interaction
 network to return}
 }
 \value{
@@ -27,9 +27,10 @@ data(gold_standard)
 # analyze only the first 100 profiles
 subset <- scott[seq_len(500), ]
 gauss <- scott_gaussians[names(scott_gaussians) \%in\% rownames(subset)]
-ppi <- PrInCE(subset, gold_standard, gaussians = gauss, models = 1, 
-             cv_folds = 3)
+ppi <- PrInCE(subset, gold_standard,
+  gaussians = gauss, models = 1,
+  cv_folds = 3
+)
 network <- threshold_precision(ppi, threshold = 0.5)
 nrow(network)
-
 }

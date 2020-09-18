@@ -14,7 +14,8 @@ calculate_features(
   euclidean_distance = TRUE,
   co_peak = TRUE,
   co_apex = TRUE,
-  n_pairs = FALSE
+  n_pairs = FALSE,
+  max_euclidean_quantile = 0.9
 )
 }
 \arguments{
@@ -44,6 +45,10 @@ in fractions, between the single highest value of each profile) as a feature}
 
 \item{co_apex}{if true, include the 'co-apex score' (that is, the minimum
 Euclidean distance between any pair of fit Gaussians) as a feature}
+
+\item{max_euclidean_quantile}{very high Euclidean distance values are trimmed
+to avoid numerical precision issues; values above this quantile will be
+replaced with the value at this quantile (default: \code{0.9})}
 }
 \value{
 a data frame containing the calculated features for all possible

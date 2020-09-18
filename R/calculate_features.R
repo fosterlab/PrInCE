@@ -24,6 +24,9 @@
 #' in fractions, between the single highest value of each profile) as a feature 
 #' @param co_apex if true, include the 'co-apex score' (that is, the minimum
 #' Euclidean distance between any pair of fit Gaussians) as a feature
+#' @param max_euclidean_quantile very high Euclidean distance values are trimmed
+#' to avoid numerical precision issues; values above this quantile will be
+#' replaced with the value at this quantile (default: \code{0.9})
 #' 
 #' @return a data frame containing the calculated features for all possible
 #' protein pairs
@@ -44,7 +47,8 @@ calculate_features <- function(profile_matrix, gaussians,
                                euclidean_distance = TRUE,
                                co_peak = TRUE,
                                co_apex = TRUE,
-                               n_pairs = FALSE
+                               n_pairs = FALSE,
+                               max_euclidean_quantile = 0.9
 ) {
   if (is(profile_matrix, "MSnSet")) {
     profile_matrix <- exprs(profile_matrix)
@@ -115,7 +119,6 @@ calculate_features <- function(profile_matrix, gaussians,
   dat <- cbind(dat, map(feature_matrices, ~ .[tri]))
   
   ## cap Euclidean distance at the 99.5th %ile
-  max_euclidean_quantile = 0.995
   if ("euclidean_distance" %in% colnames(dat)) {
     vec = dat$euclidean_distance
     threshold = quantile(vec, probs = max_euclidean_quantile, na.rm = T)

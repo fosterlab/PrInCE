@@ -29,7 +29,7 @@ PrInCE(
   co_apex = TRUE,
   n_pairs = FALSE,
   classifier = c("NB", "SVM", "RF", "LR", "ensemble"),
-  models = 10,
+  models = 1,
   cv_folds = 10,
   trees = 500
 )
@@ -38,34 +38,34 @@ PrInCE(
 \item{profiles}{the co-elution profile matrix, or a list of profile matrices
 if replicate experiments were performed. Can be a single numeric matrix,
 with proteins in rows and fractions in columns, or a list of matrices.
-Alternatively, can be provided as a single 
+Alternatively, can be provided as a single
 \code{\linkS4class{MSnSet}} object or a list of objects.}
 
 \item{gold_standard}{a set of 'gold standard' interactions, used to train the
-classifier. Can be provided either as an adjacency matrix, in which 
+classifier. Can be provided either as an adjacency matrix, in which
 both rows and columns correspond to protein IDs in the co-elution matrix
 or matrices, or as a list of proteins in the same complex, which will be
-converted to an adjacency matrix by PrInCE. Zeroes in the adjacency matrix 
+converted to an adjacency matrix by PrInCE. Zeroes in the adjacency matrix
 are interpreted by PrInCE as "true negatives" when calculating precision.}
 
-\item{gaussians}{optionally, provide Gaussian mixture models fit by 
+\item{gaussians}{optionally, provide Gaussian mixture models fit by
 the \code{\link[PrInCE]{build_gaussians}} function. If \code{profiles} is
-a numeric matrix, this should be the named list output by 
-\code{\link[PrInCE]{build_gaussians}} for that matrix; if \code{profiles} 
+a numeric matrix, this should be the named list output by
+\code{\link[PrInCE]{build_gaussians}} for that matrix; if \code{profiles}
 is a list of numeric matrices, this should be a list of named lists}
 
-\item{precision}{optionally, return only interactions above the given 
+\item{precision}{optionally, return only interactions above the given
 precision; by default, all interactions are returned and the user can
-subsequently threshold the list using the  
+subsequently threshold the list using the
 \code{\link[PrInCE]{threshold_precision}} function}
 
 \item{verbose}{if \code{TRUE}, print a series of messages about the stage
 of the analysis}
 
-\item{min_points}{filter profiles without at least this many total, 
+\item{min_points}{filter profiles without at least this many total,
 non-missing points; passed to \code{\link{filter_profiles}}}
 
-\item{min_consecutive}{filter profiles without at least this many 
+\item{min_consecutive}{filter profiles without at least this many
 consecutive, non-missing points; passed to \code{\link{filter_profiles}}}
 
 \item{min_pairs}{minimum number of overlapping fractions between any given
@@ -81,21 +81,21 @@ passed to \code{\link{clean_profiles}}}
 passed to \code{\link{clean_profiles}}}
 
 \item{max_gaussians}{the maximum number of Gaussians to fit; defaults to 5.
-Note that Gaussian mixtures with more parameters than observed (i.e., 
-non-zero or NA) points will not be fit. Passed to  
+Note that Gaussian mixtures with more parameters than observed (i.e.,
+non-zero or NA) points will not be fit. Passed to
 \code{\link{choose_gaussians}}}
 
 \item{max_iterations}{the number of times to try fitting the curve with
-different initial conditions; defaults to 50. Passed to 
+different initial conditions; defaults to 50. Passed to
 \code{\link{fit_gaussians}}}
 
 \item{min_R_squared}{the minimum R-squared value to accept when fitting the
-curve with different initial conditions; defaults to 0.5. Passed to 
+curve with different initial conditions; defaults to 0.5. Passed to
 \code{\link{fit_gaussians}}}
 
 \item{method}{the method used to select the initial conditions for
-nonlinear least squares optimization (one of "guess" or "random"); 
-see \code{\link{make_initial_conditions}} for details. Passed to 
+nonlinear least squares optimization (one of "guess" or "random");
+see \code{\link{make_initial_conditions}} for details. Passed to
 \code{\link{fit_gaussians}}}
 
 \item{criterion}{the criterion to use for model selection;
@@ -108,14 +108,14 @@ raw profiles as a feature}
 \item{pearson_R_cleaned}{if true, include the Pearson correlation (R) between
 cleaned profiles as a feature}
 
-\item{pearson_P}{if true, include the P-value of the Pearson correlation 
+\item{pearson_P}{if true, include the P-value of the Pearson correlation
 between raw profiles as a feature}
 
 \item{euclidean_distance}{if true, include the Euclidean distance between
 cleaned profiles as a feature}
 
 \item{co_peak}{if true, include the 'co-peak score' (that is, the distance,
-in fractions, between the single highest value of each profile) as a 
+in fractions, between the single highest value of each profile) as a
 feature}
 
 \item{co_apex}{if true, include the 'co-apex score' (that is, the minimum
@@ -141,17 +141,17 @@ a ranked data frame of interacting proteins, with the precision
   at each point in the list
 }
 \description{
-PrInCE is a computational approach to infer protein-protein interaction 
+PrInCE is a computational approach to infer protein-protein interaction
 networks from co-elution proteomics data, also called co-migration,
 co-fractionation, or protein correlation profiling. This family of methods
 separates interacting protein complexes on the basis of their diameter
-or biochemical properties. Protein-protein interactions can then be 
+or biochemical properties. Protein-protein interactions can then be
 inferred for pairs of proteins with similar elution profiles. PrInCE
-implements a machine-learning approach to identify protein-protein 
+implements a machine-learning approach to identify protein-protein
 interactions given a set of labelled examples, using features derived
-exclusively from the data. This allows PrInCE to infer high-quality 
+exclusively from the data. This allows PrInCE to infer high-quality
 protein interaction networks from raw proteomics data, without bias
-towards known interactions or functionally associated proteins, making 
+towards known interactions or functionally associated proteins, making
 PrInCE a unique resource for discovery.
 }
 \details{
@@ -163,11 +163,11 @@ replicate separately and use features from all replicates as input to the
 classifier. The 'gold standard' can be either a data frame or adjacency
 matrix of known interactions (and non-interactions), or a list of protein
 complexes. For computational convenience, Gaussian mixture models can be
-pre-fit to every profile and provided separately to the \code{PrInCE} 
+pre-fit to every profile and provided separately to the \code{PrInCE}
 function. The matrix, or matrices, can be provided to PrInCE either as
 numeric matrices or as \code{\linkS4class{MSnSet}} objects.
 
-PrInCE implements three different types of classifiers to predict 
+PrInCE implements three different types of classifiers to predict
 protein-protein interaction networks, including naive Bayes (the default),
 random forests, and support vector machines. The classifiers are trained
 on the gold standards using a ten-fold cross-validation procedure, training
@@ -178,27 +178,27 @@ all ten folds is used. Furthermore, to ensure the results are not sensitive
 to the precise classifier split used, an ensemble of multiple classifiers
 (ten, by default) is trained, and the classifier score is subsequently
 averaged across classifiers. PrInCE can also ensemble across a set of
-classifiers. 
+classifiers.
 
 By default, PrInCE calculates six features from each pair of co-elution
-profiles as input to the classifier, including conventional similarity 
-metrics but also several features specifically adapted to co-elution 
+profiles as input to the classifier, including conventional similarity
+metrics but also several features specifically adapted to co-elution
 proteomics. For example, one such feature is derived
-from fitting a Gaussian mixture model to each elution profile, then 
-calculating the smallest Euclidean distance between any pair of fitted 
-Gaussians. The complete set of features includes: 
+from fitting a Gaussian mixture model to each elution profile, then
+calculating the smallest Euclidean distance between any pair of fitted
+Gaussians. The complete set of features includes:
 
 \enumerate{
   \item the Pearson correlation between raw co-elution profiles;
-  \item the p-value of the Pearson correlation between raw co-elution 
+  \item the p-value of the Pearson correlation between raw co-elution
     profiles;
   \item the Pearson correlation between cleaned profiles, which are generated
     by imputing single missing values with the mean of their neighbors,
-    replacing remaining missing values with random near-zero noise, and 
+    replacing remaining missing values with random near-zero noise, and
     smoothing the profiles using a moving average filter (see
     \code{\link[PrInCE]{clean_profile}});
  \item the Euclidean distance between cleaned profiles;
- \item the 'co-peak' score, defined as the distance, in fractions, between 
+ \item the 'co-peak' score, defined as the distance, in fractions, between
    the maximum values of each profile; and
  \item the 'co-apex' score, defined as the minimum Euclidean distance between
    any pair of fit Gaussians
@@ -207,8 +207,8 @@ Gaussians. The complete set of features includes:
 The output of PrInCE is a ranked data frame, containing the classifier score
 for every possible protein pair. PrInCE also calculates the precision at
 every point in this ranked list, using the 'gold standard' set of protein
-complexes or binary interactions. Our recommendation is to select a 
-threshold for the precision and use this to construct an unweighted 
+complexes or binary interactions. Our recommendation is to select a
+threshold for the precision and use this to construct an unweighted
 protein interaction network.
 }
 \examples{
@@ -218,9 +218,10 @@ data(gold_standard)
 # analyze only the first 100 profiles
 subset <- scott[seq_len(500), ]
 gauss <- scott_gaussians[names(scott_gaussians) \%in\% rownames(subset)]
-ppi <- PrInCE(subset, gold_standard, gaussians = gauss, models = 1, 
-              cv_folds = 3)
-
+ppi <- PrInCE(subset, gold_standard,
+  gaussians = gauss, models = 1,
+  cv_folds = 3
+)
 }
 \references{
 \insertRef{stacey2017}{PrInCE}
