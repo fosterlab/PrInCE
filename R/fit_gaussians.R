@@ -54,7 +54,7 @@ fit_gaussians <- function(chromatogram, n_gaussians,
     iter <- iter + 1
     # make initial conditions
     initial_conditions <- make_initial_conditions(
-      chromatogram, n_gaussians, method = "guess")
+      chromatogram, n_gaussians, method)
     A <- initial_conditions$A
     mu <- initial_conditions$mu
     sigma <- initial_conditions$sigma
