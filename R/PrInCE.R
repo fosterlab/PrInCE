@@ -161,6 +161,7 @@
 #' @importFrom Rdpack reprompt
 #' @importFrom MSnbase exprs
 #' @importFrom methods is
+#' @importFrom tictoc tic toc
 #'
 #' @export
 #'
@@ -176,6 +177,7 @@ PrInCE <- function(profiles, gold_standard,
                    gaussians = NULL,
                    precision = NULL,
                    verbose = FALSE,
+                   runtime = FALSE,
                    ## build_gaussians
                    min_points = 1,
                    min_consecutive = 5,
@@ -205,6 +207,7 @@ PrInCE <- function(profiles, gold_standard,
   criterion <- match.arg(criterion)
   classifier <- match.arg(classifier)
 
+  tic("total")
   # check profile input
   if (is.list(profiles) & !is.data.frame(profiles)) {
     for (replicate_idx in seq_along(profiles)) {
@@ -262,6 +265,8 @@ PrInCE <- function(profiles, gold_standard,
   }
 
   # get features for each matrix separately
+  tic("features")
+ 
   features <- list()
   for (replicate_idx in seq_along(profiles)) {
     if (verbose) {
@@ -314,7 +319,11 @@ PrInCE <- function(profiles, gold_standard,
     features[[replicate_idx]] <- feat
   }
 
+  feature_toc <- toc()
+
   # collapse into a single data frame
+  tic("classification")
+
   if (verbose) {
     message("concatenating features across replicates ...")
   }
@@ -332,6 +341,8 @@ PrInCE <- function(profiles, gold_standard,
     verbose = verbose
   )
 
+  classifier_toc <- toc()
+
   # optionally threshold based on precison
   if (!is.null(precision)) {
     before <- nrow(interactions)
@@ -342,6 +353,14 @@ PrInCE <- function(profiles, gold_standard,
         precision
       )
     }
+  }
+
+  total_toc <- toc()
+  # optionally include runtimes as attributes
+  if(runtime) {
+    attr(interactions, "classification runtime (s)") <- classifier_toc$toc - classifier_toc$tic
+    attr(interactions, "features generation runtime (s)") <- feature_toc$toc - feature_toc$tic
+    attr(interactions, "total runtime (s)") <- total_toc$toc - total_toc$tic
   }
 
   return(interactions)
