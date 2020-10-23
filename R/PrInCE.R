@@ -91,6 +91,9 @@
 #'   \code{\link[PrInCE]{threshold_precision}} function
 #' @param verbose if \code{TRUE}, print a series of messages about the stage
 #'   of the analysis
+#' @param  runtime if if \code{TRUE}, appends the total runtime, the runtime
+#'    for building gaussians and features, and the runtime for classifier
+#'    training and prediction as attributes to the output
 #' @param min_points filter profiles without at least this many total,
 #'   non-missing points; passed to \code{\link{filter_profiles}}
 #' @param min_consecutive filter profiles without at least this many
@@ -266,7 +269,7 @@ PrInCE <- function(profiles, gold_standard,
 
   # get features for each matrix separately
   tic("features")
- 
+
   features <- list()
   for (replicate_idx in seq_along(profiles)) {
     if (verbose) {
@@ -357,7 +360,7 @@ PrInCE <- function(profiles, gold_standard,
 
   total_toc <- toc()
   # optionally include runtimes as attributes
-  if(runtime) {
+  if (runtime) {
     attr(interactions, "classification runtime (s)") <- classifier_toc$toc - classifier_toc$tic
     attr(interactions, "features generation runtime (s)") <- feature_toc$toc - feature_toc$tic
     attr(interactions, "total runtime (s)") <- total_toc$toc - total_toc$tic

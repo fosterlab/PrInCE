@@ -63,6 +63,10 @@ subsequently threshold the list using the
 \item{verbose}{if \code{TRUE}, print a series of messages about the stage
 of the analysis}
 
+\item{runtime}{if if \code{TRUE}, appends the total runtime, the runtime
+for building gaussians and features, and the runtime for classifier
+training and prediction as attributes to the output}
+
 \item{min_points}{filter profiles without at least this many total,
 non-missing points; passed to \code{\link{filter_profiles}}}
 
