@@ -10,6 +10,7 @@ PrInCE(
   gaussians = NULL,
   precision = NULL,
   verbose = FALSE,
+  runtime = FALSE,
   min_points = 1,
   min_consecutive = 5,
   min_pairs = 3,
