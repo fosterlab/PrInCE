@@ -92,8 +92,8 @@
 #' @param verbose if \code{TRUE}, print a series of messages about the stage
 #'   of the analysis
 #' @param  runtime if if \code{TRUE}, appends the total runtime, the runtime
-#'    for building gaussians and features, and the runtime for classifier
-#'    training and prediction as attributes to the output
+#'    for preprocessing, gaussian building, feature generation, and classifier
+#'    prediction as attributes to the output
 #' @param min_points filter profiles without at least this many total,
 #'   non-missing points; passed to \code{\link{filter_profiles}}
 #' @param min_consecutive filter profiles without at least this many
@@ -211,7 +211,9 @@ PrInCE <- function(profiles, gold_standard,
   classifier <- match.arg(classifier)
 
   tic("total")
+
   # check profile input
+  tic("preprocessing")
   if (is.list(profiles) & !is.data.frame(profiles)) {
     for (replicate_idx in seq_along(profiles)) {
       replicate <- profiles[[replicate_idx]]
@@ -267,8 +269,11 @@ PrInCE <- function(profiles, gold_standard,
     stop("could not convert supplied gold standards to adjacency matrix")
   }
 
+  preprocessing_toc <- toc()
+
   # get features for each matrix separately
-  tic("features")
+  gaussian_sec <- 0
+  features_sec <- 0
 
   features <- list()
   for (replicate_idx in seq_along(profiles)) {
@@ -278,6 +283,7 @@ PrInCE <- function(profiles, gold_standard,
     mat <- profiles[[replicate_idx]]
 
     # read Gaussians, or fit if they haven't been yet
+    tic("gaussians")
     if (!is.null(gaussians)) {
       gauss <- gaussians[[replicate_idx]]
     } else {
@@ -308,7 +314,12 @@ PrInCE <- function(profiles, gold_standard,
       )
     }
 
+    gaussian_toc <- toc()
+    gaussian_sec <- gaussian_sec + gaussian_toc$toc - gaussian_toc$tic
+
     # calculate features
+    tic("features")
+
     feat <- calculate_features(mat, gauss,
       min_pairs = min_pairs,
       pearson_R_raw = pearson_R_raw,
@@ -320,9 +331,11 @@ PrInCE <- function(profiles, gold_standard,
       n_pairs = n_pairs
     )
     features[[replicate_idx]] <- feat
+
+    feature_toc <- toc()
+    features_sec <- features_sec + feature_toc$toc - feature_toc$tic
   }
 
-  feature_toc <- toc()
 
   # collapse into a single data frame
   tic("classification")
@@ -359,10 +372,13 @@ PrInCE <- function(profiles, gold_standard,
   }
 
   total_toc <- toc()
+
   # optionally include runtimes as attributes
   if (runtime) {
+    attr(interactions, "preprocessing runtime (s)") <- preprocessing_toc$toc - preprocessing_toc$tic
+    attr(interactions, "gaussian generation runtime (s)") <- gaussian_sec
+    attr(interactions, "features generation runtime (s)") <- features_sec
     attr(interactions, "classification runtime (s)") <- classifier_toc$toc - classifier_toc$tic
-    attr(interactions, "features generation runtime (s)") <- feature_toc$toc - feature_toc$tic
     attr(interactions, "total runtime (s)") <- total_toc$toc - total_toc$tic
   }
 
