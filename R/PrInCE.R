@@ -318,7 +318,7 @@ PrInCE <- function(profiles, gold_standard,
     gaussian_sec <- gaussian_sec + gaussian_toc$toc - gaussian_toc$tic
 
     # calculate features
-    tic("replicate", replicate_idx, "features")
+    tic(paste("replicate", replicate_idx, "features"))
 
     feat <- calculate_features(mat, gauss,
       min_pairs = min_pairs,
