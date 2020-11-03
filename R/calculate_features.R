@@ -53,10 +53,6 @@ calculate_features <- function(profile_matrix, gaussians,
   if (is(profile_matrix, "MSnSet")) {
     profile_matrix <- exprs(profile_matrix)
   }
-  # remove at least pairs supported by only 2 points
-  if (min_pairs < 3) {
-    min_pairs <- 3
-  }
   
   # replace missing values with near-zero noise
   cleaned <- clean_profiles(profile_matrix, impute_NA = FALSE, smooth = FALSE,
