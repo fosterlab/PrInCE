@@ -62,7 +62,7 @@ choose_gaussians <- function(chromatogram, points = NULL,
   for (n_gaussians in seq_len(max_gaussians))
     fits[[n_gaussians]] <- fit_gaussians(
       chromatogram, n_gaussians, max_iterations, min_R_squared,
-      method = method, filter_gaussians_center, 
+      method = method, filter_gaussians_center,
       filter_gaussians_height, filter_gaussians_variance_min,
       filter_gaussians_variance_max)
   
@@ -75,9 +75,9 @@ choose_gaussians <- function(chromatogram, points = NULL,
   if (criterion == "AICc") {
     criteria <- lapply(coefs, gaussian_aicc, chromatogram)
   } else if (criterion == "AIC") { 
-    criteria <- lapply(coefs, gaussian_aic)
+    criteria <- lapply(coefs, gaussian_aic, chromatogram)
   } else if (criterion == "BIC") {
-    criteria <- lapply(coefs, gaussian_bic)  
+    criteria <- lapply(coefs, gaussian_bic, chromatogram)
   }
   best <- which.min(criteria)
   if (length(best) == 0) {
