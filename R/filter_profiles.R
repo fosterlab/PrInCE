@@ -24,8 +24,8 @@
 #' @importFrom purrr map_int
 #' 
 #' @export
-filter_profiles <- function(profile_matrix, min_points = 1, 
-                            min_consecutive = 5) {
+filter_profiles <- function(profile_matrix, min_points = 5, 
+                            min_consecutive = 1) {
   # extract the matrix and impute individual missing points
   if (is(profile_matrix, "MSnSet")) {
     expr <- exprs(profile_matrix)
