@@ -24,7 +24,7 @@
 #' @importFrom purrr map_int
 #' 
 #' @export
-filter_profiles <- function(profile_matrix, min_points = 5, 
+filter_profiles <- function(profile_matrix, min_points = 5,
                             min_consecutive = 1) {
   # extract the matrix and impute individual missing points
   if (is(profile_matrix, "MSnSet")) {
@@ -33,7 +33,7 @@ filter_profiles <- function(profile_matrix, min_points = 5,
     expr <- profile_matrix
   }
   imputed <- t(apply(expr, 1, impute_neighbors))
-  
+
   # filter profiles without N non-missing points after imputation
   nas <- is.na(imputed)
   if (!is.na(min_points) & !is.null(min_points) & min_points > 0) {
@@ -42,14 +42,13 @@ filter_profiles <- function(profile_matrix, min_points = 5,
     # need to at least filter profiles without any points
     profile_matrix <- profile_matrix[rowSums(!nas) >= 1, ]
   }
-  
+
   # filter profiles without N consecutive points after imputation
-  if (!is.na(min_consecutive) & !is.null(min_consecutive) &
-      min_consecutive > 0) {
-    rles <- apply(nas, 1, rle)
+  if (!is.na(min_consecutive) & !is.null(min_consecutive) & min_consecutive > 0) {
+    rles <- apply(is.na(profile_matrix), 1, rle)
     max_consecutive <- map_int(rles, ~ ifelse(FALSE %in% .$values, max(.$lengths[.$values == FALSE]), 0L))
-    profile_matrix <- imputed[max_consecutive >= min_consecutive, ]
+    profile_matrix <- profile_matrix[max_consecutive >= min_consecutive, ]
   }
-  
+
   return(profile_matrix)
 }
