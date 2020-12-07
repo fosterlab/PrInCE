@@ -73,7 +73,7 @@
 #' 
 #' @export
 build_gaussians <- function(profile_matrix, 
-                            min_points = 1, min_consecutive = 5,
+                            min_points = 5, min_consecutive = 1,
                             impute_NA = TRUE, smooth = TRUE, smooth_width = 4,
                             max_gaussians = 5, 
                             criterion = c("AICc", "AIC", "BIC"),
