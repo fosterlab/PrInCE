@@ -48,7 +48,7 @@ filter_profiles <- function(profile_matrix, min_points = 5,
       min_consecutive > 0) {
     rles <- apply(nas, 1, rle)
     max_consecutive <- map_int(rles, ~ ifelse(FALSE %in% .$values, max(.$lengths[.$values == FALSE]), 0L))
-    profile_matrix <- profile_matrix[max_consecutive >= min_consecutive, ]
+    profile_matrix <- imputed[max_consecutive >= min_consecutive, ]
   }
   
   return(profile_matrix)
