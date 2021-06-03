@@ -13,7 +13,8 @@
 #'   1 for positives, and NA for interactions outside the reference set 
 #' @param classifier the type of classifier to use; one of \code{"NB"} 
 #'   (naive Bayes), \code{"SVM"} (support vector machine), \code{"RF"}
-#'   (random forest), or \code{"LR"} (logistic regression)
+#'   (random forest), \code{"LR"} (logistic regression) or \code{"XGB"} 
+#'   (XGBoost)
 #' @param models the number of classifiers to train
 #' @param cv_folds the number of folds to split the reference dataset into 
 #'   when training each classifier. By default, each 
@@ -57,7 +58,7 @@
 #' @export
 predict_ensemble <- function(dat, 
                              labels, 
-                             classifier = c("NB", "SVM", "RF", "LR"), 
+                             classifier = c("NB", "SVM", "RF", "LR", "XGB"), 
                              models = 1, 
                              cv_folds = 10,
                              trees = 500,
@@ -129,7 +130,10 @@ predict_ensemble <- function(dat,
                                 num.trees = trees,
                                 num.threads = 1),
                     LR = speedglm(label ~ ., clf_data_labeled, 
-                                  family = binomial()))
+                                  family = binomial()),
+                    XGB = xgboost(data = clf_data %>% as.matrix(),
+                                  label = clf_labels,
+                                  nrounds = 2))
       
       # classify
       withheld_idxs <- as.integer(rownames(training))[folds == fold]
@@ -139,14 +143,16 @@ predict_ensemble <- function(dat,
         NB = predict(clf, test_data, type = 'prob', threshold = 5e-324),
         SVM = predict(clf, test_data, decisionValues = TRUE),
         RF = predict(clf, test_data, num.threads = 1),
-        LR = predict(clf, test_data, type = 'response'))
+        LR = predict(clf, test_data, type = 'response'),
+        XGB = predict(clf, test_data %>% as.matrix()))
       ## extract predictions as numeric vector
       predictions <- switch(
         classifier,
         NB = predictions[, "1"],
         SVM = -1.0 * predictions$decisionValues[, "0"],
         RF = predictions[[1]][, "1"],
-        LR = predictions)
+        LR = predictions,
+        XGB = predictions)
       # assign scores
       clf_scores[-withheld_idxs, fold] <- predictions
       

@@ -26,8 +26,8 @@
 #'  used to train the classifier 
 #' @param classifier the type of classifier to use: one of \code{"NB"} (naive
 #'   Bayes), \code{"SVM"} (support vector machine), \code{"RF"} (random forest),
-#'   \code{"LR"} (logistic regression), or \code{"ensemble"} (an ensemble of
-#'   all four)
+#'   \code{"LR"} (logistic regression), \code{"XGB"} (XGBoost) or 
+#'   \code{"ensemble"} (an ensemble of all five)
 #' @param verbose if \code{TRUE}, print a series of messages about the stage
 #'   of the analysis
 #' @param models the number of classifiers to train and average across, each
@@ -57,7 +57,7 @@
 #' 
 #' @export
 predict_interactions <- function(
-  features, gold_standard, classifier = c("NB", "SVM", "RF", "LR", "ensemble"),
+  features, gold_standard, classifier = c("NB", "SVM", "RF", "LR", "XGB", "ensemble"),
   verbose = FALSE, models = 10, cv_folds = 10, trees = 500) {
   classifier <- match.arg(classifier)
   
@@ -71,7 +71,7 @@ predict_interactions <- function(
   }
   labels <- make_labels(gold_standard, features)
   
-  if (classifier %in% c("NB", "SVM", "RF", "LR")) {
+  if (classifier %in% c("NB", "SVM", "RF", "LR", "XGB")) {
     if (verbose) {
       message("training classifiers ...")
     }
@@ -105,10 +105,16 @@ predict_interactions <- function(
     interactions_LR <- predict_ensemble(
       features, labels, classifier = "LR", models, cv_folds)
     if (verbose) {
+      message("training logistic regression classifiers ...")
+    }
+    interactions_XGB <- predict_ensemble(
+      features, labels, classifier = "XGB", models, cv_folds)
+    if (verbose) {
       message("ensembling predictions ...")
     }
     interactions_list <- list(interactions_NB, interactions_LR,
-                             interactions_RF, interactions_SVM)
+                             interactions_RF, interactions_SVM,
+                             interactions_XGB)
     interactions <- Reduce(function(x, y) full_join(
       x, y, by = c('protein_A', 'protein_B')), interactions_list) %>%
       select(-starts_with("label")) %>%
