@@ -58,7 +58,7 @@
 #' @export
 predict_interactions <- function(
   features, gold_standard, classifier = c("NB", "SVM", "RF", "LR", "XGB", "ensemble"),
-  verbose = FALSE, models = 10, cv_folds = 10, trees = 500) {
+  verbose = FALSE, models = 10, cv_folds = 10, trees = 500, nrounds = 50) {
   classifier <- match.arg(classifier)
   
   ## define global variables to prevent check complaining
@@ -108,7 +108,7 @@ predict_interactions <- function(
       message("training logistic regression classifiers ...")
     }
     interactions_XGB <- predict_ensemble(
-      features, labels, classifier = "XGB", models, cv_folds)
+      features, labels, classifier = "XGB", models, cv_folds, nrounds=nrounds)
     if (verbose) {
       message("ensembling predictions ...")
     }

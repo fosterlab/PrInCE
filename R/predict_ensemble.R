@@ -62,6 +62,7 @@ predict_ensemble <- function(dat,
                              models = 1, 
                              cv_folds = 10,
                              trees = 500,
+                             nrounds = 50,
                              node_columns = c(1, 2)) {
   classifier <- match.arg(classifier)
   # length of node columns must be exactly two (pairwise interactions)
@@ -133,7 +134,7 @@ predict_ensemble <- function(dat,
                                   family = binomial()),
                     XGB = xgboost(data = clf_data %>% as.matrix(),
                                   label = clf_labels,
-                                  nrounds = 2))
+                                  nrounds = nrounds))
       
       # classify
       withheld_idxs <- as.integer(rownames(training))[folds == fold]
