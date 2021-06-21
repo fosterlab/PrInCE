@@ -81,7 +81,8 @@ predict_interactions <- function(
                                     classifier = classifier, 
                                     models = models, 
                                     cv_folds = cv_folds, 
-                                    trees = trees)
+                                    trees = trees, 
+                                    nrounds = nrounds)
   } else if (classifier == "ensemble") {
     # predict all four separately 
     if (verbose) {
