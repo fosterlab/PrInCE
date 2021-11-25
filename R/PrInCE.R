@@ -200,7 +200,8 @@ PrInCE <- function(profiles, gold_standard,
                    classifier = c("NB", "SVM", "RF", "LR", "ensemble"),
                    models = 1,
                    cv_folds = 10,
-                   trees = 500) {
+                   trees = 500,
+                   protein_groups = NULL) {
   method <- match.arg(method)
   criterion <- match.arg(criterion)
   classifier <- match.arg(classifier)
@@ -329,7 +330,8 @@ PrInCE <- function(profiles, gold_standard,
     models = models,
     cv_folds = cv_folds,
     trees = trees,
-    verbose = verbose
+    verbose = verbose,
+    protein_groups
   )
 
   # optionally threshold based on precison

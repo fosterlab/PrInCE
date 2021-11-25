@@ -58,7 +58,8 @@
 #' @export
 predict_interactions <- function(
   features, gold_standard, classifier = c("NB", "SVM", "RF", "LR", "XGB", "ensemble"),
-  verbose = FALSE, models = 10, cv_folds = 10, trees = 500, nrounds = 50) {
+  verbose = FALSE, models = 10, cv_folds = 10, trees = 500, nrounds = 50,
+  protein_groups = NULL) {
   classifier <- match.arg(classifier)
   
   ## define global variables to prevent check complaining
@@ -69,7 +70,7 @@ predict_interactions <- function(
   if (verbose) {
     message("making labels ...")
   }
-  labels <- make_labels(gold_standard, features)
+  labels <- make_labels(gold_standard, features, protein_groups)
   
   if (classifier %in% c("NB", "SVM", "RF", "LR", "XGB")) {
     if (verbose) {

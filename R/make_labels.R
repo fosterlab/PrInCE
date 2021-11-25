@@ -50,6 +50,7 @@ make_labels <- function(gold_standard, dat,
     labels <- rep(NA, nrow(dat))
     labels[lab_idxs] <- gold_standard[idxing_mat]
   } else {
+    names(protein_groups) = unlist(sapply(protein_groups, function(x) x[1]))
     # filter groups based on presence/absence in matrix
     protein_groups <- map(protein_groups, ~ .[. %in% rownames(gold_standard)])
     # identify rows that overlap with the gold standard matrix
